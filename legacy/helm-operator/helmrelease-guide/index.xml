@@ -1,0 +1,1271 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>道场 – HelmRelease guides</title>
+    <link>/legacy/helm-operator/helmrelease-guide/</link>
+    <description>Recent content in HelmRelease guides on 道场</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="/legacy/helm-operator/helmrelease-guide/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Legacy: Introduction</title>
+      <link>/legacy/helm-operator/helmrelease-guide/introduction/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/helmrelease-guide/introduction/</guid>
+      <description>
+        
+        
+        &lt;p&gt;The intention of this guide is to give you more detailed information on various
+elements of the &lt;code&gt;HelmRelease&lt;/code&gt; Custom Resource. You can follow it in one take,
+use it as a more explanatory reference, or a combination of both.&lt;/p&gt;
+&lt;p&gt;It assumes you have the Helm Operator already installed in your cluster. If
+you have not done this yet, 
+&lt;a href=&#34;/legacy/helm-operator/get-started/quickstart/#install-the-helm-operator&#34;&gt;follow the installation instructions from the
+quickstart&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;The guide tries not to presume a specific enabled Helm version but for the sake
+of simplicity it was written while making use of Helm 3.&lt;/p&gt;
+&lt;h2 id=&#34;a-minimal-helmrelease&#34;&gt;A minimal HelmRelease&lt;/h2&gt;
+&lt;p&gt;To get started, we will first create the most minimal &lt;code&gt;HelmRelease&lt;/code&gt; possible.
+We will use (parts) of this minimal &lt;code&gt;HelmRelease&lt;/code&gt; as an example throughout the
+rest of this guide.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# podinfo.yaml&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#0e84b5;font-weight:bold&#34;&gt;---&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;apiVersion&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;helm.fluxcd.io/v1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;HelmRelease&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;podinfo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;namespace&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;default&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;chart&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;repository&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;https://stefanprodan.github.io/podinfo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;podinfo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;version&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;3.2.0&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;code&gt;spec.chart&lt;/code&gt; object is the only mandatory property of the &lt;code&gt;HelmRelease&lt;/code&gt;
+and defines the Helm chart that should be installed by the Helm Operator. This
+&lt;code&gt;HelmRelease&lt;/code&gt; will manage 
+&lt;a href=&#34;https://github.com/stefanprodan/podinfo&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;stefanprodan/podinfo&lt;/code&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;a tiny web application made with Go that showcases best practices of running
+microservices in Kubernetes&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;from a 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/chart-sources/#helm-repositories&#34;&gt;Helm repository chart source&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Applying this to the cluster and making the Helm Operator do the release is
+equivalent to a human running the following &lt;code&gt;helm&lt;/code&gt; commands:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;$ helm repo add podinfo https://stefanprodan.github.io/podinfo
+$ helm upgrade -i default-podinfo podinfo/podinfo --version &#39;3.2.0&#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;A couple of differences between the &lt;code&gt;HelmRelease&lt;/code&gt; resource and listed &lt;code&gt;helm&lt;/code&gt;
+commands should stand out:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The &lt;code&gt;HelmRelease&lt;/code&gt; does not make use of a repository alias, instead the
+absolute URL of the Helm repository is used.&lt;br&gt;&lt;br&gt;
+This is to ensure the &lt;code&gt;HelmRelease&lt;/code&gt; is able to stand on its own. If we used
+names in the spec, which were resolved to URLs elsewhere (e.g., in a
+&lt;code&gt;repositories.yaml&lt;/code&gt; supplied to the operator), it would be possible to
+change the meaning of a &lt;code&gt;HelmRelease&lt;/code&gt; without altering it. This is
+undesirable because it makes it hard to specify exactly what you want, in
+the one place; or to read exactly what is being specified, in the one place.&lt;/li&gt;
+&lt;li&gt;The &lt;code&gt;spec.chart.version&lt;/code&gt; is mandatory.&lt;br&gt;&lt;br&gt;
+The reasoning behind this is the same as the explanation given above.&lt;/li&gt;
+&lt;li&gt;The default release name used by the Helm Operator is composed from the
+&lt;code&gt;metadata.namespace&lt;/code&gt; and the &lt;code&gt;metadata.name&lt;/code&gt; of the &lt;code&gt;HelmRelease&lt;/code&gt; resource
+(&lt;code&gt;&amp;lt;namespace&amp;gt;-&amp;lt;name&amp;gt;&lt;/code&gt;).&lt;br&gt;&lt;br&gt;
+This to ensure it does not collide with other &lt;code&gt;HelmRelease&lt;/code&gt; resources that
+may have the same &lt;code&gt;.metadata.name&lt;/code&gt; but different namespace definitions.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Having absorbed this information, you can now go ahead and apply the resource
+using &lt;code&gt;kubectl&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;$ kubectl apply -f podinfo.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Take a look at the logs of the Helm Operator deployment and you will see the
+Helm installation was performed almost instantly after applying the resource:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;$ kubectl logs deploy/flux-helm-operator
+...
+ts=2020-01-01T12:00:00.000000000Z caller=release.go:335 component=release release=default-podinfo targetNamespace=default resource=default:helmrelease/podinfo helmVersion=v3 info=&amp;quot;no existing release&amp;quot; action=install
+ts=2020-01-01T12:00:00.000000000Z caller=helm.go:69 component=helm version=v3 info=&amp;quot;creating 2
+resource(s)&amp;quot; targetNamespace=default release=default-podinfo
+ts=2020-01-01T12:00:00.000000000Z caller=release.go:266 component=release release=default-podinfo targetNamespace=default resource=default:helmrelease/podinfo helmVersion=v3 info=&amp;quot;Helm release sync succeeded&amp;quot; revision=3.2.0
+$ kubectl get helmrelease
+NAME      RELEASE           STATUS     MESSAGE                       AGE
+podinfo   default-podinfo   deployed   Helm release sync succeeded   10s
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;As expected, the release will now also show up for e.g. &lt;code&gt;helm list&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;$ helm list
+NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART           APP VERSION
+default-podinfo default         1               2020-01-01 12:00:00.000000000 +0000 UTC deployed        podinfo-3.2.0   3.2.0
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Congratulations! You made your first Helm release using a &lt;code&gt;HelmRelease&lt;/code&gt;
+resource.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Chart sources</title>
+      <link>/legacy/helm-operator/helmrelease-guide/chart-sources/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/helmrelease-guide/chart-sources/</guid>
+      <description>
+        
+        
+        &lt;p&gt;In the introduction we created a simple &lt;code&gt;HelmRelease&lt;/code&gt; that made use of a chart
+from a Helm repository, but the Helm Operator does support multiple chart
+sources, and virtually any protocol and/or source that can be shelled-in
+through a 
+&lt;a href=&#34;#extending-the-supported-helm-repository-protocols&#34;&gt;Helm downloader plugin&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In this section of the guide we will take a deeper dive into the available
+chart sources, and the unique features they have.&lt;/p&gt;
+&lt;h2 id=&#34;comparison&#34;&gt;Comparison&lt;/h2&gt;
+&lt;p&gt;The following are short lists of the major characteristics of the different
+chart sources. Keep these in mind when you have to make a decision about what
+type of chart source to use for your &lt;code&gt;HelmRelease&lt;/code&gt;, as they result in quite
+different behaviour.&lt;/p&gt;
+&lt;h3 id=&#34;charts-from-helm-repositorieshelm-repositories&#34;&gt;Charts from 
+&lt;a href=&#34;#helm-repositories&#34;&gt;Helm repositories&lt;/a&gt;&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Are immutable and non-moving (i.e. no updates for the chart itself are
+received unless the &lt;code&gt;.chart.version&lt;/code&gt; is changed).&lt;/li&gt;
+&lt;li&gt;Are cached for the lifetime duration of the Helm Operator pod.&lt;/li&gt;
+&lt;li&gt;Are shared between &lt;code&gt;HelmRelease&lt;/code&gt; resources making use of the same chart
+and version.&lt;/li&gt;
+&lt;li&gt;Require a custom &lt;code&gt;repositories.yaml&lt;/code&gt; to be 
+&lt;a href=&#34;#authentication-and-certificates&#34;&gt;mounted and imported&lt;/a&gt;
+when authentication is required.&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;#extending-the-supported-helm-repository-protocols&#34;&gt;Are not just limited to HTTP/S&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Do not support&lt;/em&gt; chart dependency updates (but instead use the dependencies
+bundled with the chart).&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Do not support&lt;/em&gt; &lt;code&gt;valuesFrom.chartFileRef&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;charts-from-git-repositoriesgit-repositories&#34;&gt;Charts from 
+&lt;a href=&#34;#git-repositories&#34;&gt;Git repositories&lt;/a&gt;&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Move by mirroring the Git repository and fetching the latest &lt;code&gt;HEAD&lt;/code&gt; for the
+configured &lt;code&gt;.chart.ref&lt;/code&gt; on an interval (i.e. when a change is detected in
+Git under the &lt;code&gt;.chart.path&lt;/code&gt;, a release will be scheduled for an upgrade).&lt;/li&gt;
+&lt;li&gt;Share their Git repository mirror with &lt;code&gt;HelmRelease&lt;/code&gt; resources making use
+of the same &lt;code&gt;.chart.git&lt;/code&gt;, &lt;code&gt;.chart.ref&lt;/code&gt; and &lt;code&gt;.chart.secretKeyRef&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Require a 
+&lt;a href=&#34;#ssh&#34;&gt;private key to be mounted for Git over SSH&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Support credentials from a secret or a global &lt;code&gt;.netrc&lt;/code&gt; file for 
+&lt;a href=&#34;#https&#34;&gt;Git over
+HTTPS&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Do support&lt;/em&gt; 
+&lt;a href=&#34;#dependency-updates&#34;&gt;chart dependency updates&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Do support&lt;/em&gt; 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/values/#chart-files&#34;&gt;&lt;code&gt;valuesFrom.chartFileRef&lt;/code&gt;&lt;/a&gt; to make use
+of alternative value files present in the &lt;code&gt;.chart.path&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;helm-repositories&#34;&gt;Helm repositories&lt;/h2&gt;
+&lt;p&gt;The Helm repository chart source is defined as follows in the &lt;code&gt;.spec&lt;/code&gt; of a
+&lt;code&gt;HelmRelease&lt;/code&gt;. All listed fields are mandatory:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;chart&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;repository&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;https://stefanprodan.github.io/podinfo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;podinfo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;version&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;3.2.0&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The definition of the listed keys is as follows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;repository&lt;/code&gt;: The URL of the Helm repository, e.g. &lt;code&gt;https://kubernetes-charts.storage.googleapis.com&lt;/code&gt;
+or &lt;code&gt;https://charts.example.com&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Putting &lt;code&gt;/index.yaml&lt;/code&gt; behind the URL it should return an index file with all
+available charts for the Helm repository.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;name&lt;/code&gt;: The name of the Helm chart &lt;em&gt;without&lt;/em&gt; an alias, e.g. &lt;code&gt;podinfo&lt;/code&gt;
+(instead of &lt;code&gt;&amp;lt;alias&amp;gt;/podinfo&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;Having doubts about what to put here? Use the &lt;code&gt;name&lt;/code&gt; as listed in the
+&lt;code&gt;Chart.yaml&lt;/code&gt; of the Helm chart you want to use.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;version&lt;/code&gt;: The targeted Helm chart version, e.g. &lt;code&gt;3.2.0&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In the 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/introduction/&#34;&gt;introduction&lt;/a&gt; you already had a brief exposure to this
+chart source, and in essence Helm repositories are the simplest way to make use
+of a Helm chart in a &lt;code&gt;HelmRelease&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;To be able to perform releases with them the Helm Operator only makes use of
+native Helm features and a tiny bit of glue to wire things together:&lt;/p&gt;
+&lt;p&gt;It will first attempt a reverse lookup for a repository alias in the local
+&lt;code&gt;repositories.yaml&lt;/code&gt; for the defined &lt;code&gt;repository&lt;/code&gt; URL, if an alias is found it
+will use this alias with the given &lt;code&gt;name&lt;/code&gt; and &lt;code&gt;version&lt;/code&gt; to instruct Helm to
+fetch the chart to a cache path defined by the Helm Operator.&lt;/p&gt;
+&lt;p&gt;If the reverse lookup failed and no alias was found for the given URL it will
+fallback to attempting to retrieve the absolute URL of the chart from the index
+of the given &lt;code&gt;repository&lt;/code&gt; URL, this URL is then used to instruct Helm to fetch
+the chart to a cache path defined by the Helm Operator.&lt;/p&gt;
+&lt;p&gt;When this does not succeed either a status condition of type &lt;code&gt;ChartFetched&lt;/code&gt;
+will be recorded on the &lt;code&gt;HelmRelease&lt;/code&gt; resource with the returned error.&lt;/p&gt;
+&lt;h3 id=&#34;authentication-and-certificates&#34;&gt;Authentication and certificates&lt;/h3&gt;
+&lt;p&gt;Some Helm repositories require authentication or certificates before you are
+able to make use of any charts they hold. At present, per-resource
+authentication is not implemented for Helm repositories. The &lt;code&gt;HelmRelease&lt;/code&gt;
+Custom Resource does include a field &lt;code&gt;chartPullSecret&lt;/code&gt; for attaching a
+&lt;code&gt;repositories.yaml&lt;/code&gt; file, but this has not been actually implemented.&lt;/p&gt;
+&lt;p&gt;As a workaround, you can mount a &lt;code&gt;repositories.yaml&lt;/code&gt; file with authentication
+already configured (and any required certificates) into the Helm Operator
+container, and import it using the &lt;code&gt;--helm-repository-import&lt;/code&gt; flag.&lt;/p&gt;
+&lt;p&gt;First, create a new empty &lt;code&gt;repositories.yaml&lt;/code&gt; file &lt;em&gt;locally&lt;/em&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;touch repositories.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You can now use &lt;code&gt;helm&lt;/code&gt; to write the repository entry to this new file. Using
+Helm 3 for this is the best option as it offers a &lt;code&gt;--repository-config&lt;/code&gt; flag
+and the generated output works for both versions:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;helm repo add &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --repository-config &lt;span style=&#34;color:#bb60d5&#34;&gt;$PWD&lt;/span&gt;/repositories.yaml &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --username &amp;lt;username&amp;gt; &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --password &amp;lt;password&amp;gt; &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    &amp;lt;alias&amp;gt; &amp;lt;URL&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Note&lt;/h4&gt;
+
+    For Azure ACR repositories, you will need to 
+&lt;a href=&#34;https://docs.microsoft.com/en-us/azure/container-registry/container-registry-auth-service-principal#create-a-service-principal&#34; target=&#34;_blank&#34;&gt;create a service
+principal&lt;/a&gt;
+and use the plain text ID and password this gives you.
+
+&lt;/div&gt;
+
+&lt;p&gt;If you need to define any certificates, edit the respective &lt;code&gt;caFile&lt;/code&gt;, &lt;code&gt;certFile&lt;/code&gt;
+and &lt;code&gt;keyFile&lt;/code&gt; values of the entry you just added to the mount paths you will
+later add to the Helm Operator &lt;em&gt;container&lt;/em&gt;  (example path used here is
+&lt;code&gt;/var/certs/*&lt;/code&gt;):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;caFile&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;/var/certs/ca.crt&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;certFile&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;/var/certs/cert.crt&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;keyFile&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;/var/certs/auth.key&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&amp;lt;alias&amp;gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now you can create a secret in the same namespace as you are running the Helm
+operator, from the repositories file:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl create secret generic flux-helm-repositories &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --from-file&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;$PWD&lt;/span&gt;/repositories.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In case you defined any certificate entries, also create a secret for those
+files in the same namespace as you are running the Helm Operator:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl create secret generic flux-helm-repository-certs &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --from-file&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;$PWD&lt;/span&gt;/ca.crt &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --from-file&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;$PWD&lt;/span&gt;/cert.crt &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --from-file&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;$PWD&lt;/span&gt;/auth.key
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Mount the created secret(s) by adding to &lt;code&gt;volumes&lt;/code&gt; in the pod spec of the Helm
+operator deployment, and &lt;code&gt;volumeMounts&lt;/code&gt; of the Helm Operator container. A good
+mount path for the &lt;code&gt;repositories.yaml&lt;/code&gt; file that does not give conflicts with
+any Helm paths is &lt;code&gt;/root/.helm/repository/repositories.yaml&lt;/code&gt;. Examples of this
+can be found in the commented-out sections of the 
+&lt;a href=&#34;https://github.com/fluxcd/helm-operator/blob/1.2.0/deploy/deployment.yaml&#34; target=&#34;_blank&#34;&gt;example
+deployment&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Lastly, configure the &lt;code&gt;--helm-repository-import&lt;/code&gt; argument on the Helm Operator
+container for your enabled Helm versions:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;args&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;- --helm-repository-import=v2:/root/.helm/repository/repositories.yaml,v3:/root/.helm/repository/repositories.yaml&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Note&lt;/h4&gt;
+
+    There is no limit to the amount of repository files that can be imported
+as the &lt;code&gt;--helm-repository-import&lt;/code&gt; flag accepts a comma separated string
+slice of &lt;code&gt;&amp;lt;Helm version&amp;gt;:&amp;lt;filepath&amp;gt;&lt;/code&gt;, e.g. &lt;code&gt;v3:/my/path.yaml&lt;/code&gt;.
+Adding all entries to the same file and/or secret is thus not a requirement.
+
+&lt;/div&gt;
+
+
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Hint&lt;/h4&gt;
+
+    For the 
+&lt;a href=&#34;../references/chart.md&#34;&gt;Helm chart&lt;/a&gt;, this all can be done by setting
+&lt;code&gt;configureRepositories.enable&lt;/code&gt; to &lt;code&gt;true&lt;/code&gt;, it will automatically pick up the
+&lt;code&gt;flux-helm-reposities&lt;/code&gt; secret created earlier in this guide and configure the
+&lt;code&gt;--helm-repository-import&lt;/code&gt; flag for the enabled Helm versions. The certificate
+secret can be mounted by configuring the &lt;code&gt;extraVolumes&lt;/code&gt; and &lt;code&gt;extraVolumeMounts&lt;/code&gt;
+values.
+
+&lt;/div&gt;
+
+&lt;h3 id=&#34;extending-the-supported-helm-repository-protocols&#34;&gt;Extending the supported Helm repository protocols&lt;/h3&gt;
+&lt;p&gt;By default, the Helm Operator is able to pull charts from repositories using
+HTTP/S. It is however possible to extend the supported protocols by making use
+of a 
+&lt;a href=&#34;https://helm.sh/docs/topics/plugins/#downloader-plugins&#34; target=&#34;_blank&#34;&gt;Helm downloader plugin&lt;/a&gt;,
+this allows you for example to use charts hosted on 
+&lt;a href=&#34;https://github.com/hypnoglow/helm-s3&#34; target=&#34;_blank&#34;&gt;Amazon S3&lt;/a&gt;
+or 
+&lt;a href=&#34;https://github.com/hayorov/helm-gcs&#34; target=&#34;_blank&#34;&gt;Google Cloud Storage&lt;/a&gt;.&lt;/p&gt;
+&lt;h4 id=&#34;installing-a-helm-downloader-plugin&#34;&gt;Installing a Helm downloader plugin&lt;/h4&gt;
+&lt;p&gt;The easiest way to install a plugin so that it becomes accessible to the Helm
+operator to use an 
+&lt;a href=&#34;https://kubernetes.io/docs/concepts/workloads/pods/init-containers/&#34; target=&#34;_blank&#34;&gt;init container&lt;/a&gt;
+and one of the available &lt;code&gt;helm&lt;/code&gt; binaries in the Helm Operator&amp;rsquo;s image and a
+volume mount. For the Helm chart,
+
+&lt;a href=&#34;../references/chart.md#use-helm-downloader-plugins&#34;&gt;refer to the chart the documentation&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Plugin folder paths per Helm version:&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Version&lt;/th&gt;
+&lt;th&gt;Plugins&lt;/th&gt;
+&lt;th&gt;Config&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Helm 2&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;/var/fluxd/helm/cache/plugins&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;/var/fluxd/helm/plugins&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Helm 3&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;/root/.cache/helm/plugins&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;/root/.local/share/helm/plugins&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Add a volume entry of 
+&lt;a href=&#34;https://kubernetes.io/docs/concepts/storage/volumes/#emptydir&#34; target=&#34;_blank&#34;&gt;type &lt;code&gt;emptyDir&lt;/code&gt;&lt;/a&gt;
+to the deployment of your Helm Operator, this is where the plugins will be
+stored for the lifetime duration of the pod:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;volumes&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;helm-plugins-cache&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;   &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;emptyDir&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;{}&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Next, add a new init container that uses the same image as the Helm
+operator&amp;rsquo;s container, and makes use of the earlier mentioned volume, with
+correct volume mounts for the Helm version you are making use of. The
+available &lt;code&gt;helm2&lt;/code&gt; and &lt;code&gt;helm3&lt;/code&gt; binaries can then be used to install the plugin:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;initContainers&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;helm-3-downloader-plugin&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;   &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;docker.io/fluxcd/helm-operator:&amp;lt;tag&amp;gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;   &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;imagePullPolicy&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;IfNotPresent&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;   &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;command&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;- &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;sh&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;- &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;-c&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# Replace &amp;#39;&amp;lt;plugin&amp;gt;&amp;#39; and &amp;#39;&amp;lt;version&amp;gt;&amp;#39; with the respective&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# values of the plugin you want to install&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;- &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;helm3 plugin install &amp;lt;plugin&amp;gt; --version &amp;lt;version&amp;gt;&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;   &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;volumeMounts&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;   &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;helm-plugins-cache&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# See: &amp;#39;plugin folder paths per Helm version&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;mountPath&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;/root/.cache/helm/plugins&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;subPath&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;v3&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;   &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;helm-plugins-cache&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# See: &amp;#39;plugin folder paths per Helm version&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;mountPath&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;/root/.local/share/helm/plugins&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;subPath&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;v3-config&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Last, add the same volume mounts to the Helm Operator container so that the
+downloaded plugin becomes available:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;containers&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux-helm-operator&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;   &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;docker.io/fluxcd/helm-operator:&amp;lt;tag&amp;gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;   &lt;/span&gt;...&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;   &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;volumeMounts&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;   &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;helm-plugins-cache&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# See: &amp;#39;plugin folder paths per Helm version&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;mountPath&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;/root/.cache/helm/plugins&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;subPath&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;v3&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;   &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;helm-plugins-cache&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# See: &amp;#39;plugin folder paths per Helm version&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;mountPath&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;/root/.local/share/helm/plugins&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;subPath&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;v3-config&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;using-an-installed-protocol-in-your-helmrelease&#34;&gt;Using an installed protocol in your HelmRelease&lt;/h4&gt;
+&lt;p&gt;Once a Helm downloader plugin has been successfully installed, the newly added
+protocol can be used in the &lt;code&gt;.chart.repository&lt;/code&gt; value of a &lt;code&gt;HelmRelease&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;chart&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;repository&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;s3://bucket-name/charts&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;chart-name&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;version&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;1.0.0&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&#34;alert alert-warning&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Caution&lt;/h4&gt;
+
+    Most downloader plugins expect some form of credentials to be present to be
+able to download a chart, make sure those are available in the Helm
+operator&amp;rsquo;s container before attempting to make use of the newly added
+protocol.
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;git-repositories&#34;&gt;Git repositories&lt;/h2&gt;
+&lt;p&gt;Besides the extensive support for Helm repositories, the Helm Operator also
+offers support for charts from Git repository sources. You can refer to a chart
+from a &lt;em&gt;Git&lt;/em&gt; repository, rather than a Helm repository, with a &lt;code&gt;.chart&lt;/code&gt; section
+like this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;chart&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;git&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;git@github.com:org/repo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;ref&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;master&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;path&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;charts/podinfo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The definition of the listed keys is as follows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;git&lt;/code&gt;: The URL of the Git repository, e.g. &lt;code&gt;git@github.com:org/repo&lt;/code&gt; or
+&lt;code&gt;https://github.com/org/repo.git&lt;/code&gt;. &lt;strong&gt;Note:&lt;/strong&gt; specifying a custom port only
+works when the protocol is specified,
+e.g. &lt;code&gt;ssh://git@github.com:2222/org/repo.git&lt;/code&gt; and not &lt;code&gt;git@github.com:2222/org/repo&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ref&lt;/code&gt; &lt;em&gt;(Optional)&lt;/em&gt;: The Git reference, e.g. a branch, tag, or (short) commit
+hash. When omitted, defaults to &lt;code&gt;master&lt;/code&gt; or the configured &lt;code&gt;--git-default-ref&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;path&lt;/code&gt;: The path of the chart relative to the root of the Git repository.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In this case, the Helm Operator will start a mirror for the Git repository, and
+a temporary working clone at the current &lt;code&gt;HEAD&lt;/code&gt; of the defined &lt;code&gt;ref&lt;/code&gt; of the
+mirror will be created, before performing a release with the &lt;code&gt;path&lt;/code&gt; given.&lt;/p&gt;
+&lt;p&gt;Mirrored Git repositories are polled for changes by fetching from the upstream
+on the configured &lt;code&gt;--git-poll-interval&lt;/code&gt; (defaults to 5 minutes). When a change
+is detected the Helm Operator will collect all &lt;code&gt;HelmRelease&lt;/code&gt; resources making
+use of the mirror, and inspect if the change updates the chart at the &lt;code&gt;path&lt;/code&gt;
+given. When this is true, it will schedule a new release and an upgrade will
+follow.&lt;/p&gt;
+&lt;p&gt;When a temporary working clone cannot be created due to e.g. the mirror not
+being available yet or a cloning failure because of missing 
+&lt;a href=&#34;#authentication&#34;&gt;credentials&lt;/a&gt;,
+a status condition of type &lt;code&gt;ChartFetched&lt;/code&gt; will be recorded on the &lt;code&gt;HelmRelease&lt;/code&gt; resource with the
+returned error.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Note&lt;/h4&gt;
+
+    You can pin a chart to a specific version by changing the &lt;code&gt;.ref&lt;/code&gt; to a tag
+or commit hash.
+
+&lt;/div&gt;
+
+&lt;h3 id=&#34;authentication&#34;&gt;Authentication&lt;/h3&gt;
+&lt;p&gt;Unauthenticated cloning from Git repositories is possible for public Git
+repositories by making the Helm Operator fetch them over HTTP/S. It is
+however likely that most of the time you will be using a Git repository
+chart source, some form of authentication is required before the repository
+can be accessed by the Helm Operator.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Tip&lt;/h4&gt;
+
+    Because the Helm Operator does not perform any write operations on the Git
+repository, credentials with read permissions are always sufficient.
+
+&lt;/div&gt;
+
+&lt;h4 id=&#34;ssh&#34;&gt;SSH&lt;/h4&gt;
+&lt;p&gt;For Git over SSH the Helm Operator makes use of private keys available in the
+container. Because of this, any &lt;code&gt;HelmRelease&lt;/code&gt; under the management of a
+Helm Operator instance has access to the same repositories once a private key
+has been provided and no additional configuration is required for the resource
+itself other than defining the Git repository in the &lt;code&gt;.chart.repo&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;To provide a private key to be used for Git operations over SSH, put the key in
+a secret under the entry &lt;code&gt;identity&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl create secret generic flux-git-deploy &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --from-file&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;identity&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&amp;lt;path to key file&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Next, mount it into the Helm Operator container as shown in the
+
+&lt;a href=&#34;https://github.com/fluxcd/helm-operator/blob/1.2.0/deploy/deployment.yaml&#34; target=&#34;_blank&#34;&gt;example deployment&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The default &lt;code&gt;ssh_config&lt;/code&gt; that ships with the Helm Operator&amp;rsquo;s Docker image
+expects an identity file at &lt;code&gt;/etc/fluxd/ssh/identity&lt;/code&gt;, which is where it will
+be if you just uncomment the blocks from the example.&lt;/p&gt;
+&lt;h5 id=&#34;providing-multiple-private-keys&#34;&gt;Providing multiple private keys&lt;/h5&gt;
+&lt;p&gt;If you are using more than one repository, you may need to provide more than
+one private key. In that case, you can create a secret with an entry for each
+key and mount that &lt;em&gt;as well as&lt;/em&gt; an &lt;code&gt;ssh_config&lt;/code&gt; file mentioning each key as an
+&lt;code&gt;IdentityFile&lt;/code&gt; in &lt;code&gt;/root/.ssh&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;For example, to provide different credentials for &lt;code&gt;github.com&lt;/code&gt; and
+&lt;code&gt;bitbucket.org&lt;/code&gt; you would create a &lt;code&gt;ssh_config&lt;/code&gt; file looking like this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;Host github.com
+    HostName github.com
+    User git
+    IdentityFile &amp;lt;github private key path&amp;gt;
+    IdentitiesOnly yes
+
+Host bitbucket.org
+    HostName bitbucket.org
+    User git
+    IdentityFile &amp;lt;bitbucket private key path&amp;gt;
+    IdentitiesOnly yes
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Note&lt;/h4&gt;
+
+    The &lt;code&gt;IdentitiesOnly&lt;/code&gt; ensures that only the &lt;code&gt;IdentityFile&lt;/code&gt; for the
+&lt;code&gt;Host&lt;/code&gt; is used and any other identity files known are ignored.
+
+&lt;/div&gt;
+
+&lt;h6 id=&#34;multiple-private-keys-for-git-repositories-on-the-same-host&#34;&gt;Multiple private keys for Git repositories on the same host&lt;/h6&gt;
+&lt;p&gt;There is one caveat to the example illustrated above; due to the fact that
+permissions are being handled by the Git server and not SSH itself, any public
+key known to the Git server will result in a successful login while the private
+counterpart it belongs to may not actually have access to the Git repository
+that is targeted. This poses a problem when you have multiple repositories on
+the same Git server with a dedicated private key per repository.&lt;/p&gt;
+&lt;p&gt;The workaround is to use an alias for the &lt;code&gt;Host&lt;/code&gt; value, and then use this as a
+replacement for the hostname in the defined Git repository URL of the
+&lt;code&gt;HelmRelease&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;Host github-repository1
+    HostName github.com
+    User git
+    IdentityFile &amp;lt;repository specific private key path&amp;gt;
+    IdentitiesOnly yes
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;chart&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;git&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;git@github-repository1:org/repo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;ref&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;master&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;path&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;charts/podinfo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;https&#34;&gt;HTTPS&lt;/h4&gt;
+&lt;p&gt;For Git over HTTPS the Helm Operator offers two ways of providing credentials.&lt;/p&gt;
+&lt;h5 id=&#34;per-resource-credentials-using-chartsecretref&#34;&gt;Per-resource credentials using .chart.secretRef&lt;/h5&gt;
+&lt;p&gt;To provide HTTPS credentials per &lt;code&gt;HelmRelease&lt;/code&gt; resource you can make use of
+a &lt;code&gt;secretRef&lt;/code&gt; in the &lt;code&gt;.chart&lt;/code&gt; and a secret with a username and password.
+The defined secret is retrieved from Kubernetes and appended to the
+&lt;code&gt;.chart.git&lt;/code&gt; URL before starting the Git mirror.&lt;/p&gt;
+&lt;p&gt;First, create a secret with the &lt;code&gt;username&lt;/code&gt; and &lt;code&gt;password&lt;/code&gt; that give access
+to the Git repository:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl create secret generic git-https-credentials &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --from-literal&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;username&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&amp;lt;username&amp;gt; &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --from-literal&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;password&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&amp;lt;password&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now, add the reference to the secret to the &lt;code&gt;.chart&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;chart&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;git&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;https://github.com/org/repo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;ref&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;master&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;path&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;charts/podinfo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;secretRef&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;git-https-credentials&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id=&#34;global-credentials-using-netrc&#34;&gt;Global credentials using .netrc&lt;/h5&gt;
+&lt;p&gt;It is also possible to provide &lt;code&gt;HelmRelease&lt;/code&gt; resources access to global
+credentials via a
+
+&lt;a href=&#34;https://ec.haxx.se/usingcurl/usingcurl-netrc&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;.netrc&lt;/code&gt; file&lt;/a&gt; mounted in the
+&lt;code&gt;/root/&lt;/code&gt; directory of the Helm Operator container.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-warning&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Caution&lt;/h4&gt;
+
+    This approach suffers essentially from 
+&lt;a href=&#34;#multiple-private-keys-for-git-repositories-on-the-same-host&#34;&gt;the same caveat as mentioned for
+Git over SSH&lt;/a&gt;.
+
+&lt;/div&gt;
+
+&lt;p&gt;To provide credentials for &lt;code&gt;github.com&lt;/code&gt;, you would create a &lt;code&gt;.netrc&lt;/code&gt; file like
+this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;machine github.com
+login &amp;lt;username&amp;gt;
+password &amp;lt;password&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;After mounting the file from a secret, you can then define the plain HTTPS URL
+of the Git repository in your &lt;code&gt;HelmRelease&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;chart&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;git&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;https://github.com/org/repo.git&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;ref&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;master&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;path&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;charts/podinfo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;dependency-updates&#34;&gt;Dependency updates&lt;/h3&gt;
+&lt;p&gt;For a chart from a Git repository the Helm Operator runs a dependency update
+by default, this is done through an action that equals to &lt;code&gt;helm dep update&lt;/code&gt;.
+You may want to disable this behaviour, for example because your dependencies
+are already in git, to do so set &lt;code&gt;skipDepUpdate&lt;/code&gt; to &lt;code&gt;true&lt;/code&gt; in &lt;code&gt;.chart&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;chart&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;git&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;git@github.com:org/repo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;ref&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;master&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;path&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;charts/podinfo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;skipDepUpdate&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;notifying-the-helm-operator-about-git-changes&#34;&gt;Notifying the Helm Operator about Git changes&lt;/h3&gt;
+&lt;p&gt;As earlier laid out in this guide the Helm Operator fetches the upstream of
+mirrored Git repositories on the configured &lt;code&gt;--git-poll-interval&lt;/code&gt; (defaults
+to 5 minutes). In some scenarios (think CI/CD), you may not want to wait for
+this interval to pass.&lt;/p&gt;
+&lt;p&gt;To help you with this the Helm Operator serves a HTTP API endpoint to
+instruct it to immediately refresh all Git mirrors:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;$ kubectl port-forward deployment/flux-helm-operator 3030:3030 &amp;amp;
+$ curl -XPOST http://localhost:3030/api/v1/sync-git
+OK
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div class=&#34;alert alert-warning&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Warning&lt;/h4&gt;
+
+    The HTTP API has no built-in authentication, this means you either need to
+port forward before making the request or put something in front of it to
+serve as a gatekeeper.
+
+&lt;/div&gt;
+
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Values</title>
+      <link>/legacy/helm-operator/helmrelease-guide/values/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/helmrelease-guide/values/</guid>
+      <description>
+        
+        
+        &lt;p&gt;Now that we have a good understanding of where we can get our charts from and
+what they have to offer, it is time to examine how you can supply
+
+&lt;a href=&#34;https://helm.sh/docs/glossary/#values-values-files-values-yaml&#34; target=&#34;_blank&#34;&gt;values&lt;/a&gt; to
+be used with the chart when the Helm Operator makes a release.&lt;/p&gt;
+&lt;h3 id=&#34;inlined-values&#34;&gt;Inlined values&lt;/h3&gt;
+&lt;p&gt;The most simple option to define the values for your Helm release. This is a
+YAML map as you would put in a file and supply to Helm with &lt;code&gt;-f values.yaml&lt;/code&gt;,
+but inlined into the &lt;code&gt;HelmRelease&lt;/code&gt; manifest. For example:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;values&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;foo&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;value1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;bar&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;baz&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;value2&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;oof&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;- item1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;- item2&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;values-from-sources&#34;&gt;Values from sources&lt;/h2&gt;
+&lt;p&gt;It is possible to define a list of config maps, secrets (in the same namespace
+as the &lt;code&gt;HelmRelease&lt;/code&gt; by default, or in a configured namespace) or external
+sources (URLs) from which to take values. For charts from a Git
+repository, there is an additional option available to refer to a file in
+the chart folder.&lt;/p&gt;
+&lt;p&gt;The values are merged in the order given, with later values overwriting
+earlier. These values always have a lower priority than the values
+inlined in the &lt;code&gt;HelmRelease&lt;/code&gt; via the &lt;code&gt;spec.values&lt;/code&gt; parameter.&lt;/p&gt;
+&lt;p&gt;This is useful if you want to have defaults such as the &lt;code&gt;region&lt;/code&gt;,
+&lt;code&gt;clustername&lt;/code&gt;, &lt;code&gt;environment&lt;/code&gt;, a local docker registry URL, etc., or if you
+simply do not want the values to be visible as plaintext in the &lt;code&gt;HelmRelease&lt;/code&gt;.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Note&lt;/h4&gt;
+
+    The Helm Operator does not watch the sources for updates. Changes to
+sources are detected during the 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/reconciliation-and-upgrades/#reconciliation&#34;&gt;reconciliation
+loop&lt;/a&gt;.
+
+&lt;/div&gt;
+
+&lt;h3 id=&#34;config-maps&#34;&gt;Config maps&lt;/h3&gt;
+&lt;p&gt;The reference to a config map is defined by adding a &lt;code&gt;configMapKeyRef&lt;/code&gt; to the
+&lt;code&gt;spec.valuesFrom&lt;/code&gt; list.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;valuesFrom&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;configMapKeyRef&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;default-values&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;namespace&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;my-ns&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;key&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;values.yaml&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;optional&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The definition of the listed keys is as follows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;name&lt;/code&gt;: The name of the config map.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;namespace&lt;/code&gt; &lt;em&gt;(Optional)&lt;/em&gt;: The namespace the config map is in. Defaults to the
+namespace of the &lt;code&gt;HelmRelease&lt;/code&gt; when omitted.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;key&lt;/code&gt; &lt;em&gt;(Optional)&lt;/em&gt;: The key in the config map to get the values from.
+Defaults to &lt;code&gt;values.yaml&lt;/code&gt; when omitted.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;optional&lt;/code&gt; &lt;em&gt;(Optional)&lt;/em&gt;: When set to &lt;code&gt;true&lt;/code&gt;, successful retrieval of the
+config map is optional and a release will still be made if it is missing.
+Defaults to &lt;code&gt;false&lt;/code&gt; when omitted.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;secrets&#34;&gt;Secrets&lt;/h3&gt;
+&lt;p&gt;The reference to a secret is defined by adding a &lt;code&gt;secretKeyRef&lt;/code&gt; to the
+&lt;code&gt;spec.valuesFrom&lt;/code&gt; list.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;valuesFrom&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;secretKeyRef&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;default-values&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;namespace&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;my-ns&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;key&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;values.yaml&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;optional&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The definition of the listed keys is as follows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;name&lt;/code&gt;: The name of the secret.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;namespace&lt;/code&gt; &lt;em&gt;(Optional)&lt;/em&gt;: The namespace the secret is in. Defaults to the
+namespace of the &lt;code&gt;HelmRelease&lt;/code&gt; when omitted.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;key&lt;/code&gt; &lt;em&gt;(Optional)&lt;/em&gt;: The key in the secret to get the values from.
+Defaults to &lt;code&gt;values.yaml&lt;/code&gt; when omitted.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;optional&lt;/code&gt; &lt;em&gt;(Optional)&lt;/em&gt;: When set to &lt;code&gt;true&lt;/code&gt;, successful retrieval of the
+secret is optional and a release will still be made if it is missing.
+Defaults to &lt;code&gt;false&lt;/code&gt; when omitted.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;external-sources&#34;&gt;External sources&lt;/h3&gt;
+&lt;p&gt;The reference to an external source (URL) is defined by adding a
+&lt;code&gt;externalSourceRef&lt;/code&gt; to the &lt;code&gt;spec.valuesFrom&lt;/code&gt; list. The external
+source is expected to be a plain YAML file.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;valuesFrom&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;externalSourceRef&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;url&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;https://example.com/static/raw/values.yaml&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;optional&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The definition of the listed keys is as follows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;url&lt;/code&gt;: The URL of the plain YAML file.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;optional&lt;/code&gt; &lt;em&gt;(Optional)&lt;/em&gt;: When set to &lt;code&gt;true&lt;/code&gt;, successful retrieval of the
+YAML file is optional and a release will still be made if it could not be
+found. Defaults to &lt;code&gt;false&lt;/code&gt; when omitted.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;chart-files&#34;&gt;Chart files&lt;/h3&gt;
+
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Note&lt;/h4&gt;
+
+    Values from chart files are only supported for charts from a 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/chart-sources/#git-repositories&#34;&gt;Git
+repository&lt;/a&gt;.
+
+&lt;/div&gt;
+
+&lt;p&gt;When making use of a chart sourced from a Git repository, it is possible to
+refer to a values file relative to the path of the chart. This can for example
+be utilized to select values optimized for production environments, that you ship
+with your chart.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;valuesFrom&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;chartFileRef&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;path&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;overrides/environment-prod.yaml&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;optional&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The definition of the listed keys is as follows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;path&lt;/code&gt;: The path relative to the &lt;code&gt;.chart.path&lt;/code&gt; where the values file can be
+found.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;optional&lt;/code&gt; &lt;em&gt;(Optional)&lt;/em&gt;: When set to &lt;code&gt;true&lt;/code&gt;, successful retrieval of the
+YAML file is optional and a release will still be made if it could not be
+found. Defaults to &lt;code&gt;false&lt;/code&gt; when omitted.&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Release configuration</title>
+      <link>/legacy/helm-operator/helmrelease-guide/release-configuration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/helmrelease-guide/release-configuration/</guid>
+      <description>
+        
+        
+        &lt;p&gt;When making use of the &lt;code&gt;helm&lt;/code&gt; binary you can pass along various flags while
+making a release that influence how a release is performed. Most of these flags
+are also available as parameters in the &lt;code&gt;spec&lt;/code&gt; of the &lt;code&gt;HelmRelease&lt;/code&gt; resource,
+others are not available for &lt;code&gt;helm&lt;/code&gt; but fine-tune how the Helm Operator itself
+functions.&lt;/p&gt;
+&lt;p&gt;This section of the guide documents the parameters, and the effect they have
+when the Helm Operator performs a release for the &lt;code&gt;HelmRelease&lt;/code&gt; they are
+configured on.&lt;/p&gt;
+&lt;h2 id=&#34;targeting-a-helm-version&#34;&gt;Targeting a Helm version&lt;/h2&gt;
+&lt;p&gt;When you install the Helm Operator with multiple Helm versions enabled, the
+lowest enabled version is targeted by default. To target another version or to
+ensure it does not accidentally target the wrong version due to a configuration
+mistake, you can set the &lt;code&gt;.helmVersion&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;helmVersion&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;v3&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;migrating-from-helm-v2-to-v3&#34;&gt;Migrating from Helm v2 to v3&lt;/h2&gt;
+&lt;p&gt;Helm Operator uses the 
+&lt;a href=&#34;https://github.com/helm/helm-2to3&#34; target=&#34;_blank&#34;&gt;helm-2to3 plugin&lt;/a&gt;
+under the hood to migrate HelmRelease objects.
+In order to perform a release conversion you have to:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Set &lt;code&gt;.spec.helmVersion&lt;/code&gt; to &lt;code&gt;v3&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Add a migrate annotation &lt;code&gt;helm.fluxcd.io/migrate: &amp;quot;true&amp;quot;&lt;/code&gt; (For testing, you
+can set the value to &amp;ldquo;dry-run&amp;rdquo; instead of &amp;ldquo;true&amp;rdquo;)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;apiVersion&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;helm.fluxcd.io/v1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;HelmRelease&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;redis&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;annotations&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;helm.fluxcd.io/migrate&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# add annotation&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;helmVersion&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;v3&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# set helmVersion to v3&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;releaseName&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;redis&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;chart&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;repository&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;https://kubernetes-charts.storage.googleapis.com&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;redis&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Assuming you will be deleting the tiller deployment using gitops, consider
+setting the operator flags &lt;code&gt;--convert-tiller-out-cluster=true&lt;/code&gt; and
+&lt;code&gt;--convert-release-storage=configmaps&lt;/code&gt;. If tiller is in a custom namespace, make
+sure you set &lt;code&gt;--tiller-namespace=&lt;/code&gt; flag as well.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;After applying the new HelmRelease, the operator will take care of deleting the
+old v2 release that Tiller managed and converting it to the v3 format. Once
+you&amp;rsquo;re satisfied with the migration, you can go ahead and remove the
+annotation. This approach allows teams to migrate their charts at scale to
+the v3 format without stopping the world.&lt;/p&gt;
+&lt;h2 id=&#34;configuring-a-target-namespace&#34;&gt;Configuring a target namespace&lt;/h2&gt;
+&lt;p&gt;It is possible to target a different namespace for the release than the
+&lt;code&gt;HelmRelease&lt;/code&gt; lives in using &lt;code&gt;.targetNamespace&lt;/code&gt;. This can come in handy when
+you have to deploy releases into a namespace that is also managed by another
+team running their own namespace-restricted Helm Operator in this same
+namespace:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;targetNamespace&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;team-a&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;specifying-a-release-name&#34;&gt;Specifying a release name&lt;/h2&gt;
+&lt;p&gt;The default release name used by the Helm Operator is a composition of the
+following values:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&amp;lt;namespace&amp;gt;-[&amp;lt;target namespace&amp;gt;-]&amp;lt;name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This format was invented for Helm 2 to ensure release names from
+&lt;code&gt;HelmRelease&lt;/code&gt; resources in different namespaces would never accidentally
+collide with each if they would have the same name, as release names
+
+&lt;a href=&#34;https://helm.sh/docs/faq/#release-names-are-now-scoped-to-the-namespace&#34; target=&#34;_blank&#34;&gt;were not scoped in this version like they are in Helm 3&lt;/a&gt;,
+and it still serves this purpose when a target namespace is defined.&lt;/p&gt;
+&lt;p&gt;In some situations you may want to overwrite this generated release name, for
+example because you want to take over a release made with &lt;code&gt;helm&lt;/code&gt;. This is
+possible by declaring a &lt;code&gt;.releaseName&lt;/code&gt; which will replace the generated format:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;releaseName&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;podinfo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;forcing-resource-updates&#34;&gt;Forcing resource updates&lt;/h2&gt;
+&lt;p&gt;When a chart contains a breaking upgrade, you may need to force resource updates
+through the replacement strategy of Helm, this is possible by setting
+&lt;code&gt;.forceUpgrade&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;forceUpgrade&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;reusing-values-during-upgrade&#34;&gt;Reusing values during upgrade&lt;/h2&gt;
+&lt;p&gt;Due to the declarative behaviour of the Helm Operator it resets all values by
+default, so that the only configuration being applied is what is defined in the
+&lt;code&gt;HelmRelease&lt;/code&gt; resource. It is possible to disable this behaviour, and make it
+reuse values from the previous release by explicitly stating that values should
+not be reset:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;resetValues&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;configuring-the-timeout&#34;&gt;Configuring the timeout&lt;/h2&gt;
+&lt;p&gt;To configure how many seconds Helm should wait for any individual Kubernetes operations
+you can set &lt;code&gt;.timeout&lt;/code&gt;, the default is &lt;code&gt;300&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;timeout&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;300&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&#34;alert alert-warning&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Warning&lt;/h4&gt;
+
+    When your chart requires a high non-default &lt;code&gt;timeout&lt;/code&gt; value it is advised
+to increase the &lt;code&gt;terminationGracePeriod&lt;/code&gt; on the Helm Operator pod to not
+end up with a release in a faulty state due to the operator receiving a
+&lt;code&gt;SIGKILL&lt;/code&gt; signal during an upgrade.
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;wait-for-resources-to-be-ready&#34;&gt;Wait for resources to be ready&lt;/h2&gt;
+
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Note&lt;/h4&gt;
+
+    When you have many &lt;code&gt;HelmRelease&lt;/code&gt; resources with the waiting enabled,
+it is likely that you want to increase the amount of &lt;code&gt;--workers&lt;/code&gt; to
+ensure other releases are still processed, given the waiting process blocks
+the worker from processing other &lt;code&gt;HelmRelease&lt;/code&gt; resources.
+
+&lt;/div&gt;
+
+&lt;p&gt;By default, Helm will mark a release as successfully deployed as soon as the
+changes have been applied to the cluster. To instruct Helm to wait until
+all resources are in ready state before marking the release as successful
+you can set &lt;code&gt;.wait&lt;/code&gt;, or enable 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/tests/#enabling-tests&#34;&gt;tests&lt;/a&gt; or 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/rollbacks/#enabling-rollbacks&#34;&gt;rollbacks&lt;/a&gt; which has the same effect.
+When set, it will wait for as long as 
+&lt;a href=&#34;#configuring-the-timeout&#34;&gt;&lt;code&gt;.timeout&lt;/code&gt;&lt;/a&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;wait&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;configuring-the-max-number-of-revision-saved&#34;&gt;Configuring the max number of revision saved&lt;/h2&gt;
+
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Note&lt;/h4&gt;
+
+    Setting this only has effect for a &lt;code&gt;HelmRelease&lt;/code&gt; targeting Helm 3.
+You can configure a global history limit for Helm 2 by 
+&lt;a href=&#34;https://v2.helm.sh/docs/using_helm/#initialize-helm-and-install-tiller&#34; target=&#34;_blank&#34;&gt;passing &lt;code&gt;--history-max &amp;lt;int&amp;gt;&lt;/code&gt; to &lt;code&gt;helm init&lt;/code&gt;&lt;/a&gt;.
+
+&lt;/div&gt;
+
+&lt;p&gt;To configure the maximum number of revision saved by Helm for a &lt;code&gt;HelmRelease&lt;/code&gt;,
+you can set &lt;code&gt;.maxHistory&lt;/code&gt;. Use &lt;code&gt;0&lt;/code&gt; for an unlimited number of revisions;
+defaults to &lt;code&gt;10&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;maxHistory&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Reconciliation and upgrades</title>
+      <link>/legacy/helm-operator/helmrelease-guide/reconciliation-and-upgrades/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/helmrelease-guide/reconciliation-and-upgrades/</guid>
+      <description>
+        
+        
+        &lt;p&gt;Now that you know the ins and outs of configuring a release, we are going to
+have a better look at how the Helm Operator performs the actual Helm release.&lt;/p&gt;
+&lt;h2 id=&#34;reconciliation&#34;&gt;Reconciliation&lt;/h2&gt;
+&lt;p&gt;On the creation and update of a &lt;code&gt;HelmRelease&lt;/code&gt; the resource is queued for
+reconciliation. Besides this all &lt;code&gt;HelmRelease&lt;/code&gt; resources handled by the Helm
+operator instance are also queued for reconciliation every
+
+&lt;a href=&#34;/legacy/helm-operator/references/operator/&#34;&gt;&lt;code&gt;--charts-sync-interval&lt;/code&gt;&lt;/a&gt; (defaults to 3
+minutes).&lt;/p&gt;
+&lt;p&gt;Once the queued resource has been picked up by a worker, the Helm Operator
+attempts to receive the chart for the resource and performs several 
+&lt;a href=&#34;#what-triggers-an-upgrade&#34;&gt;safe guard
+checks&lt;/a&gt;; if those do not result in an error or
+instruct to return early, the Helm installation or upgrade is performed.&lt;/p&gt;
+&lt;h2 id=&#34;what-triggers-an-upgrade&#34;&gt;What triggers an upgrade&lt;/h2&gt;
+&lt;p&gt;To prevent spurious upgrades from happening the Helm Operator performs several
+safe guard checks before performing the actual upgrade. Bellow you will find an
+overview of the checks it performs, and what effect they have.&lt;/p&gt;
+&lt;p&gt;If any of the following equals to &lt;code&gt;false&lt;/code&gt;, the sync process will exit with an
+error and no upgrade will be performed:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The values composed of the merged &lt;code&gt;.valuesFrom&lt;/code&gt; and &lt;code&gt;.values&lt;/code&gt; are valid
+YAML.&lt;/li&gt;
+&lt;li&gt;The resources of the Helm release are 
+&lt;a href=&#34;#the-antecedent-annotation&#34;&gt;marked as being managed by the
+&lt;code&gt;HelmRelease&lt;/code&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;The current state of the Helm release is &lt;code&gt;deployed&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The first of the following that equals to &lt;code&gt;true&lt;/code&gt; will result in an upgrade
+being performed, otherwise no action is taken:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;No Helm release exists in the Helm storage for the &lt;code&gt;HelmRelease&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;This generation of the &lt;code&gt;HelmRelease&lt;/code&gt; has not been processed before —
+the generation changes for example when the &lt;code&gt;.spec&lt;/code&gt; is edited.&lt;/li&gt;
+&lt;li&gt;The result of a dry-run upgrade for the &lt;code&gt;HelmRelease&lt;/code&gt; differs from the
+latest release in the Helm storage.&lt;/li&gt;
+&lt;/ol&gt;
+
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Note&lt;/h4&gt;
+
+    Mutations to live cluster-state are not detected and thus not
+reverted. This will however be added in the foreseeable future.
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;upgrade-failures&#34;&gt;Upgrade failures&lt;/h2&gt;
+&lt;p&gt;When an upgrade fails, the Helm Operator will stop performing upgrades for the
+release as it cannot assume this is a safe procedure, nor does it
+automatically perform 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/rollbacks/&#34;&gt;a rollback&lt;/a&gt;. Instead it will start logging
+warnings about the &lt;code&gt;failed&lt;/code&gt; status of the release.&lt;/p&gt;
+&lt;p&gt;Recovering from this is possible, after having inspected the state of the
+release, by getting the Helm release manually in a &lt;code&gt;deployed&lt;/code&gt; state, for
+example by performing a rollback or upgrade for the release using &lt;code&gt;helm&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;helm rollback &amp;lt;release name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;the-antecedent-annotation&#34;&gt;The antecedent annotation&lt;/h2&gt;
+&lt;p&gt;Right after the Helm Operator performs a Helm release for the
+&lt;code&gt;HelmRelease&lt;/code&gt; resource, all resources that were the result of this release
+are annotated with the antecedent annotation &lt;code&gt;helm.fluxcd.io/antecedent&lt;/code&gt;,
+the value of the annotation equals to &lt;code&gt;&amp;lt;namespace&amp;gt;:helmrelease/&amp;lt;name&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The purpose of this annotation is to indicate that the cause of that resource
+is a &lt;code&gt;HelmRelease&lt;/code&gt;. It also functions as a safe guard during reconciliation
+to ensure the release is only managed by a single &lt;code&gt;HelmRelease&lt;/code&gt;, as it is
+possible that due to a misconfiguration multiple &lt;code&gt;HelmRelease&lt;/code&gt; resources exist
+with the same &lt;code&gt;.releaseName&lt;/code&gt; set.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Rollbacks</title>
+      <link>/legacy/helm-operator/helmrelease-guide/rollbacks/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/helmrelease-guide/rollbacks/</guid>
+      <description>
+        
+        
+        &lt;p&gt;From time to time a release made by the Helm Operator may fail, this section
+of the guide will explain how you can recover from a failed release by enabling
+rollbacks.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-warning&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Caution&lt;/h4&gt;
+
+    Rollbacks of Helm charts containing &lt;code&gt;StatefulSet&lt;/code&gt; resources can be a
+tricky operation, and are one of the main reasons automated rollbacks are not
+enabled by default. Verify a manual rollback (using &lt;code&gt;helm&lt;/code&gt;) of your Helm
+chart does not cause any problems before enabling it.
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;enabling-rollbacks&#34;&gt;Enabling rollbacks&lt;/h2&gt;
+&lt;p&gt;When rollbacks for a &lt;code&gt;HelmRelease&lt;/code&gt; are enabled, the Helm Operator will detect
+a faulty upgrade, including post-upgrade helm test 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/tests/#enabling-tests&#34;&gt;if enabled&lt;/a&gt;
+failures, and instruct Helm to perform a rollback, it will not attempt a new
+upgrade unless it detects a change in values and/or the chart, or
+
+&lt;a href=&#34;#enabling-retries-of-rolled-back-releases&#34;&gt;retries have been enabled&lt;/a&gt;. Changes
+are detected by comparing the failed release to a fresh dry-run release.&lt;/p&gt;
+&lt;p&gt;Rollbacks can be enabled by setting &lt;code&gt;.rollback.enable&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;rollback&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;enable&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;wait-interaction&#34;&gt;Wait interaction&lt;/h2&gt;
+&lt;p&gt;When rollbacks are enabled, 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/release-configuration/#wait-for-resources-to-be-ready&#34;&gt;resource waiting&lt;/a&gt;
+defaults to &lt;code&gt;true&lt;/code&gt; since this is necessary to validate whether the release should
+be rolled back or not.&lt;/p&gt;
+&lt;h2 id=&#34;tweaking-the-rollback-configuration&#34;&gt;Tweaking the rollback configuration&lt;/h2&gt;
+&lt;p&gt;To get more fine-grained control over how the rollback is performed by Helm,
+the &lt;code&gt;.rollback&lt;/code&gt; of the &lt;code&gt;HelmRelease&lt;/code&gt; resources offers a couple of additional
+settings.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;rollback&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;enable&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;disableHooks&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;force&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;recreate&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;timeout&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;300&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The definition of the listed keys is as follows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;enable&lt;/code&gt;: Enables the performance of a rollback when a release fails.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;disableHooks&lt;/code&gt; &lt;em&gt;(Optional)&lt;/em&gt;: When set to &lt;code&gt;true&lt;/code&gt;, prevent hooks from running
+during rollback. Defaults to &lt;code&gt;false&lt;/code&gt; when omitted.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;force&lt;/code&gt; &lt;em&gt;(Optional)&lt;/em&gt;: When set to &lt;code&gt;true&lt;/code&gt;, force resource update through
+delete/recreate if needed. Defaults to &lt;code&gt;false&lt;/code&gt; when omitted.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;recreate&lt;/code&gt; &lt;em&gt;(Optional)&lt;/em&gt;: When set to &lt;code&gt;true&lt;/code&gt;, performs pods restart for the
+resource if applicable. Defaults to &lt;code&gt;false&lt;/code&gt; when omitted.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;timeout&lt;/code&gt; &lt;em&gt;(Optional)&lt;/em&gt;: Time to wait for any individual Kubernetes operation
+during rollback in seconds. Defaults to &lt;code&gt;300&lt;/code&gt; when omitted.&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;div class=&#34;alert alert-warning&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Warning&lt;/h4&gt;
+
+    When your chart requires a high non-default &lt;code&gt;timeout&lt;/code&gt; value it is advised
+to increase the &lt;code&gt;terminationGracePeriod&lt;/code&gt; on the Helm Operator pod to not
+end up with a release in a faulty state due to the operator receiving a
+&lt;code&gt;SIGKILL&lt;/code&gt; signal during an upgrade.
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;enabling-retries-of-rolled-back-releases&#34;&gt;Enabling retries of rolled back releases&lt;/h2&gt;
+&lt;p&gt;Sometimes the cause of an upgrade failure may be transient. To guard yourself
+against this it is possible to instruct the Helm Operator to retry the upgrade
+of a rolled back release by setting &lt;code&gt;.rollback.retry&lt;/code&gt; to &lt;code&gt;true&lt;/code&gt;. This will
+cause the Helm Operator to retry the upgrade until the &lt;code&gt;.rollback.maxRetries&lt;/code&gt;
+is reached:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;rollback&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;enable&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;retry&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;maxRetries&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;5&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The definition of the listed keys is as follows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;enable&lt;/code&gt;: Enables the performance of a rollback when a release fails.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;retry&lt;/code&gt; &lt;em&gt;(Optional)&lt;/em&gt;: When set to &lt;code&gt;true&lt;/code&gt;, retries the upgrade of a failed
+release until &lt;code&gt;maxRetries&lt;/code&gt; is reached. Defaults to &lt;code&gt;false&lt;/code&gt; when omitted.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;maxRetries&lt;/code&gt; &lt;em&gt;(Optional)&lt;/em&gt;: The maximum amount of retries that should be
+attempted for a rolled back release. Defaults to &lt;code&gt;5&lt;/code&gt; when omitted, use &lt;code&gt;0&lt;/code&gt;
+for an unlimited amount of retries.&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Tests</title>
+      <link>/legacy/helm-operator/helmrelease-guide/tests/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/helmrelease-guide/tests/</guid>
+      <description>
+        
+        
+        &lt;p&gt;
+&lt;a href=&#34;https://helm.sh/docs/topics/chart_tests/&#34; target=&#34;_blank&#34;&gt;Helm tests&lt;/a&gt; are a useful validation
+mechanism for Helm Releases, and thus are supported by the Helm Operator.&lt;/p&gt;
+&lt;h2 id=&#34;enabling-tests&#34;&gt;Enabling tests&lt;/h2&gt;
+&lt;p&gt;When tests for a &lt;code&gt;HelmRelease&lt;/code&gt; are enabled, the Helm Operator will run them
+after any successful installation or upgrade attempt. In the case of a test
+failure, the prior installation or upgrade will be treated as failed, resulting
+in the release being purged or rolled back 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/rollbacks/#enabling-rollbacks&#34;&gt;if enabled&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Tests can be enabled by setting &lt;code&gt;.test.enable&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;test&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;enable&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;wait-interaction&#34;&gt;Wait interaction&lt;/h2&gt;
+&lt;p&gt;When tests are enabled, 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/release-configuration/#wait-for-resources-to-be-ready&#34;&gt;resource waiting&lt;/a&gt;
+defaults to &lt;code&gt;true&lt;/code&gt; since this is likely needed for test pre-conditions to be satisfied.&lt;/p&gt;
+&lt;h2 id=&#34;uninstall-or-rollback-release-on-test-failure&#34;&gt;Uninstall or rollback release on test failure&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;spec.test.ignoreFailures&lt;/code&gt; allows the &lt;code&gt;HelmRelease&lt;/code&gt; to be left in a released state if the tests fail.
+Setting &lt;code&gt;ignoreFailures&lt;/code&gt; to &lt;code&gt;false&lt;/code&gt; will automatically uninstall or rollback the &lt;code&gt;HelmRelease&lt;/code&gt; if any of the tests fail.
+If the tests are ignored, the &lt;code&gt;Released&lt;/code&gt; condition will be left as &lt;code&gt;true&lt;/code&gt; and &lt;code&gt;Tested&lt;/code&gt; will be &lt;code&gt;false&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;test&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;enable&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;ignoreFailures&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;test-timeout&#34;&gt;Test timeout&lt;/h2&gt;
+&lt;p&gt;Test timeout can be set via the &lt;code&gt;.test.timeout&lt;/code&gt; option.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;test&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;enable&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;timeout&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;600&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;It is defined as the time to wait for any individual Kubernetes operation during
+tests in seconds. Defaults to &lt;code&gt;300&lt;/code&gt; when omitted.&lt;/p&gt;
+&lt;h2 id=&#34;helm-2-vs-3&#34;&gt;Helm 2 vs 3&lt;/h2&gt;
+&lt;p&gt;In Helm 3, test-specific funcationality was removed in favor of a generic &lt;code&gt;test&lt;/code&gt;
+hook no different than any other hook. The Helm Operator takes this into account
+as detailed below.&lt;/p&gt;
+&lt;h3 id=&#34;test-cleanup&#34;&gt;Test cleanup&lt;/h3&gt;
+&lt;p&gt;Helm 3 removed the &lt;code&gt;helm test --cleanup&lt;/code&gt; flag in favor of 
+&lt;a href=&#34;https://helm.sh/docs/topics/chart_tests/#notes&#34; target=&#34;_blank&#34;&gt;hook delete policies&lt;/a&gt;.
+For &lt;code&gt;HelmRelease&lt;/code&gt;s targeting Helm 2, test cleanup is enabled by default since
+upgrades are highly likely to cause test pod name conflicts without it.
+This flag currently deletes test pods immediately after they are run, but the only
+guarantee is that tests are cleaned up before running a subsequent test for the
+same &lt;code&gt;HelmRelease&lt;/code&gt;, as delaying the deletion would allow time to debug failures,
+and thus may be implemented in the future. Test cleanup can be disabled by setting
+&lt;code&gt;.test.cleanup&lt;/code&gt; to &lt;code&gt;false&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;helmVersion&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;v2&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;test&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;enable&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;cleanup&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;false&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;test-parallelism&#34;&gt;Test parallelism&lt;/h3&gt;
+&lt;p&gt;Helm 2 supported &lt;code&gt;helm test --parallel --max 10&lt;/code&gt; to run tests in parallel. Helm 3 will
+likely 
+&lt;a href=&#34;https://github.com/helm/helm/issues/7763&#34; target=&#34;_blank&#34;&gt;expand this functionality to all hooks&lt;/a&gt;. Once the Helm 3 implementation is available
+this can be integrated into the Helm Operator, and translated into the equivalent
+Helm 2 options for test parallelism as well.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Automation</title>
+      <link>/legacy/helm-operator/helmrelease-guide/automation/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/helmrelease-guide/automation/</guid>
+      <description>
+        
+        
+        &lt;p&gt;This section of the guide is mostly a clarification of some common
+misconceptions about (non-existent) automation features of the Helm Operator.&lt;/p&gt;
+&lt;h2 id=&#34;image-updates&#34;&gt;Image updates&lt;/h2&gt;
+&lt;p&gt;Because the Helm Operator is a 
+&lt;a href=&#34;https://fluxcd.io&#34; target=&#34;_blank&#34;&gt;Flux umbrella project&lt;/a&gt;,
+occasionally people assume it is capable of updating image references in
+the &lt;code&gt;HelmRelease&lt;/code&gt; and/or associated charts. This feature is however baked
+in to 
+&lt;a href=&#34;https://github.com/fluxcd/flux&#34; target=&#34;_blank&#34;&gt;Flux&lt;/a&gt;, and not the Helm Operator
+itself due to it having no knowledge of available images or the origin of the
+&lt;code&gt;HelmRelease&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;For more details about this Flux feature, please refer to the 
+&lt;a href=&#34;/legacy/flux/references/helm-operator-integration/&#34;&gt;documentation
+for the &lt;code&gt;HelmRelease&lt;/code&gt; integration&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;helm-repository-chart-updates&#34;&gt;Helm repository chart updates&lt;/h2&gt;
+&lt;p&gt;Another much requested feature is automated updates for charts from 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/chart-sources/#helm-repositories&#34;&gt;Helm
+repository chart sources&lt;/a&gt;. The
+development of this feature is currently blocked until the automation logic
+has been untangled from Flux. To keep up-to-date about new developments of
+this feature you can subscribe to
+
+&lt;a href=&#34;https://github.com/fluxcd/helm-operator/issues/12&#34; target=&#34;_blank&#34;&gt;fluxcd/helm-operator#12&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;It is possible to get a similar functionality by making use of an
+
+&lt;a href=&#34;https://helm.sh/docs/howto/charts_tips_and_tricks/#complex-charts-with-many-dependencies&#34; target=&#34;_blank&#34;&gt;umbrella chart&lt;/a&gt;
+from a 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/chart-sources/#git-repositories&#34;&gt;Git repository chart source&lt;/a&gt; with
+a 
+&lt;a href=&#34;https://helm.sh/docs/topics/chart_best_practices/dependencies/#versions&#34; target=&#34;_blank&#34;&gt;version range set&lt;/a&gt;,
+as for charts from Git repository sources, a 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/chart-sources/#dependency-updates&#34;&gt;dependency update is performed by
+default&lt;/a&gt;, and that will download the
+latest available version within the defined range.&lt;/p&gt;
+&lt;p&gt;For example, to make the Helm Operator install the latest &lt;code&gt;1.2.x&lt;/code&gt; patch release
+for &lt;code&gt;foo-chart&lt;/code&gt;, you would define the following in the &lt;code&gt;dependencies&lt;/code&gt; of your
+(dummy) umbrella chart in Git:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;dependencies&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; 
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;version&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;~1.2.0&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;repository&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;https://charts.example.com&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Debugging</title>
+      <link>/legacy/helm-operator/helmrelease-guide/debugging/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/helmrelease-guide/debugging/</guid>
+      <description>
+        
+        
+        &lt;p&gt;Even after having read everything this guide has to offer it is possible that a
+&lt;code&gt;HelmRelease&lt;/code&gt; fails and you want to debug it to get to the cause. This may be
+a bit harder at first than you were used to while working with just &lt;code&gt;helm&lt;/code&gt;
+because you are no longer in direct control but the Helm Operator is doing the
+work for you.&lt;/p&gt;
+&lt;p&gt;This last section of the guide will give you some pointers on how to debug a
+failing &lt;code&gt;HelmRelease&lt;/code&gt; resource.&lt;/p&gt;
+&lt;h2 id=&#34;getting-the-reason-of-failure&#34;&gt;Getting the reason of failure&lt;/h2&gt;
+&lt;p&gt;If a release fails the reason of failure will be logged in the Helm Operator&amp;rsquo;s
+logs &lt;em&gt;and&lt;/em&gt; recorded as a condition on the &lt;code&gt;HelmRelease&lt;/code&gt; resource. You can view
+this condition by describing the &lt;code&gt;HelmRelease&lt;/code&gt; resource using &lt;code&gt;kubectl&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;$ kubectl describe -n &amp;lt;namespace&amp;gt; helmrelease/&amp;lt;name&amp;gt;
+...
+Events:
+  Type     Reason             Age   From           Message
+  ----     ------             ----  ----           -------
+  Normal   ReleaseSynced      55s   helm-operator  managed release &#39;default-podinfo-0&#39; in namespace &#39;default&#39; synchronized
+  Warning  FailedReleaseSync  18s   helm-operator  synchronization of release &#39;default-podinfo-0&#39; in namespace &#39;default&#39; failed: upgrade failed:  &amp;quot;&amp;quot; is invalid: patch: [...]
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;In case of a release upgrade failure, the error as returned by Helm will be
+recorded in the message of &lt;code&gt;FailedReleaseSync&lt;/code&gt;. If this does not give a
+conclusive answer the logs will likely contain more information about what
+happened during the release process:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;kubectl logs deploy/flux-helm-operator
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;manually-performing-a-release-to-debug&#34;&gt;Manually performing a release to debug&lt;/h2&gt;
+&lt;p&gt;When describing the &lt;code&gt;HelmRelease&lt;/code&gt; and the logs did not give any clues, it may
+help to perform the release manually using the same values as specified in the
+&lt;code&gt;HelmRelease&lt;/code&gt; resource. When no &lt;code&gt;.valuesFrom&lt;/code&gt; are defined, this can be done
+by making use of 
+&lt;a href=&#34;https://github.com/kislyuk/yq&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;yq&lt;/code&gt;&lt;/a&gt; (an extension to &lt;code&gt;jq&lt;/code&gt;)
+and &lt;code&gt;kubectl&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;kubectl get helmrelease/&amp;lt;name&amp;gt; -n &amp;lt;namespace&amp;gt; -o yaml | yq .spec.values -y | helm upgrade -i &amp;lt;release name&amp;gt; -f - &amp;lt;chart&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;getting-help&#34;&gt;Getting help&lt;/h2&gt;
+&lt;p&gt;If you still have any questions about the Helm Operator:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Invite yourself to the &lt;a href=&#34;https://slack.cncf.io&#34; target=&#34;_blank&#34;&gt;CNCF community&lt;/a&gt;
+slack and ask a question on the 
+&lt;a href=&#34;https://cloud-native.slack.com/messages/flux/&#34; target=&#34;_blank&#34;&gt;#flux&lt;/a&gt;
+channel.&lt;/li&gt;
+&lt;li&gt;To be part of the conversation about Helm Operator&amp;rsquo;s development, join the
+
+&lt;a href=&#34;https://lists.cncf.io/g/cncf-flux-dev&#34; target=&#34;_blank&#34;&gt;flux-dev mailing list&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://github.com/fluxcd/helm-operator/issues/new&#34; target=&#34;_blank&#34;&gt;File an issue.&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Your feedback is always welcome!&lt;/p&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

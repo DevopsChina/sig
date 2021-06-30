@@ -1,0 +1,2322 @@
+<!doctype html>
+<html lang="zh-cn" class="no-js">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.84.3" /><META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+<link rel="shortcut icon" href="/favicon.png" >
+<link rel="apple-touch-icon" href="/favicon.png" sizes="180x180">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="16x16">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="36x36">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="48x48">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="72x72">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="96x96">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="144x144">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="192x192">
+
+<title>Values | 道场</title>
+<meta name="description" content="Open and extensible continuous delivery solution for Kubernetes."><meta property="og:title" content="Values" />
+<meta property="og:description" content="Now that we have a good understanding of where we can get our charts from and what they have to offer, it is time to examine how you can supply values to be used with the chart when the Helm Operator makes a release.
+Inlined values The most simple option to define the values for your Helm release. This is a YAML map as you would put in a file and supply to Helm with -f values." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/legacy/helm-operator/helmrelease-guide/values/" /><meta property="og:image" content="/img/flux-social.png"/><meta property="article:section" content="legacy" />
+
+
+
+<meta itemprop="name" content="Values">
+<meta itemprop="description" content="Now that we have a good understanding of where we can get our charts from and what they have to offer, it is time to examine how you can supply values to be used with the chart when the Helm Operator makes a release.
+Inlined values The most simple option to define the values for your Helm release. This is a YAML map as you would put in a file and supply to Helm with -f values.">
+
+<meta itemprop="wordCount" content="628"><meta itemprop="image" content="/img/flux-social.png"/>
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="/img/flux-social.png"/>
+
+<meta name="twitter:title" content="Values"/>
+<meta name="twitter:description" content="Now that we have a good understanding of where we can get our charts from and what they have to offer, it is time to examine how you can supply values to be used with the chart when the Helm Operator makes a release.
+Inlined values The most simple option to define the values for your Helm release. This is a YAML map as you would put in a file and supply to Helm with -f values."/>
+
+
+
+
+<link rel="preload" href="/scss/main.min.4a9db146ac33069ee85be0885ccf5f1ce3a4387f774ad3c60af13d7316e8cedc.css" as="style">
+<link href="/scss/main.min.4a9db146ac33069ee85be0885ccf5f1ce3a4387f774ad3c60af13d7316e8cedc.css" rel="stylesheet" integrity="">
+
+
+<script
+  src="https://code.jquery.com/jquery-3.5.1.min.js"
+  integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+  crossorigin="anonymous"></script>
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css" />
+
+
+
+
+
+  </head>
+  <body class="td-page">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
+        <a class="navbar-brand" href="/">
+		<span class="navbar-logo"><svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><title>flux-icon</title><desc>Created with Sketch.</desc><g id="flux-icon" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="Group" transform="translate(11.000000, 2.000000)"><path d="M.803134615 15.7791346c-1.049423077-.682500000000001-1.049423077-2.2188461.0-2.9007692L20.1819808.279519231c.573461499999997-.3726923079 1.3125-.3726923079 1.8859615.0L41.4473654 12.8783654c1.0494231.681923100000001 1.0494231 2.2182692.0 2.9007692L22.0679423 28.3779808C21.4944808 28.7506731 20.7554423 28.7506731 20.1819808 28.3779808L.803134615 15.7791346z" id="Fill-1" fill="#326ce5"/><path d="M24.1851346 18.0023077h1.3442308C26.3145577 18.0023077 26.8055192 17.1525 26.4126346 16.4728846L22.0084038 8.84423077C21.6160962 8.16461538 20.63475 8.16461538 20.2418654 8.84423077L15.8376346 16.4728846C15.4453269 17.1525 15.9357115 18.0023077 16.7209038 18.0023077h1.3448077c.563077.0 1.0194231.456923100000001 1.0194231 1.02v8.7075L19.9874423 28.3165385C20.6791731 28.7665385 21.5710962 28.7665385 22.2628269 28.3165385L23.1651346 27.7298077v-8.7075c0-.563076899999999.456346200000002-1.02 1.02-1.02" id="Fill-3" fill="#c1d2f7"/><path d="M27.8390769 34.8375577l-4.6742307-3.0386539v1.44C24.6902308 33.8919808 26.2588846 34.4008269 27.8390769 34.8375577" id="Fill-5" fill="#326ce5"/><path d="M23.1650769 35.8280192v2.0215385C24.7095 38.3209038 26.2723846 38.7080192 27.8191154 39.0893654c5.0515384 1.2455769 9.8226923 2.4213461 13.6592308 6.2584615C41.6733462 45.54225 41.8562308 45.7407115 42.0373846 45.93975 42.4308462 45.1880192 42.2335385 44.1957115 41.4466154 43.6845577l-7.5905769-4.9355769c-1.8426923-.608077000000002-3.72-1.073077-5.5753847-1.53C26.5308462 36.7874423 24.8196923 36.3570577 23.1650769 35.8280192" id="Fill-7" fill="#326ce5"/><path d="M19.08525 34.1699423C18.4304423 33.8318654 17.7854423 33.4689808 17.1629423 33.0489808l-1.7359615 1.1284615c1.1705769.8607692 2.3965384 1.5588462 3.6582692 2.1438462V34.1699423z" id="Fill-9" fill="#326ce5"/><path d="M24.8941731 40.6051154C24.3137885 40.4620385 23.7374423 40.3195385 23.1651346 40.1735769V42.1605C23.5885962 42.2666538 24.0114808 42.3722308 24.4326346 42.4760769c5.0515385 1.245 9.8226923 2.4207693 13.6598077 6.2578846C38.0987885 48.7408846 38.1045577 48.7472308 38.1114808 48.7541538L39.75225 47.6868462C39.6524423 47.5824231 39.5584038 47.4751154 39.4545577 47.3718462c-4.2161539-4.2167308-9.4753846-5.513077-14.5603846-6.7667308" id="Fill-11" fill="#326ce5"/><path d="M19.08525 38.9907115C16.8900577 38.2389808 14.8096731 37.2714808 12.9115962 35.8124423l-1.6996154 1.1053846c2.4167307 1.9932693 5.1075 3.2025 7.8732692 4.0990385V38.9907115z" id="Fill-13" fill="#326ce5"/><path d="M19.08525 43.3809808C15.3069808 42.3909808 11.7537115 41.18175 8.71794231 38.5388654L7.04717308 39.6252115c3.56538462 3.285 7.80692312 4.658077 12.03807692 5.745577V43.3809808z" id="Fill-15" fill="#326ce5"/><path d="M23.1650769 46.3935c3.9525 1.02057689999999 7.6690385 2.2407692 10.8173077 5.0446154l1.6615385-1.08c-3.6784616-3.4580769-8.0925-4.8386539-12.4788462-5.9532692V46.3935z" id="Fill-17" fill="#326ce5"/><path d="M4.57875 41.2299231 2.92990385 42.3018462C2.98759615 42.3612692 3.04009615 42.423 3.09951923 42.4818462 7.31625 46.6985769 12.5743269 47.9949231 17.6599038 49.2485769c4.4042308 1.0851923 8.5944231 2.1201923 12.1390385 4.9096154L31.4893269 53.0591538C27.4958654 49.6968462 22.7385577 48.5158846 18.1214423 47.3781923 13.1206731 46.1453077 8.39567308 44.9758846 4.57875 41.2299231" id="Fill-19" fill="#326ce5"/><path d="M1.07555769 44.5060962C.883442308 44.3139808.702865385 44.1184038.524019231 43.9216731-.227711538 44.6745577-.139442308 45.9726346.80325 46.5853269l5.70634615 3.7101923c2.52576923 1.0453846 5.16692305 1.6990385 7.76423075 2.3394231 4.0546154.999230799999999 7.9280769 1.9575 11.2840385 4.2807692l1.7255769-1.1226923C23.4676731 52.9245577 19.0403654 51.8255192 14.7347885 50.7639808c-5.05096158-1.245-9.82211542-2.4207693-13.65923081-6.2578846" id="Fill-21" fill="#326ce5"/><path d="M19.6441154 58.8342692C20.0243077 59.0188846 20.3998846 59.2133077 20.7691154 59.4221538 21.2093077 59.5150385 21.6771923 59.4383077 22.0683462 59.1838846L23.0260385 58.5613846C19.9493077 56.5035 16.5287308 55.461 13.1196923 54.5927308l6.5244231 4.2415384z" id="Fill-23" fill="#326ce5"/></g></g></svg></span><span class="text-uppercase font-weight-bold">道场</span>
+	</a>
+		<ul class="navbar-nav mt-2 mt-lg-0">
+			
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="/docs" ><span>修习</span></a>
+				
+			</li>
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="/blog/" ><span>动态</span></a>
+				
+			</li>
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="https://github.com/devopschina/sig/" target="_blank" ><i class='fab fa-github'></i> <span>Github</span></a>
+				
+			</li>
+			
+			
+			
+			<li class="nav-item nav-search-item">
+<input type="search" class="form-control td-search-input" placeholder="&#xf002; " aria-label="" autocomplete="off">
+
+</li>
+		</ul>
+</nav>
+
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-xl-nowrap">
+          <aside class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            
+
+
+
+
+  
+
+
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+  
+  <div id="content-mobile">
+  <form class="td-sidebar__search d-flex align-items-center">
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  </div>
+  <div id="content-desktop"></div>
+  
+  <nav class="collapse td-sidebar-nav foldable-nav" id="td-section-nav">
+    
+    
+    
+    
+    
+    <ul class="td-sidebar-nav__section pr-md-3 ul-0">
+      
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-legacy-li">
+    
+      <a href="/legacy/" class="align-left pl-0 td-sidebar-link td-sidebar-link__section tree-root" id="m-legacy"><span class="">Legacy documentation</span></a>
+    
+    
+      
+      <ul class="ul-1">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-legacyflux-li">
+    
+      <input type="checkbox" id="m-legacyflux-check"/>
+      <label for="m-legacyflux-check"><a href="/legacy/flux/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyflux"><span class="">Flux</span></a></label>
+    
+    
+      
+      <ul class="ul-2 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxintroduction-li">
+    
+      <input type="checkbox" id="m-legacyfluxintroduction-check"/>
+      <label for="m-legacyfluxintroduction-check"><a href="/legacy/flux/introduction/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxintroduction"><span class="">Introducing Flux</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxrequirements-li">
+    
+      <input type="checkbox" id="m-legacyfluxrequirements-check"/>
+      <label for="m-legacyfluxrequirements-check"><a href="/legacy/flux/requirements/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxrequirements"><span class="">Requirements and limitations</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxget-started-li">
+    
+      <input type="checkbox" id="m-legacyfluxget-started-check"/>
+      <label for="m-legacyfluxget-started-check"><a href="/legacy/flux/get-started/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxget-started"><span class="">Get started</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-legacyfluxreferences-li">
+    
+      <input type="checkbox" id="m-legacyfluxreferences-check"/>
+      <label for="m-legacyfluxreferences-check"><a href="/legacy/flux/references/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyfluxreferences"><span class="">References</span></a></label>
+    
+    
+      
+      <ul class="ul-3 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxreferencesblueprint-li">
+    
+      <input type="checkbox" id="m-legacyfluxreferencesblueprint-check"/>
+      <label for="m-legacyfluxreferencesblueprint-check"><a href="/legacy/flux/references/blueprint/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxreferencesblueprint"><span class="">Blueprint</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxreferencesdaemon-li">
+    
+      <input type="checkbox" id="m-legacyfluxreferencesdaemon-check"/>
+      <label for="m-legacyfluxreferencesdaemon-check"><a href="/legacy/flux/references/daemon/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxreferencesdaemon"><span class="">Daemon (fluxd)</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxreferencesfluxctl-li">
+    
+      <input type="checkbox" id="m-legacyfluxreferencesfluxctl-check"/>
+      <label for="m-legacyfluxreferencesfluxctl-check"><a href="/legacy/flux/references/fluxctl/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxreferencesfluxctl"><span class="">fluxctl</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxreferencesfluxyaml-config-files-li">
+    
+      <input type="checkbox" id="m-legacyfluxreferencesfluxyaml-config-files-check"/>
+      <label for="m-legacyfluxreferencesfluxyaml-config-files-check"><a href="/legacy/flux/references/fluxyaml-config-files/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxreferencesfluxyaml-config-files"><span class="">Manifest generation through .flux.yaml configuration files</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxreferencesgarbagecollection-li">
+    
+      <input type="checkbox" id="m-legacyfluxreferencesgarbagecollection-check"/>
+      <label for="m-legacyfluxreferencesgarbagecollection-check"><a href="/legacy/flux/references/garbagecollection/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxreferencesgarbagecollection"><span class="">Garbage collection</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxreferencesgit-gpg-li">
+    
+      <input type="checkbox" id="m-legacyfluxreferencesgit-gpg-check"/>
+      <label for="m-legacyfluxreferencesgit-gpg-check"><a href="/legacy/flux/references/git-gpg/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxreferencesgit-gpg"><span class="">Git commit signing and verification</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxreferencesautomated-image-update-li">
+    
+      <input type="checkbox" id="m-legacyfluxreferencesautomated-image-update-check"/>
+      <label for="m-legacyfluxreferencesautomated-image-update-check"><a href="/legacy/flux/references/automated-image-update/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxreferencesautomated-image-update"><span class="">Automated deployment of new container images</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxreferencesmonitoring-li">
+    
+      <input type="checkbox" id="m-legacyfluxreferencesmonitoring-check"/>
+      <label for="m-legacyfluxreferencesmonitoring-check"><a href="/legacy/flux/references/monitoring/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxreferencesmonitoring"><span class="">Monitoring Flux</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxreferenceshelm-operator-integration-li">
+    
+      <input type="checkbox" id="m-legacyfluxreferenceshelm-operator-integration-check"/>
+      <label for="m-legacyfluxreferenceshelm-operator-integration-check"><a href="/legacy/flux/references/helm-operator-integration/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxreferenceshelm-operator-integration"><span class="">Integration with the Helm Operator</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-legacyfluxguides-li">
+    
+      <input type="checkbox" id="m-legacyfluxguides-check"/>
+      <label for="m-legacyfluxguides-check"><a href="/legacy/flux/guides/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyfluxguides"><span class="">Guides</span></a></label>
+    
+    
+      
+      <ul class="ul-3 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxguidesprovide-own-ssh-key-li">
+    
+      <input type="checkbox" id="m-legacyfluxguidesprovide-own-ssh-key-check"/>
+      <label for="m-legacyfluxguidesprovide-own-ssh-key-check"><a href="/legacy/flux/guides/provide-own-ssh-key/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxguidesprovide-own-ssh-key"><span class="">Providing your own SSH key</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxguidesuse-git-https-li">
+    
+      <input type="checkbox" id="m-legacyfluxguidesuse-git-https-check"/>
+      <label for="m-legacyfluxguidesuse-git-https-check"><a href="/legacy/flux/guides/use-git-https/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxguidesuse-git-https"><span class="">Using Git over HTTPS</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxguidesuse-private-git-host-li">
+    
+      <input type="checkbox" id="m-legacyfluxguidesuse-private-git-host-check"/>
+      <label for="m-legacyfluxguidesuse-private-git-host-check"><a href="/legacy/flux/guides/use-private-git-host/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxguidesuse-private-git-host"><span class="">Using a private Git host</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxguidesupgrading-to-10-li">
+    
+      <input type="checkbox" id="m-legacyfluxguidesupgrading-to-10-check"/>
+      <label for="m-legacyfluxguidesupgrading-to-10-check"><a href="/legacy/flux/guides/upgrading-to-1.0/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxguidesupgrading-to-10"><span class="">Upgrading to Flux v1</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxguidesuse-gke-workload-identity-li">
+    
+      <input type="checkbox" id="m-legacyfluxguidesuse-gke-workload-identity-check"/>
+      <label for="m-legacyfluxguidesuse-gke-workload-identity-check"><a href="/legacy/flux/guides/use-gke-workload-identity/" title="Using GKE Workload Identity with Flux" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxguidesuse-gke-workload-identity"><span class="">Using GKE Workload Identity</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-legacyfluxtutorials-li">
+    
+      <input type="checkbox" id="m-legacyfluxtutorials-check"/>
+      <label for="m-legacyfluxtutorials-check"><a href="/legacy/flux/tutorials/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyfluxtutorials"><span class="">Tutorials</span></a></label>
+    
+    
+      
+      <ul class="ul-3 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxtutorialsget-started-li">
+    
+      <input type="checkbox" id="m-legacyfluxtutorialsget-started-check"/>
+      <label for="m-legacyfluxtutorialsget-started-check"><a href="/legacy/flux/tutorials/get-started/" title="Get started with Flux" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxtutorialsget-started"><span class="">Get started</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxtutorialsget-started-helm-li">
+    
+      <input type="checkbox" id="m-legacyfluxtutorialsget-started-helm-check"/>
+      <label for="m-legacyfluxtutorialsget-started-helm-check"><a href="/legacy/flux/tutorials/get-started-helm/" title="Get started with Flux using Helm" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxtutorialsget-started-helm"><span class="">Get started using Helm</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxtutorialsget-started-kustomize-li">
+    
+      <input type="checkbox" id="m-legacyfluxtutorialsget-started-kustomize-check"/>
+      <label for="m-legacyfluxtutorialsget-started-kustomize-check"><a href="/legacy/flux/tutorials/get-started-kustomize/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxtutorialsget-started-kustomize"><span class="">How to bootstrap Flux using Kustomize</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxtutorialsdriving-flux-li">
+    
+      <input type="checkbox" id="m-legacyfluxtutorialsdriving-flux-check"/>
+      <label for="m-legacyfluxtutorialsdriving-flux-check"><a href="/legacy/flux/tutorials/driving-flux/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxtutorialsdriving-flux"><span class="">Automations, locks and annotations</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxfaq-li">
+    
+      <input type="checkbox" id="m-legacyfluxfaq-check"/>
+      <label for="m-legacyfluxfaq-check"><a href="/legacy/flux/faq/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxfaq"><span class="">Frequently asked questions</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxtroubleshooting-li">
+    
+      <input type="checkbox" id="m-legacyfluxtroubleshooting-check"/>
+      <label for="m-legacyfluxtroubleshooting-check"><a href="/legacy/flux/troubleshooting/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxtroubleshooting"><span class="">Troubleshooting</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-legacyfluxcontributing-li">
+    
+      <input type="checkbox" id="m-legacyfluxcontributing-check"/>
+      <label for="m-legacyfluxcontributing-check"><a href="/legacy/flux/contributing/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyfluxcontributing"><span class="">Contributing</span></a></label>
+    
+    
+      
+      <ul class="ul-3 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxcontributingget-started-developing-li">
+    
+      <input type="checkbox" id="m-legacyfluxcontributingget-started-developing-check"/>
+      <label for="m-legacyfluxcontributingget-started-developing-check"><a href="/legacy/flux/contributing/get-started-developing/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxcontributingget-started-developing"><span class="">Get started developing</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxcontributingbuilding-li">
+    
+      <input type="checkbox" id="m-legacyfluxcontributingbuilding-check"/>
+      <label for="m-legacyfluxcontributingbuilding-check"><a href="/legacy/flux/contributing/building/" title="Building" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxcontributingbuilding"><span class="">Building Flux</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-legacyhelm-operator-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operator-check" checked/>
+      <label for="m-legacyhelm-operator-check"><a href="/legacy/helm-operator/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyhelm-operator"><span class="">Helm Operator</span></a></label>
+    
+    
+      
+      <ul class="ul-2 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-legacyhelm-operatorget-started-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorget-started-check"/>
+      <label for="m-legacyhelm-operatorget-started-check"><a href="/legacy/helm-operator/get-started/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyhelm-operatorget-started"><span class="">Get started</span></a></label>
+    
+    
+      
+      <ul class="ul-3 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorget-startedquickstart-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorget-startedquickstart-check"/>
+      <label for="m-legacyhelm-operatorget-startedquickstart-check"><a href="/legacy/helm-operator/get-started/quickstart/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorget-startedquickstart"><span class="">Quickstart</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorget-startedusing-helm-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorget-startedusing-helm-check"/>
+      <label for="m-legacyhelm-operatorget-startedusing-helm-check"><a href="/legacy/helm-operator/get-started/using-helm/" title="Get started using Helm" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorget-startedusing-helm"><span class="">Using Helm</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorget-startedusing-kustomize-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorget-startedusing-kustomize-check"/>
+      <label for="m-legacyhelm-operatorget-startedusing-kustomize-check"><a href="/legacy/helm-operator/get-started/using-kustomize/" title="Get started using Kustomize" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorget-startedusing-kustomize"><span class="">Using Kustomize</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorget-startedusing-yamls-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorget-startedusing-yamls-check"/>
+      <label for="m-legacyhelm-operatorget-startedusing-yamls-check"><a href="/legacy/helm-operator/get-started/using-yamls/" title="Get started using YAMLs" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorget-startedusing-yamls"><span class="">Using YAMLs</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-legacyhelm-operatorreferences-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorreferences-check"/>
+      <label for="m-legacyhelm-operatorreferences-check"><a href="/legacy/helm-operator/references/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyhelm-operatorreferences"><span class="">References</span></a></label>
+    
+    
+      
+      <ul class="ul-3 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorreferencesoperator-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorreferencesoperator-check"/>
+      <label for="m-legacyhelm-operatorreferencesoperator-check"><a href="/legacy/helm-operator/references/operator/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorreferencesoperator"><span class="">Operator reference</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorreferencesmonitoring-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorreferencesmonitoring-check"/>
+      <label for="m-legacyhelm-operatorreferencesmonitoring-check"><a href="/legacy/helm-operator/references/monitoring/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorreferencesmonitoring"><span class="">Monitoring</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-legacyhelm-operatorhelmrelease-guide-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhelmrelease-guide-check" checked/>
+      <label for="m-legacyhelm-operatorhelmrelease-guide-check"><a href="/legacy/helm-operator/helmrelease-guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyhelm-operatorhelmrelease-guide"><span class="">HelmRelease guides</span></a></label>
+    
+    
+      
+      <ul class="ul-3 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhelmrelease-guideintroduction-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhelmrelease-guideintroduction-check"/>
+      <label for="m-legacyhelm-operatorhelmrelease-guideintroduction-check"><a href="/legacy/helm-operator/helmrelease-guide/introduction/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhelmrelease-guideintroduction"><span class="">Introduction</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhelmrelease-guidechart-sources-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhelmrelease-guidechart-sources-check"/>
+      <label for="m-legacyhelm-operatorhelmrelease-guidechart-sources-check"><a href="/legacy/helm-operator/helmrelease-guide/chart-sources/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhelmrelease-guidechart-sources"><span class="">Chart sources</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-legacyhelm-operatorhelmrelease-guidevalues-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhelmrelease-guidevalues-check" checked/>
+      <label for="m-legacyhelm-operatorhelmrelease-guidevalues-check"><a href="/legacy/helm-operator/helmrelease-guide/values/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhelmrelease-guidevalues"><span class="td-sidebar-nav-active-item">Values</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhelmrelease-guiderelease-configuration-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhelmrelease-guiderelease-configuration-check"/>
+      <label for="m-legacyhelm-operatorhelmrelease-guiderelease-configuration-check"><a href="/legacy/helm-operator/helmrelease-guide/release-configuration/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhelmrelease-guiderelease-configuration"><span class="">Release configuration</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhelmrelease-guidereconciliation-and-upgrades-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhelmrelease-guidereconciliation-and-upgrades-check"/>
+      <label for="m-legacyhelm-operatorhelmrelease-guidereconciliation-and-upgrades-check"><a href="/legacy/helm-operator/helmrelease-guide/reconciliation-and-upgrades/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhelmrelease-guidereconciliation-and-upgrades"><span class="">Reconciliation and upgrades</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhelmrelease-guiderollbacks-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhelmrelease-guiderollbacks-check"/>
+      <label for="m-legacyhelm-operatorhelmrelease-guiderollbacks-check"><a href="/legacy/helm-operator/helmrelease-guide/rollbacks/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhelmrelease-guiderollbacks"><span class="">Rollbacks</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhelmrelease-guidetests-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhelmrelease-guidetests-check"/>
+      <label for="m-legacyhelm-operatorhelmrelease-guidetests-check"><a href="/legacy/helm-operator/helmrelease-guide/tests/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhelmrelease-guidetests"><span class="">Tests</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhelmrelease-guideautomation-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhelmrelease-guideautomation-check"/>
+      <label for="m-legacyhelm-operatorhelmrelease-guideautomation-check"><a href="/legacy/helm-operator/helmrelease-guide/automation/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhelmrelease-guideautomation"><span class="">Automation</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhelmrelease-guidedebugging-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhelmrelease-guidedebugging-check"/>
+      <label for="m-legacyhelm-operatorhelmrelease-guidedebugging-check"><a href="/legacy/helm-operator/helmrelease-guide/debugging/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhelmrelease-guidedebugging"><span class="">Debugging</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-legacyhelm-operatorhow-to-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhow-to-check"/>
+      <label for="m-legacyhelm-operatorhow-to-check"><a href="/legacy/helm-operator/how-to/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyhelm-operatorhow-to"><span class="">How-to</span></a></label>
+    
+    
+      
+      <ul class="ul-3 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhow-toupgrade-to-ga-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhow-toupgrade-to-ga-check"/>
+      <label for="m-legacyhelm-operatorhow-toupgrade-to-ga-check"><a href="/legacy/helm-operator/how-to/upgrade-to-ga/" title="Upgrade from beta (&gt;=0.5.0) to stable (&gt;=1.0.0)" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhow-toupgrade-to-ga"><span class="">Upgrade to GA</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhow-toupgrade-to-beta-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhow-toupgrade-to-beta-check"/>
+      <label for="m-legacyhelm-operatorhow-toupgrade-to-beta-check"><a href="/legacy/helm-operator/how-to/upgrade-to-beta/" title="Upgrade from alpha (&lt;=0.4.0) to beta" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhow-toupgrade-to-beta"><span class="">Upgrade to beta</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorfaq-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorfaq-check"/>
+      <label for="m-legacyhelm-operatorfaq-check"><a href="/legacy/helm-operator/faq/" title="Frequently asked questions" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorfaq"><span class="">FAQ</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatortroubleshooting-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatortroubleshooting-check"/>
+      <label for="m-legacyhelm-operatortroubleshooting-check"><a href="/legacy/helm-operator/troubleshooting/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatortroubleshooting"><span class="">Troubleshooting</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-legacyhelm-operatorcontributing-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorcontributing-check"/>
+      <label for="m-legacyhelm-operatorcontributing-check"><a href="/legacy/helm-operator/contributing/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyhelm-operatorcontributing"><span class="">Contributing</span></a></label>
+    
+    
+      
+      <ul class="ul-3 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorcontributingbuilding-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorcontributingbuilding-check"/>
+      <label for="m-legacyhelm-operatorcontributingbuilding-check"><a href="/legacy/helm-operator/contributing/building/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorcontributingbuilding"><span class="">Building</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorcontributingget-started-developing-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorcontributingget-started-developing-check"/>
+      <label for="m-legacyhelm-operatorcontributingget-started-developing-check"><a href="/legacy/helm-operator/contributing/get-started-developing/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorcontributingget-started-developing"><span class="">Get started developing</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatortutorialsget-started-kustomize-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatortutorialsget-started-kustomize-check"/>
+      <label for="m-legacyhelm-operatortutorialsget-started-kustomize-check"><a href="/legacy/helm-operator/tutorials/get-started-kustomize/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatortutorialsget-started-kustomize"><span class=""></span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatortutorialsget-started-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatortutorialsget-started-check"/>
+      <label for="m-legacyhelm-operatortutorialsget-started-check"><a href="/legacy/helm-operator/tutorials/get-started/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatortutorialsget-started"><span class=""></span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+    </ul>
+  </nav>
+</div>
+
+
+
+
+          </aside>
+          
+          <aside class="d-none d-xl-block col-xl-2 td-sidebar-toc d-print-none">
+            
+  
+  
+  
+  
+  
+  
+  
+  <div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
+  
+    
+    
+      
+    
+    
+    
+    
+    
+    
+    
+
+    
+    <a href="https://github.com/fluxcd/website/edit/main/content/zh-cn/legacy/helm-operator/helmrelease-guide/values.md" target="_blank"><i class="fa fa-edit fa-fw"></i> </a>
+    <a href="https://github.com/fluxcd/website/new/main/content/zh-cn/legacy/helm-operator/helmrelease-guide/values.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> </a>
+    
+    <a href="https://github.com/fluxcd/website/issues/new?title=Values" target="_blank"><i class="fab fa-github fa-fw"></i> </a>
+    
+      
+      <a href="https://github.com/fluxcd/flux2/issues/new" target="_blank"><i class="fas fa-tasks fa-fw"></i> </a>
+    
+
+  
+  
+  </div>
+
+
+            
+
+
+<div class="td-toc"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#inlined-values">Inlined values</a></li>
+      </ul>
+    </li>
+    <li><a href="#values-from-sources">Values from sources</a>
+      <ul>
+        <li><a href="#config-maps">Config maps</a></li>
+        <li><a href="#secrets">Secrets</a></li>
+        <li><a href="#external-sources">External sources</a></li>
+        <li><a href="#chart-files">Chart files</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+
+
+
+            
+
+	
+		
+
+
+
+  
+  
+
+	
+		
+
+
+
+  
+  
+
+	
+
+          </aside>
+          
+          
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+          
+            
+  
+
+            <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
+	<ol class="breadcrumb spb-1">
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="/legacy/">Legacy documentation</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="/legacy/helm-operator/">Helm Operator</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="/legacy/helm-operator/helmrelease-guide/">HelmRelease guides</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="/legacy/helm-operator/helmrelease-guide/values/">Values</a>
+</li>
+
+	</ol>
+</nav	>
+
+            <div class="pageinfo pageinfo-warning">
+    <h2>Upgrade Advisory</h2>
+    <p>This documentation is for Flux (v1) and Helm Operator (v1).
+       Both projects are in maintenance mode and will soon reach end-of-life.
+       We strongly recommend you familiarise yourself with the newest Flux and
+       <a href="/docs/migration/">start looking at your migration path</a>.</p>
+    <p>For documentation regarding the latest Flux, please refer to
+       <a href="/docs/">this section</a>.</p>
+</div>
+
+            
+<div class="td-content">
+	<h1>Values</h1>
+	
+	<header class="article-meta">
+		
+		
+			
+				
+
+
+			
+				
+
+
+			
+		
+		
+	</header>    
+	<p>Now that we have a good understanding of where we can get our charts from and
+what they have to offer, it is time to examine how you can supply
+
+<a href="https://helm.sh/docs/glossary/#values-values-files-values-yaml" target="_blank">values</a> to
+be used with the chart when the Helm Operator makes a release.</p>
+<h3 id="inlined-values">Inlined values</h3>
+<p>The most simple option to define the values for your Helm release. This is a
+YAML map as you would put in a file and supply to Helm with <code>-f values.yaml</code>,
+but inlined into the <code>HelmRelease</code> manifest. For example:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#062873;font-weight:bold">spec</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">  </span><span style="color:#062873;font-weight:bold">values</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#062873;font-weight:bold">foo</span>:<span style="color:#bbb"> </span>value1<span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#062873;font-weight:bold">bar</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#062873;font-weight:bold">baz</span>:<span style="color:#bbb"> </span>value2<span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#062873;font-weight:bold">oof</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>- item1<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>- item2<span style="color:#bbb">
+</span></code></pre></div><h2 id="values-from-sources">Values from sources</h2>
+<p>It is possible to define a list of config maps, secrets (in the same namespace
+as the <code>HelmRelease</code> by default, or in a configured namespace) or external
+sources (URLs) from which to take values. For charts from a Git
+repository, there is an additional option available to refer to a file in
+the chart folder.</p>
+<p>The values are merged in the order given, with later values overwriting
+earlier. These values always have a lower priority than the values
+inlined in the <code>HelmRelease</code> via the <code>spec.values</code> parameter.</p>
+<p>This is useful if you want to have defaults such as the <code>region</code>,
+<code>clustername</code>, <code>environment</code>, a local docker registry URL, etc., or if you
+simply do not want the values to be visible as plaintext in the <code>HelmRelease</code>.</p>
+
+
+<div class="alert alert-info" role="alert">
+<h4 class="alert-heading">Note</h4>
+
+    The Helm Operator does not watch the sources for updates. Changes to
+sources are detected during the 
+<a href="/legacy/helm-operator/helmrelease-guide/reconciliation-and-upgrades/#reconciliation">reconciliation
+loop</a>.
+
+</div>
+
+<h3 id="config-maps">Config maps</h3>
+<p>The reference to a config map is defined by adding a <code>configMapKeyRef</code> to the
+<code>spec.valuesFrom</code> list.</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#062873;font-weight:bold">spec</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">  </span><span style="color:#062873;font-weight:bold">valuesFrom</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">  </span>- <span style="color:#062873;font-weight:bold">configMapKeyRef</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">      </span><span style="color:#062873;font-weight:bold">name</span>:<span style="color:#bbb"> </span>default-values<span style="color:#bbb">
+</span><span style="color:#bbb">      </span><span style="color:#062873;font-weight:bold">namespace</span>:<span style="color:#bbb"> </span>my-ns<span style="color:#bbb">
+</span><span style="color:#bbb">      </span><span style="color:#062873;font-weight:bold">key</span>:<span style="color:#bbb"> </span>values.yaml<span style="color:#bbb">
+</span><span style="color:#bbb">      </span><span style="color:#062873;font-weight:bold">optional</span>:<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">false</span><span style="color:#bbb">
+</span></code></pre></div><p>The definition of the listed keys is as follows:</p>
+<ul>
+<li><code>name</code>: The name of the config map.</li>
+<li><code>namespace</code> <em>(Optional)</em>: The namespace the config map is in. Defaults to the
+namespace of the <code>HelmRelease</code> when omitted.</li>
+<li><code>key</code> <em>(Optional)</em>: The key in the config map to get the values from.
+Defaults to <code>values.yaml</code> when omitted.</li>
+<li><code>optional</code> <em>(Optional)</em>: When set to <code>true</code>, successful retrieval of the
+config map is optional and a release will still be made if it is missing.
+Defaults to <code>false</code> when omitted.</li>
+</ul>
+<h3 id="secrets">Secrets</h3>
+<p>The reference to a secret is defined by adding a <code>secretKeyRef</code> to the
+<code>spec.valuesFrom</code> list.</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#062873;font-weight:bold">spec</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">  </span><span style="color:#062873;font-weight:bold">valuesFrom</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">  </span>- <span style="color:#062873;font-weight:bold">secretKeyRef</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">      </span><span style="color:#062873;font-weight:bold">name</span>:<span style="color:#bbb"> </span>default-values<span style="color:#bbb">
+</span><span style="color:#bbb">      </span><span style="color:#062873;font-weight:bold">namespace</span>:<span style="color:#bbb"> </span>my-ns<span style="color:#bbb">
+</span><span style="color:#bbb">      </span><span style="color:#062873;font-weight:bold">key</span>:<span style="color:#bbb"> </span>values.yaml<span style="color:#bbb">
+</span><span style="color:#bbb">      </span><span style="color:#062873;font-weight:bold">optional</span>:<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">true</span><span style="color:#bbb">
+</span></code></pre></div><p>The definition of the listed keys is as follows:</p>
+<ul>
+<li><code>name</code>: The name of the secret.</li>
+<li><code>namespace</code> <em>(Optional)</em>: The namespace the secret is in. Defaults to the
+namespace of the <code>HelmRelease</code> when omitted.</li>
+<li><code>key</code> <em>(Optional)</em>: The key in the secret to get the values from.
+Defaults to <code>values.yaml</code> when omitted.</li>
+<li><code>optional</code> <em>(Optional)</em>: When set to <code>true</code>, successful retrieval of the
+secret is optional and a release will still be made if it is missing.
+Defaults to <code>false</code> when omitted.</li>
+</ul>
+<h3 id="external-sources">External sources</h3>
+<p>The reference to an external source (URL) is defined by adding a
+<code>externalSourceRef</code> to the <code>spec.valuesFrom</code> list. The external
+source is expected to be a plain YAML file.</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#062873;font-weight:bold">spec</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">  </span><span style="color:#062873;font-weight:bold">valuesFrom</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">  </span>- <span style="color:#062873;font-weight:bold">externalSourceRef</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">      </span><span style="color:#062873;font-weight:bold">url</span>:<span style="color:#bbb"> </span>https://example.com/static/raw/values.yaml<span style="color:#bbb">
+</span><span style="color:#bbb">      </span><span style="color:#062873;font-weight:bold">optional</span>:<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">true</span><span style="color:#bbb">
+</span></code></pre></div><p>The definition of the listed keys is as follows:</p>
+<ul>
+<li><code>url</code>: The URL of the plain YAML file.</li>
+<li><code>optional</code> <em>(Optional)</em>: When set to <code>true</code>, successful retrieval of the
+YAML file is optional and a release will still be made if it could not be
+found. Defaults to <code>false</code> when omitted.</li>
+</ul>
+<h3 id="chart-files">Chart files</h3>
+
+
+<div class="alert alert-info" role="alert">
+<h4 class="alert-heading">Note</h4>
+
+    Values from chart files are only supported for charts from a 
+<a href="/legacy/helm-operator/helmrelease-guide/chart-sources/#git-repositories">Git
+repository</a>.
+
+</div>
+
+<p>When making use of a chart sourced from a Git repository, it is possible to
+refer to a values file relative to the path of the chart. This can for example
+be utilized to select values optimized for production environments, that you ship
+with your chart.</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#062873;font-weight:bold">spec</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">  </span><span style="color:#062873;font-weight:bold">valuesFrom</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">  </span>- <span style="color:#062873;font-weight:bold">chartFileRef</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">      </span><span style="color:#062873;font-weight:bold">path</span>:<span style="color:#bbb"> </span>overrides/environment-prod.yaml<span style="color:#bbb">
+</span><span style="color:#bbb">      </span><span style="color:#062873;font-weight:bold">optional</span>:<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">true</span><span style="color:#bbb">
+</span></code></pre></div><p>The definition of the listed keys is as follows:</p>
+<ul>
+<li><code>path</code>: The path relative to the <code>.chart.path</code> where the values file can be
+found.</li>
+<li><code>optional</code> <em>(Optional)</em>: When set to <code>true</code>, successful retrieval of the
+YAML file is optional and a release will still be made if it could not be
+found. Defaults to <code>false</code> when omitted.</li>
+</ul>
+
+	
+	
+	<div class="text-muted mt-5 pt-3 border-top">
+
+</div>
+
+</div>
+
+
+          </main>
+        </div>
+      </div>
+      
+<footer class="bg-dark py-5 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+        
+        
+<ul class="list-inline mb-0">
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Twitter" aria-label="Twitter">
+    <a class="text-white" target="_blank" rel="noopener" href="https://twitter.com/fluxcd" aria-label="Twitter">
+      <i class="fab fa-twitter"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="LinkedIn" aria-label="LinkedIn">
+    <a class="text-white" target="_blank" rel="noopener" href="https://linkedin.com/groups/8985374" aria-label="LinkedIn">
+      <i class="fab fa-linkedin"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="RSS Feed" aria-label="RSS Feed">
+    <a class="text-white" target="_blank" rel="noopener" href="/blog/index.xml" aria-label="RSS Feed">
+      <i class="fa fa-rss"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Support" aria-label="Support">
+    <a class="text-white" target="_blank" rel="noopener" href="/support" aria-label="Support">
+      <i class="fas fa-comments"></i>
+    </a>
+  </li>
+  
+</ul>
+
+        
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+        
+        
+<ul class="list-inline mb-0">
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Flux project on GitHub" aria-label="Flux project on GitHub">
+    <a class="text-white" target="_blank" rel="noopener" href="https://github.com/fluxcd" aria-label="Flux project on GitHub">
+      <i class="fab fa-github"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Slack" aria-label="Slack">
+    <a class="text-white" target="_blank" rel="noopener" href="https://cloud-native.slack.com/messages/flux" aria-label="Slack">
+      <i class="fab fa-slack"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Developer mailing list" aria-label="Developer mailing list">
+    <a class="text-white" target="_blank" rel="noopener" href="https://lists.cncf.io/g/cncf-flux-dev" aria-label="Developer mailing list">
+      <i class="fa fa-envelope"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Flux YouTube channel" aria-label="Flux YouTube channel">
+    <a class="text-white" target="_blank" rel="noopener" href="https://www.youtube.com/channel/UCoZxt-YMhGHb20ZkvcCc5KA" aria-label="Flux YouTube channel">
+      <i class="fab fa-youtube"></i>
+    </a>
+  </li>
+  
+</ul>
+
+        
+        
+      </div>
+      <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
+        <small class="text-white">&copy; 2021 The Flux authors </small>
+        
+	
+		
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+<script src="/js/main.min.5c74b870c6953931a705f390a49c7e4c0a842ec5c83b24354758dd674343ed0d.js" integrity="sha256-XHS4cMaVOTGnBfOQpJx&#43;TAqELsXIOyQ1R1jdZ0ND7Q0=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<script type="text/javascript"> docsearch({
+apiKey: '45f9f14d53600b0a2cafa46a26ee10f4',
+indexName: 'fluxcd',
+inputSelector: '.td-search-input',
+
+algoliaOptions: { 'facetFilters': ["tags:legacy"] },
+
+debug: false 
+});
+</script>
+
+
+
+  </body>
+</html>

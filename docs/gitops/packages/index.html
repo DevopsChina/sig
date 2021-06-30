@@ -1,0 +1,1726 @@
+<!doctype html>
+<html lang="zh-cn" class="no-js">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.84.3" /><META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+<link rel="shortcut icon" href="/favicon.png" >
+<link rel="apple-touch-icon" href="/favicon.png" sizes="180x180">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="16x16">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="36x36">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="48x48">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="72x72">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="96x96">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="144x144">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="192x192">
+
+<title>Using the GitOps Toolkit APIs with Go | 道场</title>
+<meta name="description" content="Open and extensible continuous delivery solution for Kubernetes."><meta property="og:title" content="Using the GitOps Toolkit APIs with Go" />
+<meta property="og:description" content="The GitOps Toolkit client libraries documentation." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/docs/gitops/packages/" /><meta property="og:image" content="/img/flux-social.png"/><meta property="article:section" content="docs" />
+
+
+
+<meta itemprop="name" content="Using the GitOps Toolkit APIs with Go">
+<meta itemprop="description" content="The GitOps Toolkit client libraries documentation.">
+
+<meta itemprop="wordCount" content="517"><meta itemprop="image" content="/img/flux-social.png"/>
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="/img/flux-social.png"/>
+
+<meta name="twitter:title" content="Using the GitOps Toolkit APIs with Go"/>
+<meta name="twitter:description" content="The GitOps Toolkit client libraries documentation."/>
+
+
+
+
+<link rel="preload" href="/scss/main.min.4a9db146ac33069ee85be0885ccf5f1ce3a4387f774ad3c60af13d7316e8cedc.css" as="style">
+<link href="/scss/main.min.4a9db146ac33069ee85be0885ccf5f1ce3a4387f774ad3c60af13d7316e8cedc.css" rel="stylesheet" integrity="">
+
+
+<script
+  src="https://code.jquery.com/jquery-3.5.1.min.js"
+  integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+  crossorigin="anonymous"></script>
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css" />
+
+
+
+
+
+  </head>
+  <body class="td-page">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
+        <a class="navbar-brand" href="/">
+		<span class="navbar-logo"><svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><title>flux-icon</title><desc>Created with Sketch.</desc><g id="flux-icon" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="Group" transform="translate(11.000000, 2.000000)"><path d="M.803134615 15.7791346c-1.049423077-.682500000000001-1.049423077-2.2188461.0-2.9007692L20.1819808.279519231c.573461499999997-.3726923079 1.3125-.3726923079 1.8859615.0L41.4473654 12.8783654c1.0494231.681923100000001 1.0494231 2.2182692.0 2.9007692L22.0679423 28.3779808C21.4944808 28.7506731 20.7554423 28.7506731 20.1819808 28.3779808L.803134615 15.7791346z" id="Fill-1" fill="#326ce5"/><path d="M24.1851346 18.0023077h1.3442308C26.3145577 18.0023077 26.8055192 17.1525 26.4126346 16.4728846L22.0084038 8.84423077C21.6160962 8.16461538 20.63475 8.16461538 20.2418654 8.84423077L15.8376346 16.4728846C15.4453269 17.1525 15.9357115 18.0023077 16.7209038 18.0023077h1.3448077c.563077.0 1.0194231.456923100000001 1.0194231 1.02v8.7075L19.9874423 28.3165385C20.6791731 28.7665385 21.5710962 28.7665385 22.2628269 28.3165385L23.1651346 27.7298077v-8.7075c0-.563076899999999.456346200000002-1.02 1.02-1.02" id="Fill-3" fill="#c1d2f7"/><path d="M27.8390769 34.8375577l-4.6742307-3.0386539v1.44C24.6902308 33.8919808 26.2588846 34.4008269 27.8390769 34.8375577" id="Fill-5" fill="#326ce5"/><path d="M23.1650769 35.8280192v2.0215385C24.7095 38.3209038 26.2723846 38.7080192 27.8191154 39.0893654c5.0515384 1.2455769 9.8226923 2.4213461 13.6592308 6.2584615C41.6733462 45.54225 41.8562308 45.7407115 42.0373846 45.93975 42.4308462 45.1880192 42.2335385 44.1957115 41.4466154 43.6845577l-7.5905769-4.9355769c-1.8426923-.608077000000002-3.72-1.073077-5.5753847-1.53C26.5308462 36.7874423 24.8196923 36.3570577 23.1650769 35.8280192" id="Fill-7" fill="#326ce5"/><path d="M19.08525 34.1699423C18.4304423 33.8318654 17.7854423 33.4689808 17.1629423 33.0489808l-1.7359615 1.1284615c1.1705769.8607692 2.3965384 1.5588462 3.6582692 2.1438462V34.1699423z" id="Fill-9" fill="#326ce5"/><path d="M24.8941731 40.6051154C24.3137885 40.4620385 23.7374423 40.3195385 23.1651346 40.1735769V42.1605C23.5885962 42.2666538 24.0114808 42.3722308 24.4326346 42.4760769c5.0515385 1.245 9.8226923 2.4207693 13.6598077 6.2578846C38.0987885 48.7408846 38.1045577 48.7472308 38.1114808 48.7541538L39.75225 47.6868462C39.6524423 47.5824231 39.5584038 47.4751154 39.4545577 47.3718462c-4.2161539-4.2167308-9.4753846-5.513077-14.5603846-6.7667308" id="Fill-11" fill="#326ce5"/><path d="M19.08525 38.9907115C16.8900577 38.2389808 14.8096731 37.2714808 12.9115962 35.8124423l-1.6996154 1.1053846c2.4167307 1.9932693 5.1075 3.2025 7.8732692 4.0990385V38.9907115z" id="Fill-13" fill="#326ce5"/><path d="M19.08525 43.3809808C15.3069808 42.3909808 11.7537115 41.18175 8.71794231 38.5388654L7.04717308 39.6252115c3.56538462 3.285 7.80692312 4.658077 12.03807692 5.745577V43.3809808z" id="Fill-15" fill="#326ce5"/><path d="M23.1650769 46.3935c3.9525 1.02057689999999 7.6690385 2.2407692 10.8173077 5.0446154l1.6615385-1.08c-3.6784616-3.4580769-8.0925-4.8386539-12.4788462-5.9532692V46.3935z" id="Fill-17" fill="#326ce5"/><path d="M4.57875 41.2299231 2.92990385 42.3018462C2.98759615 42.3612692 3.04009615 42.423 3.09951923 42.4818462 7.31625 46.6985769 12.5743269 47.9949231 17.6599038 49.2485769c4.4042308 1.0851923 8.5944231 2.1201923 12.1390385 4.9096154L31.4893269 53.0591538C27.4958654 49.6968462 22.7385577 48.5158846 18.1214423 47.3781923 13.1206731 46.1453077 8.39567308 44.9758846 4.57875 41.2299231" id="Fill-19" fill="#326ce5"/><path d="M1.07555769 44.5060962C.883442308 44.3139808.702865385 44.1184038.524019231 43.9216731-.227711538 44.6745577-.139442308 45.9726346.80325 46.5853269l5.70634615 3.7101923c2.52576923 1.0453846 5.16692305 1.6990385 7.76423075 2.3394231 4.0546154.999230799999999 7.9280769 1.9575 11.2840385 4.2807692l1.7255769-1.1226923C23.4676731 52.9245577 19.0403654 51.8255192 14.7347885 50.7639808c-5.05096158-1.245-9.82211542-2.4207693-13.65923081-6.2578846" id="Fill-21" fill="#326ce5"/><path d="M19.6441154 58.8342692C20.0243077 59.0188846 20.3998846 59.2133077 20.7691154 59.4221538 21.2093077 59.5150385 21.6771923 59.4383077 22.0683462 59.1838846L23.0260385 58.5613846C19.9493077 56.5035 16.5287308 55.461 13.1196923 54.5927308l6.5244231 4.2415384z" id="Fill-23" fill="#326ce5"/></g></g></svg></span><span class="text-uppercase font-weight-bold">道场</span>
+	</a>
+		<ul class="navbar-nav mt-2 mt-lg-0">
+			
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="/docs" ><span>修习</span></a>
+				
+			</li>
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="/blog/" ><span>动态</span></a>
+				
+			</li>
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="https://github.com/devopschina/sig/" target="_blank" ><i class='fab fa-github'></i> <span>Github</span></a>
+				
+			</li>
+			
+			
+			
+			<li class="nav-item nav-search-item">
+<input type="search" class="form-control td-search-input" placeholder="&#xf002; " aria-label="" autocomplete="off">
+
+</li>
+		</ul>
+</nav>
+
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-xl-nowrap">
+          <aside class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            
+
+
+
+
+  
+
+
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+  
+  <div id="content-mobile">
+  <form class="td-sidebar__search d-flex align-items-center">
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  </div>
+  <div id="content-desktop"></div>
+  
+  <nav class="collapse td-sidebar-nav foldable-nav" id="td-section-nav">
+    
+    
+    
+    
+    
+    <ul class="td-sidebar-nav__section pr-md-3 ul-0">
+      
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-docs-li">
+    
+      <a href="/docs/" title="入门指南" class="align-left pl-0 td-sidebar-link td-sidebar-link__section tree-root" id="m-docs"><span class="">道场</span></a>
+    
+    
+      
+      <ul class="ul-1">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsconcepts-li">
+    
+      <input type="checkbox" id="m-docsconcepts-check"/>
+      <label for="m-docsconcepts-check"><a href="/docs/concepts/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docsconcepts"><span class="">核心概念</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsget-started-li">
+    
+      <input type="checkbox" id="m-docsget-started-check"/>
+      <label for="m-docsget-started-check"><a href="/docs/get-started/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docsget-started"><span class="">转型方法</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docstool-chain-li">
+    
+      <input type="checkbox" id="m-docstool-chain-check"/>
+      <label for="m-docstool-chain-check"><a href="/docs/tool-chain/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docstool-chain"><span class="">工具链</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-docsiac-li">
+    
+      <input type="checkbox" id="m-docsiac-check"/>
+      <label for="m-docsiac-check"><a href="/docs/iac/" title="基础设施即代码" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-docsiac"><span class="">IaC</span></a></label>
+    
+    
+      
+      <ul class="ul-2 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsiacrepository-structure-li">
+    
+      <input type="checkbox" id="m-docsiacrepository-structure-check"/>
+      <label for="m-docsiacrepository-structure-check"><a href="/docs/iac/repository-structure/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docsiacrepository-structure"><span class="">Ways of structuring your repositories</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsiachelmreleases-li">
+    
+      <input type="checkbox" id="m-docsiachelmreleases-check"/>
+      <label for="m-docsiachelmreleases-check"><a href="/docs/iac/helmreleases/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docsiachelmreleases"><span class="">Manage Helm Releases</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsiacnotifications-li">
+    
+      <input type="checkbox" id="m-docsiacnotifications-check"/>
+      <label for="m-docsiacnotifications-check"><a href="/docs/iac/notifications/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docsiacnotifications"><span class="">Setup Notifications</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsiacwebhook-receivers-li">
+    
+      <input type="checkbox" id="m-docsiacwebhook-receivers-check"/>
+      <label for="m-docsiacwebhook-receivers-check"><a href="/docs/iac/webhook-receivers/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docsiacwebhook-receivers"><span class="">Setup Webhook Receivers</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsiacmonitoring-li">
+    
+      <input type="checkbox" id="m-docsiacmonitoring-check"/>
+      <label for="m-docsiacmonitoring-check"><a href="/docs/iac/monitoring/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docsiacmonitoring"><span class="">Monitoring with Prometheus</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsiacsealed-secrets-li">
+    
+      <input type="checkbox" id="m-docsiacsealed-secrets-check"/>
+      <label for="m-docsiacsealed-secrets-check"><a href="/docs/iac/sealed-secrets/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docsiacsealed-secrets"><span class="">Sealed Secrets</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsiacmozilla-sops-li">
+    
+      <input type="checkbox" id="m-docsiacmozilla-sops-check"/>
+      <label for="m-docsiacmozilla-sops-check"><a href="/docs/iac/mozilla-sops/" title="Manage Kubernetes secrets with Mozilla SOPS" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docsiacmozilla-sops"><span class="">Mozilla SOPS</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsiacimage-update-li">
+    
+      <input type="checkbox" id="m-docsiacimage-update-check"/>
+      <label for="m-docsiacimage-update-check"><a href="/docs/iac/image-update/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docsiacimage-update"><span class="">Automate image updates to Git</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsiacsortable-image-tags-li">
+    
+      <input type="checkbox" id="m-docsiacsortable-image-tags-check"/>
+      <label for="m-docsiacsortable-image-tags-check"><a href="/docs/iac/sortable-image-tags/" title="How to make sortable image tags to use with automation" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docsiacsortable-image-tags"><span class="">Sortable image tags to use with automation</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-docsagile-li">
+    
+      <input type="checkbox" id="m-docsagile-check"/>
+      <label for="m-docsagile-check"><a href="/docs/agile/" title="敏捷道场" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-docsagile"><span class="">Agile</span></a></label>
+    
+    
+      
+      <ul class="ul-2 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsagilesource-li">
+    
+      <input type="checkbox" id="m-docsagilesource-check"/>
+      <label for="m-docsagilesource-check"><a href="/docs/agile/source/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-docsagilesource"><span class="">Source Controller</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsagilekustomize-li">
+    
+      <input type="checkbox" id="m-docsagilekustomize-check"/>
+      <label for="m-docsagilekustomize-check"><a href="/docs/agile/kustomize/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-docsagilekustomize"><span class="">Kustomize Controller</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsagilehelm-li">
+    
+      <input type="checkbox" id="m-docsagilehelm-check"/>
+      <label for="m-docsagilehelm-check"><a href="/docs/agile/helm/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-docsagilehelm"><span class="">Helm Controller</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsagilenotification-li">
+    
+      <input type="checkbox" id="m-docsagilenotification-check"/>
+      <label for="m-docsagilenotification-check"><a href="/docs/agile/notification/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-docsagilenotification"><span class="">Notification Controller</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsagileimage-li">
+    
+      <input type="checkbox" id="m-docsagileimage-check"/>
+      <label for="m-docsagileimage-check"><a href="/docs/agile/image/" title="Image reflector and automation controllers" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-docsagileimage"><span class="">Image Automation Controllers</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-docsgitops-toolkit-li">
+    
+      <input type="checkbox" id="m-docsgitops-toolkit-check"/>
+      <label for="m-docsgitops-toolkit-check"><a href="/docs/gitops-toolkit/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-docsgitops-toolkit"><span class="">Toolkit Dev Guides</span></a></label>
+    
+    
+      
+      <ul class="ul-2 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsgitops-toolkitpackages-li">
+    
+      <input type="checkbox" id="m-docsgitops-toolkitpackages-check"/>
+      <label for="m-docsgitops-toolkitpackages-check"><a href="/docs/gitops-toolkit/packages/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docsgitops-toolkitpackages"><span class="">Using the GitOps Toolkit APIs with Go</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsgitops-toolkitsource-watcher-li">
+    
+      <input type="checkbox" id="m-docsgitops-toolkitsource-watcher-check"/>
+      <label for="m-docsgitops-toolkitsource-watcher-check"><a href="/docs/gitops-toolkit/source-watcher/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docsgitops-toolkitsource-watcher"><span class="">Watching for source changes</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsgitops-toolkitdebugging-li">
+    
+      <input type="checkbox" id="m-docsgitops-toolkitdebugging-check"/>
+      <label for="m-docsgitops-toolkitdebugging-check"><a href="/docs/gitops-toolkit/debugging/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docsgitops-toolkitdebugging"><span class="">Advanced debugging</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-docsgitops-li">
+    
+      <input type="checkbox" id="m-docsgitops-check" checked/>
+      <label for="m-docsgitops-check"><a href="/docs/gitops/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-docsgitops"><span class="">GitOps</span></a></label>
+    
+    
+      
+      <ul class="ul-2 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-docsgitopspackages-li">
+    
+      <input type="checkbox" id="m-docsgitopspackages-check" checked/>
+      <label for="m-docsgitopspackages-check"><a href="/docs/gitops/packages/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-docsgitopspackages"><span class="td-sidebar-nav-active-item">Using the GitOps Toolkit APIs with Go</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsgitopssource-watcher-li">
+    
+      <input type="checkbox" id="m-docsgitopssource-watcher-check"/>
+      <label for="m-docsgitopssource-watcher-check"><a href="/docs/gitops/source-watcher/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docsgitopssource-watcher"><span class="">Watching for source changes</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsgitopsdebugging-li">
+    
+      <input type="checkbox" id="m-docsgitopsdebugging-check"/>
+      <label for="m-docsgitopsdebugging-check"><a href="/docs/gitops/debugging/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docsgitopsdebugging"><span class="">Advanced debugging</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsroadmap-li">
+    
+      <input type="checkbox" id="m-docsroadmap-check"/>
+      <label for="m-docsroadmap-check"><a href="/docs/roadmap/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docsroadmap"><span class="">Roadmap</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsfaq-li">
+    
+      <input type="checkbox" id="m-docsfaq-check"/>
+      <label for="m-docsfaq-check"><a href="/docs/faq/" title="Frequently asked questions" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docsfaq"><span class="">FAQ</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-docscontributing-li">
+    
+      <input type="checkbox" id="m-docscontributing-check"/>
+      <label for="m-docscontributing-check"><a href="/docs/contributing/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-docscontributing"><span class="">Contributing</span></a></label>
+    
+    
+      
+      <ul class="ul-2 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-docscontributingdocs-li">
+    
+      <input type="checkbox" id="m-docscontributingdocs-check"/>
+      <label for="m-docscontributingdocs-check"><a href="/docs/contributing/docs/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-docscontributingdocs"><span class="">Documentation</span></a></label>
+    
+    
+      
+      <ul class="ul-3 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docscontributingdocssome-background-li">
+    
+      <input type="checkbox" id="m-docscontributingdocssome-background-check"/>
+      <label for="m-docscontributingdocssome-background-check"><a href="/docs/contributing/docs/some-background/" title="Where to find the docs and how to contribute" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docscontributingdocssome-background"><span class="">Some background</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docscontributingdocsproposing-changes-li">
+    
+      <input type="checkbox" id="m-docscontributingdocsproposing-changes-check"/>
+      <label for="m-docscontributingdocsproposing-changes-check"><a href="/docs/contributing/docs/proposing-changes/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docscontributingdocsproposing-changes"><span class="">Proposing changes</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docscontributingdocswriting-docs-li">
+    
+      <input type="checkbox" id="m-docscontributingdocswriting-docs-check"/>
+      <label for="m-docscontributingdocswriting-docs-check"><a href="/docs/contributing/docs/writing-docs/" title="Docs from the ground up" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-docscontributingdocswriting-docs"><span class="">Writing docs</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+    </ul>
+  </nav>
+</div>
+
+
+
+
+          </aside>
+          
+          <aside class="d-none d-xl-block col-xl-2 td-sidebar-toc d-print-none">
+            
+  
+  
+  
+  
+  
+  
+  
+  <div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
+  
+    
+    
+      
+    
+    
+    
+    
+    
+    
+    
+
+    
+    <a href="https://github.com/fluxcd/website/edit/main/content/zh-cn/docs/gitops/packages.md" target="_blank"><i class="fa fa-edit fa-fw"></i> </a>
+    <a href="https://github.com/fluxcd/website/new/main/content/zh-cn/docs/gitops/packages.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> </a>
+    
+    <a href="https://github.com/fluxcd/website/issues/new?title=Using%20the%20GitOps%20Toolkit%20APIs%20with%20Go" target="_blank"><i class="fab fa-github fa-fw"></i> </a>
+    
+      
+      <a href="https://github.com/fluxcd/flux2/issues/new" target="_blank"><i class="fas fa-tasks fa-fw"></i> </a>
+    
+
+  
+  
+  </div>
+
+
+            
+
+
+<div class="td-toc"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#go-packages">Go Packages</a>
+      <ul>
+        <li><a href="#sourcetoolkitfluxcdio">source.toolkit.fluxcd.io</a></li>
+        <li><a href="#kustomizetoolkitfluxcdio">kustomize.toolkit.fluxcd.io</a></li>
+        <li><a href="#helmtoolkitfluxcdio">helm.toolkit.fluxcd.io</a></li>
+        <li><a href="#notificationtoolkitfluxcdio">notification.toolkit.fluxcd.io</a></li>
+        <li><a href="#imagetoolkitfluxcdio">image.toolkit.fluxcd.io</a></li>
+      </ul>
+    </li>
+    <li><a href="#crud-example">CRUD Example</a></li>
+  </ul>
+</nav></div>
+
+
+
+            
+
+	
+		
+
+
+
+  
+  
+
+	
+		
+
+
+
+  
+  
+
+	
+
+          </aside>
+          
+          
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+          
+            
+  
+
+            <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
+	<ol class="breadcrumb spb-1">
+		
+
+
+
+
+
+
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="/docs/">道场</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="/docs/gitops/">GitOps</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="/docs/gitops/packages/">Using the GitOps Toolkit APIs with Go</a>
+</li>
+
+	</ol>
+</nav	>
+
+            
+            
+<div class="td-content">
+	<h1>Using the GitOps Toolkit APIs with Go</h1>
+	<div class="lead">The GitOps Toolkit client libraries documentation.</div>
+	<header class="article-meta">
+		
+		
+			
+				
+
+
+			
+				
+
+
+			
+		
+		
+	</header>    
+	<p>While you can use the GitOps Toolkit APIs in a declarative manner with <code>kubectl apply</code>,
+we provide client library code for all our toolkit APIs that makes it easier to access them from Go.</p>
+<h2 id="go-packages">Go Packages</h2>
+<p>The GitOps Toolkit Go modules and controllers are released by following the 
+<a href="https://semver.org" target="_blank">semver</a> conventions.</p>
+<p>The API schema definitions modules have the following dependencies:</p>
+<ul>
+<li>
+<a href="https://pkg.go.dev/github.com/fluxcd/pkg/apis/meta" target="_blank">github.com/fluxcd/pkg/apis/meta</a></li>
+<li>
+<a href="https://pkg.go.dev/github.com/fluxcd/pkg/runtime" target="_blank">github.com/fluxcd/pkg/runtime</a></li>
+<li>
+<a href="https://pkg.go.dev/k8s.io/apimachinery" target="_blank">k8s.io/apimachinery</a></li>
+<li>
+<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime" target="_blank">sigs.k8s.io/controller-runtime</a></li>
+</ul>
+<p>The APIs can be consumed with the 
+<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client" target="_blank">controller-runtime client</a>.</p>
+<h3 id="sourcetoolkitfluxcdio">source.toolkit.fluxcd.io</h3>
+<p>Download package</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">go get github.com/fluxcd/source-controller/api
+</code></pre></div><p>Import package</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#007020;font-weight:bold">import</span> sourcev1 <span style="color:#4070a0">&#34;github.com/fluxcd/source-controller/api/v1beta1&#34;</span>
+</code></pre></div><p>API Types</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="../components/source/gitrepositories.md">GitRepository</a></td>
+<td>v1beta1</td>
+</tr>
+<tr>
+<td>
+<a href="../components/source/helmrepositories.md">HelmRepository</a></td>
+<td>v1beta1</td>
+</tr>
+<tr>
+<td>
+<a href="../components/source/helmcharts.md">HelmChart</a></td>
+<td>v1beta1</td>
+</tr>
+<tr>
+<td>
+<a href="../components/source/buckets.md">Bucket</a></td>
+<td>v1beta1</td>
+</tr>
+</tbody>
+</table>
+<h3 id="kustomizetoolkitfluxcdio">kustomize.toolkit.fluxcd.io</h3>
+<p>Download package</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">go get github.com/fluxcd/kustomize-controller/api
+</code></pre></div><p>Import package</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#007020;font-weight:bold">import</span> kustomizev1 <span style="color:#4070a0">&#34;github.com/fluxcd/kustomize-controller/api/v1beta1&#34;</span>
+</code></pre></div><p>API Types</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="../components/kustomize/kustomization.md">Kustomization</a></td>
+<td>v1beta1</td>
+</tr>
+</tbody>
+</table>
+<h3 id="helmtoolkitfluxcdio">helm.toolkit.fluxcd.io</h3>
+<p>Download package</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">go get github.com/fluxcd/helm-controller/api
+</code></pre></div><p>Import package</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#007020;font-weight:bold">import</span> helmv2 <span style="color:#4070a0">&#34;github.com/fluxcd/helm-controller/api/v2beta1&#34;</span>
+</code></pre></div><p>API Types</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="../components/helm/helmreleases.md">HelmRelease</a></td>
+<td>v2beta1</td>
+</tr>
+</tbody>
+</table>
+<h3 id="notificationtoolkitfluxcdio">notification.toolkit.fluxcd.io</h3>
+<p>Download package</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">go get github.com/fluxcd/notification-controller/api
+</code></pre></div><p>Import package</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#007020;font-weight:bold">import</span> helmv2 <span style="color:#4070a0">&#34;github.com/fluxcd/notification-controller/api/v1beta1&#34;</span>
+</code></pre></div><p>API Types</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="../components/notification/receiver.md">Receiver</a></td>
+<td>v1beta1</td>
+</tr>
+<tr>
+<td>
+<a href="../components/notification/provider.md">Provider</a></td>
+<td>v1beta1</td>
+</tr>
+<tr>
+<td>
+<a href="../components/notification/alert.md">Alert</a></td>
+<td>v1beta1</td>
+</tr>
+</tbody>
+</table>
+<h3 id="imagetoolkitfluxcdio">image.toolkit.fluxcd.io</h3>
+<p>Download package</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">go get github.com/fluxcd/image-reflector-controller/api
+go get github.com/fluxcd/imame-automation-controller/api
+</code></pre></div><p>Import package</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#007020;font-weight:bold">import</span> (
+	imagev1 <span style="color:#4070a0">&#34;github.com/fluxcd/image-reflector-controller/api/v1alpha2&#34;</span>
+	autov1 <span style="color:#4070a0">&#34;github.com/fluxcd/image-automation-controller/api/v1alpha2&#34;</span>
+)
+</code></pre></div><p>API Types</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="../components/image/imagerepositories.md">ImageRepository</a></td>
+<td>v1alpha2</td>
+</tr>
+<tr>
+<td>
+<a href="../components/image/imagepolicies.md">ImagePolicy</a></td>
+<td>v1alpha2</td>
+</tr>
+<tr>
+<td>
+<a href="../components/image/imageupdateautomations.md">ImageUpdateAutomation</a></td>
+<td>v1alpha2</td>
+</tr>
+</tbody>
+</table>
+<h2 id="crud-example">CRUD Example</h2>
+<p>Here is an example of how to create a Helm release, wait for it to install, then delete it:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#007020;font-weight:bold">package</span> main
+
+<span style="color:#007020;font-weight:bold">import</span> (
+  <span style="color:#4070a0">&#34;context&#34;</span>
+  <span style="color:#4070a0">&#34;fmt&#34;</span>
+  <span style="color:#4070a0">&#34;time&#34;</span>
+
+  apiextensionsv1 <span style="color:#4070a0">&#34;k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1&#34;</span>
+  <span style="color:#4070a0">&#34;k8s.io/apimachinery/pkg/api/meta&#34;</span>
+  metav1 <span style="color:#4070a0">&#34;k8s.io/apimachinery/pkg/apis/meta/v1&#34;</span>
+  <span style="color:#4070a0">&#34;k8s.io/apimachinery/pkg/runtime&#34;</span>
+  <span style="color:#4070a0">&#34;k8s.io/apimachinery/pkg/types&#34;</span>
+  <span style="color:#4070a0">&#34;k8s.io/apimachinery/pkg/util/wait&#34;</span>
+  _ <span style="color:#4070a0">&#34;k8s.io/client-go/plugin/pkg/client/auth&#34;</span>
+  ctrl <span style="color:#4070a0">&#34;sigs.k8s.io/controller-runtime&#34;</span>
+  <span style="color:#4070a0">&#34;sigs.k8s.io/controller-runtime/pkg/client&#34;</span>
+
+  helmv2 <span style="color:#4070a0">&#34;github.com/fluxcd/helm-controller/api/v2beta1&#34;</span>
+  apimeta <span style="color:#4070a0">&#34;github.com/fluxcd/pkg/apis/meta&#34;</span>
+  sourcev1 <span style="color:#4070a0">&#34;github.com/fluxcd/source-controller/api/v1beta1&#34;</span>
+)
+
+<span style="color:#007020;font-weight:bold">func</span> <span style="color:#06287e">main</span>() {
+  <span style="color:#60a0b0;font-style:italic">// register the GitOps Toolkit schema definitions
+</span><span style="color:#60a0b0;font-style:italic"></span>  scheme <span style="color:#666">:=</span> runtime.<span style="color:#06287e">NewScheme</span>()
+  _ = sourcev1.<span style="color:#06287e">AddToScheme</span>(scheme)
+  _ = helmv2.<span style="color:#06287e">AddToScheme</span>(scheme)
+
+  <span style="color:#60a0b0;font-style:italic">// init Kubernetes client
+</span><span style="color:#60a0b0;font-style:italic"></span>  kubeClient, err <span style="color:#666">:=</span> client.<span style="color:#06287e">New</span>(ctrl.<span style="color:#06287e">GetConfigOrDie</span>(), client.Options{Scheme: scheme})
+  <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+    <span style="color:#007020">panic</span>(err)
+  }
+
+  <span style="color:#60a0b0;font-style:italic">// set a deadline for the Kubernetes API operations
+</span><span style="color:#60a0b0;font-style:italic"></span>  ctx, cancel <span style="color:#666">:=</span> context.<span style="color:#06287e">WithTimeout</span>(context.<span style="color:#06287e">Background</span>(), <span style="color:#40a070">60</span><span style="color:#666">*</span>time.Second)
+  <span style="color:#007020;font-weight:bold">defer</span> <span style="color:#06287e">cancel</span>()
+
+  <span style="color:#60a0b0;font-style:italic">// create a Helm repository pointing to Bitnami
+</span><span style="color:#60a0b0;font-style:italic"></span>  helmRepository <span style="color:#666">:=</span> <span style="color:#666">&amp;</span>sourcev1.HelmRepository{
+    ObjectMeta: metav1.ObjectMeta{
+      Name:      <span style="color:#4070a0">&#34;bitnami&#34;</span>,
+      Namespace: <span style="color:#4070a0">&#34;default&#34;</span>,
+    },
+    Spec: sourcev1.HelmRepositorySpec{
+      URL: <span style="color:#4070a0">&#34;https://charts.bitnami.com/bitnami&#34;</span>,
+      Interval: metav1.Duration{
+        Duration: <span style="color:#40a070">30</span> <span style="color:#666">*</span> time.Minute,
+      },
+    },
+  }
+  <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">:=</span> kubeClient.<span style="color:#06287e">Create</span>(ctx, helmRepository); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+    fmt.<span style="color:#06287e">Println</span>(err)
+  } <span style="color:#007020;font-weight:bold">else</span> {
+    fmt.<span style="color:#06287e">Println</span>(<span style="color:#4070a0">&#34;HelmRepository bitnami created&#34;</span>)
+  }
+
+  <span style="color:#60a0b0;font-style:italic">// create a Helm release for nginx
+</span><span style="color:#60a0b0;font-style:italic"></span>  helmRelease <span style="color:#666">:=</span> <span style="color:#666">&amp;</span>helmv2.HelmRelease{
+    ObjectMeta: metav1.ObjectMeta{
+      Name:      <span style="color:#4070a0">&#34;nginx&#34;</span>,
+      Namespace: <span style="color:#4070a0">&#34;default&#34;</span>,
+    },
+    Spec: helmv2.HelmReleaseSpec{
+      ReleaseName: <span style="color:#4070a0">&#34;nginx&#34;</span>,
+      Interval: metav1.Duration{
+        Duration: <span style="color:#40a070">5</span> <span style="color:#666">+</span> time.Minute,
+      },
+      Chart: helmv2.HelmChartTemplate{
+        Spec: helmv2.HelmChartTemplateSpec{
+          Chart:   <span style="color:#4070a0">&#34;nginx&#34;</span>,
+          Version: <span style="color:#4070a0">&#34;8.x&#34;</span>,
+          SourceRef: helmv2.CrossNamespaceObjectReference{
+            Kind: sourcev1.HelmRepositoryKind,
+            Name: <span style="color:#4070a0">&#34;bitnami&#34;</span>,
+          },
+        },
+      },
+      Values: <span style="color:#666">&amp;</span>apiextensionsv1.JSON{Raw: []<span style="color:#007020">byte</span>(<span style="color:#4070a0">`{&#34;service&#34;: {&#34;type&#34;: &#34;ClusterIP&#34;}}`</span>)},
+    },
+  }
+  <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">:=</span> kubeClient.<span style="color:#06287e">Create</span>(ctx, helmRelease); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+    fmt.<span style="color:#06287e">Println</span>(err)
+  } <span style="color:#007020;font-weight:bold">else</span> {
+    fmt.<span style="color:#06287e">Println</span>(<span style="color:#4070a0">&#34;HelmRelease nginx created&#34;</span>)
+  }
+
+  <span style="color:#60a0b0;font-style:italic">// wait for the a Helm release to be reconciled
+</span><span style="color:#60a0b0;font-style:italic"></span>  fmt.<span style="color:#06287e">Println</span>(<span style="color:#4070a0">&#34;Waiting for nginx to be installed&#34;</span>)
+  <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">:=</span> wait.<span style="color:#06287e">PollImmediate</span>(<span style="color:#40a070">2</span><span style="color:#666">*</span>time.Second, <span style="color:#40a070">1</span><span style="color:#666">*</span>time.Minute,
+    <span style="color:#007020;font-weight:bold">func</span>() (done <span style="color:#902000">bool</span>, err <span style="color:#902000">error</span>) {
+      namespacedName <span style="color:#666">:=</span> types.NamespacedName{
+        Namespace: helmRelease.<span style="color:#06287e">GetNamespace</span>(),
+        Name:      helmRelease.<span style="color:#06287e">GetName</span>(),
+      }
+      <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">:=</span> kubeClient.<span style="color:#06287e">Get</span>(ctx, namespacedName, helmRelease); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+        <span style="color:#007020;font-weight:bold">return</span> <span style="color:#007020;font-weight:bold">false</span>, err
+      }
+      <span style="color:#007020;font-weight:bold">return</span> meta.<span style="color:#06287e">IsStatusConditionTrue</span>(helmRelease.Status.Conditions, apimeta.ReadyCondition), <span style="color:#007020;font-weight:bold">nil</span>
+    }); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+    fmt.<span style="color:#06287e">Println</span>(err)
+  }
+
+  <span style="color:#60a0b0;font-style:italic">// print the reconciliation status
+</span><span style="color:#60a0b0;font-style:italic"></span>  fmt.<span style="color:#06287e">Println</span>(meta.<span style="color:#06287e">FindStatusCondition</span>(helmRelease.Status.Conditions, apimeta.ReadyCondition).Message)
+
+  <span style="color:#60a0b0;font-style:italic">// uninstall the release and delete the repository
+</span><span style="color:#60a0b0;font-style:italic"></span>  <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">:=</span> kubeClient.<span style="color:#06287e">Delete</span>(ctx, helmRelease); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+    fmt.<span style="color:#06287e">Println</span>(err)
+  }
+  <span style="color:#007020;font-weight:bold">if</span> err <span style="color:#666">:=</span> kubeClient.<span style="color:#06287e">Delete</span>(ctx, helmRepository); err <span style="color:#666">!=</span> <span style="color:#007020;font-weight:bold">nil</span> {
+    fmt.<span style="color:#06287e">Println</span>(err)
+  }
+  fmt.<span style="color:#06287e">Println</span>(<span style="color:#4070a0">&#34;Helm repository and release deleted&#34;</span>)
+}
+</code></pre></div><p>For an example on how to build a Kubernetes controller that interacts with the GitOps Toolkit APIs see
+
+<a href="/docs/gitops/source-watcher/">source-watcher</a>.</p>
+
+	
+	
+	<div class="text-muted mt-5 pt-3 border-top">
+
+</div>
+
+</div>
+
+
+          </main>
+        </div>
+      </div>
+      
+<footer class="bg-dark py-5 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+        
+        
+<ul class="list-inline mb-0">
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Twitter" aria-label="Twitter">
+    <a class="text-white" target="_blank" rel="noopener" href="https://twitter.com/fluxcd" aria-label="Twitter">
+      <i class="fab fa-twitter"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="LinkedIn" aria-label="LinkedIn">
+    <a class="text-white" target="_blank" rel="noopener" href="https://linkedin.com/groups/8985374" aria-label="LinkedIn">
+      <i class="fab fa-linkedin"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="RSS Feed" aria-label="RSS Feed">
+    <a class="text-white" target="_blank" rel="noopener" href="/blog/index.xml" aria-label="RSS Feed">
+      <i class="fa fa-rss"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Support" aria-label="Support">
+    <a class="text-white" target="_blank" rel="noopener" href="/support" aria-label="Support">
+      <i class="fas fa-comments"></i>
+    </a>
+  </li>
+  
+</ul>
+
+        
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+        
+        
+<ul class="list-inline mb-0">
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Flux project on GitHub" aria-label="Flux project on GitHub">
+    <a class="text-white" target="_blank" rel="noopener" href="https://github.com/fluxcd" aria-label="Flux project on GitHub">
+      <i class="fab fa-github"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Slack" aria-label="Slack">
+    <a class="text-white" target="_blank" rel="noopener" href="https://cloud-native.slack.com/messages/flux" aria-label="Slack">
+      <i class="fab fa-slack"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Developer mailing list" aria-label="Developer mailing list">
+    <a class="text-white" target="_blank" rel="noopener" href="https://lists.cncf.io/g/cncf-flux-dev" aria-label="Developer mailing list">
+      <i class="fa fa-envelope"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Flux YouTube channel" aria-label="Flux YouTube channel">
+    <a class="text-white" target="_blank" rel="noopener" href="https://www.youtube.com/channel/UCoZxt-YMhGHb20ZkvcCc5KA" aria-label="Flux YouTube channel">
+      <i class="fab fa-youtube"></i>
+    </a>
+  </li>
+  
+</ul>
+
+        
+        
+      </div>
+      <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
+        <small class="text-white">&copy; 2021 The Flux authors </small>
+        
+	
+		
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+<script src="/js/main.min.5c74b870c6953931a705f390a49c7e4c0a842ec5c83b24354758dd674343ed0d.js" integrity="sha256-XHS4cMaVOTGnBfOQpJx&#43;TAqELsXIOyQ1R1jdZ0ND7Q0=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<script type="text/javascript"> docsearch({
+apiKey: '45f9f14d53600b0a2cafa46a26ee10f4',
+indexName: 'fluxcd',
+inputSelector: '.td-search-input',
+
+algoliaOptions: { 'facetFilters': ["tags:current"] },
+
+debug: false 
+});
+</script>
+
+
+
+  </body>
+</html>

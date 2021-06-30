@@ -1,0 +1,745 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>道场 – Flux</title>
+    <link>/legacy/flux/</link>
+    <description>Recent content in Flux on 道场</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="/legacy/flux/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Legacy: Introducing Flux</title>
+      <link>/legacy/flux/introduction/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/introduction/</guid>
+      <description>
+        
+        
+        &lt;p&gt;Continuous delivery is a term that encapsulates a set of best practices
+that surround building, deploying and monitoring applications. The
+goal is to provide a sustainable model for maintaining and improving
+an application.&lt;/p&gt;
+&lt;p&gt;Flux is a tool that automates the deployment of containers to
+Kubernetes. It fills the automation void that exists between building
+and monitoring.&lt;/p&gt;
+&lt;h2 id=&#34;automated-git-cluster-synchronisation&#34;&gt;Automated git-&amp;gt;cluster synchronisation&lt;/h2&gt;
+&lt;p&gt;Flux&amp;rsquo;s main feature is the automated synchronisation between a version
+control repository and a cluster. If you make any changes to your
+repository, those changes are automatically deployed to your cluster.&lt;/p&gt;
+&lt;p&gt;This is a simple, but dramatic improvement on current state of the art.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;All configuration is stored within version control and is inherently
+up to date. At any point anyone could completely recreate the cluster
+in exactly the same state of configuration.&lt;/li&gt;
+&lt;li&gt;Changes to the cluster are immediately visible to all interested
+parties.&lt;/li&gt;
+&lt;li&gt;During a postmortem, the git log provides the perfect history for an
+audit.&lt;/li&gt;
+&lt;li&gt;End to end, code to production pipelines become not only possible, but
+easy.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;automated-deployment-of-new-container-images&#34;&gt;Automated deployment of new container images&lt;/h2&gt;
+&lt;p&gt;Another feature is the automated deployment of containers. It will
+continuously monitor a range of container registries and deploy new
+versions where applicable.&lt;/p&gt;
+&lt;p&gt;This is really useful for keeping the repository and therefore the
+cluster up to date. It allows separate teams to have their own
+deployment pipelines since Flux is able to see the new image and update
+the cluster accordingly.&lt;/p&gt;
+&lt;p&gt;This feature can be disabled and images can be locked to a specific
+version.&lt;/p&gt;
+&lt;h2 id=&#34;integrations-with-other-devops-tools&#34;&gt;Integrations with other devops tools&lt;/h2&gt;
+&lt;p&gt;For configuration customization across environments and clusters, Flux comes with builtin support
+for 
+&lt;a href=&#34;/legacy/flux/references/fluxyaml-config-files/&#34;&gt;Kustomize&lt;/a&gt; and 
+&lt;a href=&#34;/legacy/flux/references/helm-operator-integration/&#34;&gt;Helm&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;For advanced deployment patterns like Canary releases, A/B testing and Blue/Green deployments,
+Flux can be used together with 
+&lt;a href=&#34;https://flagger.app&#34; target=&#34;_blank&#34;&gt;Flagger&lt;/a&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Requirements and limitations</title>
+      <link>/legacy/flux/requirements/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/requirements/</guid>
+      <description>
+        
+        
+        &lt;p&gt;Flux has some requirements of the files it finds in your git repo.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Flux can only deal with one such repo at a time. This limitation is
+technical and may go away.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Flux only deals with YAML files at present. It tries to preserve
+comments and whitespace in YAMLs when updating them. You may see
+updates with incidental, harmless changes, like reindented blocks.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Flux will ignore directories that look like Helm charts, to avoid
+applying templated YAML manifests. A directory will be skipped if
+its contents include the files &lt;code&gt;Chart.yaml&lt;/code&gt; and &lt;code&gt;values.yaml&lt;/code&gt;, as
+these are the (only) mandatory components of a Helm chart.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;It is &lt;em&gt;not&lt;/em&gt; a requirement that the files are arranged in any
+particular way into directories. Flux will look in subdirectories for
+YAML files recursively, but does not infer any meaning from the
+directory structure.&lt;/p&gt;
+&lt;p&gt;Flux uses the Docker Registry API to collect metadata about the images
+running in the cluster. This comes with at least one limitation:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Since Flux runs in a container in your cluster, it may not be able
+to resolve all hostnames that you or Kubernetes can resolve. In
+particular, it won&amp;rsquo;t be able to get image metadata for images in a
+private image registry that&amp;rsquo;s made available at &lt;code&gt;localhost&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Get started</title>
+      <link>/legacy/flux/get-started/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/get-started/</guid>
+      <description>
+        
+        
+        &lt;p&gt;All you need is a Kubernetes cluster and a git repo. The git repo
+contains 
+&lt;a href=&#34;https://kubernetes.io/docs/concepts/configuration/overview/&#34; target=&#34;_blank&#34;&gt;manifests&lt;/a&gt;
+(as YAML files) describing what should run in the cluster. Flux imposes
+
+&lt;a href=&#34;../requirements.md&#34;&gt;some requirements&lt;/a&gt; on these files.&lt;/p&gt;
+&lt;h2 id=&#34;installing-flux&#34;&gt;Installing Flux&lt;/h2&gt;
+&lt;p&gt;Here are the instructions to 
+&lt;a href=&#34;../tutorials/get-started&#34;&gt;install Flux on your own
+cluster&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;If you are using Helm, we have a 
+&lt;a href=&#34;../tutorials/get-started-helm&#34;&gt;separate section about
+this&lt;/a&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: References</title>
+      <link>/legacy/flux/references/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/references/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Guides</title>
+      <link>/legacy/flux/guides/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/guides/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Tutorials</title>
+      <link>/legacy/flux/tutorials/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/tutorials/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Frequently asked questions</title>
+      <link>/legacy/flux/faq/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/faq/</guid>
+      <description>
+        
+        
+        &lt;h2 id=&#34;migrate-to-flux-v2&#34;&gt;Migrate to Flux v2&lt;/h2&gt;
+&lt;p&gt;
+&lt;a href=&#34;https://github.com/fluxcd/flux/issues/3320&#34; target=&#34;_blank&#34;&gt;Flux v1 is in maintenance&lt;/a&gt; on the road to becoming formally superseded by Flux v2. Flux users are all encouraged to 
+&lt;a href=&#34;https://toolkit.fluxcd.io/guides/flux-v1-migration/&#34; target=&#34;_blank&#34;&gt;migrate to Flux v2&lt;/a&gt; as early as possible.&lt;/p&gt;
+&lt;h3 id=&#34;why-should-i-upgrade&#34;&gt;Why should I upgrade&lt;/h3&gt;
+&lt;p&gt;Flux v2 includes some breaking changes, which means there is some work required to migrate. We hope that Flux users can all be persuaded to upgrade. There are some great reasons to follow the FluxCD organization&amp;rsquo;s latest hard work and consider upgrading to Flux v2:&lt;/p&gt;
+&lt;h4 id=&#34;flux-v1-runtime-behavior-doesnt-scale-well&#34;&gt;Flux v1 runtime behavior doesn&amp;rsquo;t scale well&lt;/h4&gt;
+&lt;p&gt;While there are many Flux v1 users in production, and some of them are running at very large scales, Flux users with smaller operations or those that haven&amp;rsquo;t needed to scale maybe didn&amp;rsquo;t notice that Flux v1 actually doesn&amp;rsquo;t scale very well at all.&lt;/p&gt;
+&lt;p&gt;Some architectural issues in the original design of Flux weren&amp;rsquo;t practical to resolve, or weren&amp;rsquo;t known, until after implementations could be attempted at scale.&lt;/p&gt;
+&lt;p&gt;One can debate the design choices made in Flux v1 vs. Flux v2, but it was judged by the maintainers that the design of Flux importantly required some breaking changes to resolve some key architectural issues.&lt;/p&gt;
+&lt;p&gt;Flux v1 implementation of image automation has serious performance issues scaling into thousands of images. This came to a head when Docker Hub started rate-limiting image pulls, because of the expense of this operation performed casually and at scale.&lt;/p&gt;
+&lt;p&gt;That&amp;rsquo;s right, rate limiting undoutedly happened because of abusive clients pulling image metadata from many images (like Flux v1 did,) images that might only be stored for the purpose of retention policies, that might be relegated to cold storage if they were not being periodically retrieved.&lt;/p&gt;
+&lt;p&gt;Flux v2 resolved this with 
+&lt;a href=&#34;/guides/sortable-image-tags/&#34;&gt;sortable image tags&lt;/a&gt;; (this is a breaking change.)&lt;/p&gt;
+&lt;p&gt;Flux v1 requires one Flux daemon to be running per git repository/branch that syncs to the cluster. Flux v2 only expects cluster operators to run one source-controller instance, allowing to manage multiple repositories, or multiple clusters (or an entire fleet) with just one Flux installation.&lt;/p&gt;
+&lt;p&gt;Fundamentally, Flux v1 was one single configuration and reconciliation per daemon process, while Flux v2 is designed to handle many configurations for concurrent resources like git repositories, helm charts, helm releases, tenants, clusters, Kustomizations, git providers, alert providers, (&amp;hellip; the list continues to grow.)&lt;/p&gt;
+&lt;h4 id=&#34;flux-v2-is-more-reliable-and-observable&#34;&gt;Flux v2 is more reliable and observable&lt;/h4&gt;
+&lt;p&gt;As many advanced Flux v1 users will know, Flux&amp;rsquo;s manifest generation capabilities come at a heavy cost. If manifest generation takes too long, timeout errors in Flux v1 can pre-empt the main loop and prevent the reconciliation of manifests altogether. The effect of this circumstance is a complete Denial-of-Service for changes to any resources managed by Flux v1 — it goes without saying, this is very bad.&lt;/p&gt;
+&lt;p&gt;Failures in Flux v2 are handled gracefully, with each controller performing separate reconciliations on the resources in their domain. One Kustomization can fail reconciling, or one GitRepository can fail syncing (for whatever reason including its own configurable timeout period), without interrupting the whole Flux system.&lt;/p&gt;
+&lt;p&gt;An error is captured as a Kubernetes &lt;code&gt;Event&lt;/code&gt; CRD, and is reflected in the &lt;code&gt;Status&lt;/code&gt; of the resource that had an error. When there is a fault, the new design allows that other processes should not be impacted by the fault.&lt;/p&gt;
+&lt;h4 id=&#34;flux-v2-covers-new-use-cases&#34;&gt;Flux v2 covers new use cases&lt;/h4&gt;
+&lt;p&gt;There is an idealized use case of GitOps we might explain as: when an update comes, a pull-request is automatically opened and when it gets merged, it is automatically applied to the cluster. That sounds great, but is not really how things work in Flux v1.&lt;/p&gt;
+&lt;p&gt;In Flux v2, this can actually be used as a real strategy; it is straight-forward to implement and covered by documenation: 
+&lt;a href=&#34;/docs/guides/image-update/#push-updates-to-a-different-branch&#34;&gt;Push updates to a different branch&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In Flux v1, it was possible to set up incoming webhooks with 
+&lt;a href=&#34;https://github.com/fluxcd/flux-recv&#34; target=&#34;_blank&#34;&gt;flux-recv&lt;/a&gt; as a sidecar to Flux, which while it worked nicely, it isn&amp;rsquo;t nicely integrated and frankly feels bolted-on, sort of like an after-market part. This may be more than appearance, it isn&amp;rsquo;t mentioned at all in Flux v1 docs!&lt;/p&gt;
+&lt;p&gt;The notification-controller is a core component in the architecture of Flux v2 and the &lt;code&gt;Receiver&lt;/code&gt; CRD can be used to configure similar functionality with included support for the multi-repository features of Flux.&lt;/p&gt;
+&lt;p&gt;Similarly, in Flux v1 it was possible to send notifications to outside webhooks like Slack, MS Teams, and GitHub, but only with the help of third-party tools like 
+&lt;a href=&#34;https://github.com/justinbarrick/fluxcloud&#34; target=&#34;_blank&#34;&gt;justinbarrick/fluxcloud&lt;/a&gt;. This functionality has also been subsumed as part of notification-controller and the &lt;code&gt;Alert&lt;/code&gt; CRD can be used to configure outgoing notifications for a growing list of alerting providers today!&lt;/p&gt;
+&lt;h4 id=&#34;flux-v2-takes-advantage-of-kubernetes-extension-api&#34;&gt;Flux v2 takes advantage of Kubernetes Extension API&lt;/h4&gt;
+&lt;p&gt;The addition of CRDs to the design of Flux is another great reason to upgrade. Flux v1 had a very limited API which was served from the Flux daemon, usually controlled by using &lt;code&gt;fluxctl&lt;/code&gt;, which has limited capabilities of inspection, and limited control over the behavior. By using CRDs, Flux v2 can take advantage of the Kubernetes API&amp;rsquo;s extensibility so Flux itself doesn&amp;rsquo;t need to run any daemon which responds directly to API requests.&lt;/p&gt;
+&lt;p&gt;Operations through Custom Resources (CRDs) provide great new opportunities for observability and eventing as was explained already, and also provides greater reliability through centralization.&lt;/p&gt;
+&lt;p&gt;Using one centralized, highly-available API service (the Kubernetes API) not only improves reliability, but is a great move for security as well; this decision reduces the risk that when new components are added, growing the functionality of the API, with each step we take we are potentially growing the attack surfaces.&lt;/p&gt;
+&lt;p&gt;The Kubernetes API is secured by default with TLS certificates for authentication and mandates RBAC configuration for authorization. It&amp;rsquo;s also available in every namespace on the cluster, with a default service account. This is a highly secure API design, and it is plain to see this implementation has many eyes on it.&lt;/p&gt;
+&lt;h4 id=&#34;flux-v1-wont-be-supported-forever&#34;&gt;Flux v1 won&amp;rsquo;t be supported forever&lt;/h4&gt;
+&lt;p&gt;The developers of Flux have committed to maintain Flux v1 to support their production user-base for a reasonable span of time.&lt;/p&gt;
+&lt;p&gt;It&amp;rsquo;s understood that many companies cannot adopt Flux v2 while it remains in prerelease state. So 
+&lt;a href=&#34;https://github.com/fluxcd/flux/issues/3320&#34; target=&#34;_blank&#34;&gt;Flux v1 is in maintenance mode&lt;/a&gt;, which will continue at least until a GA release of Flux v2 is announced, and security updates and critical fixes can be made available for at least 6 months following that time.&lt;/p&gt;
+&lt;p&gt;System administrators often need to plan their migrations far in advance, and these dates won&amp;rsquo;t remain on the horizon forever. It was announced as early as August 2019 that Flux v2 would be backward-incompatible, and that users would eventually be required to upgrade in order to continue to receive support from the maintainers.&lt;/p&gt;
+&lt;p&gt;Many users of Flux have already migrated production environments to Flux v2. Consider that the sooner this upgrade is undertaken by your organization, the sooner you can get it over with and have put this all behind you.&lt;/p&gt;
+&lt;h2 id=&#34;general-questions&#34;&gt;General questions&lt;/h2&gt;
+&lt;p&gt;Also see&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href=&#34;/legacy/flux/introduction/&#34;&gt;the introduction&lt;/a&gt; for Flux&amp;rsquo;s design principles&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;/legacy/flux/troubleshooting/&#34;&gt;the troubleshooting section&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;what-does-flux-do&#34;&gt;What does Flux do?&lt;/h3&gt;
+&lt;p&gt;Flux automates the process of deploying new configuration and
+container images to Kubernetes.&lt;/p&gt;
+&lt;h3 id=&#34;how-does-it-automate-deployment&#34;&gt;How does it automate deployment?&lt;/h3&gt;
+&lt;p&gt;It synchronises all manifests in a repository with a Kubernetes cluster.
+It also monitors container registries for new images and updates the
+manifests accordingly.&lt;/p&gt;
+&lt;h3 id=&#34;how-is-that-different-from-a-bash-script&#34;&gt;How is that different from a bash script?&lt;/h3&gt;
+&lt;p&gt;The amount of functionality contained within Flux warrants a dedicated
+application/service. An equivalent script could easily get too large
+to maintain and reuse.&lt;/p&gt;
+&lt;p&gt;Anyway, we&amp;rsquo;ve already done it for you!&lt;/p&gt;
+&lt;h3 id=&#34;why-should-i-automate-deployment&#34;&gt;Why should I automate deployment?&lt;/h3&gt;
+&lt;p&gt;Automation is a principle of lean development. It reduces waste, to
+provide efficiency gains. It empowers employees by removing dull
+tasks. It mitigates against failure by avoiding silly mistakes.&lt;/p&gt;
+&lt;h3 id=&#34;i-thought-flux-was-about-service-routing&#34;&gt;I thought Flux was about service routing?&lt;/h3&gt;
+&lt;p&gt;That&amp;rsquo;s 
+&lt;a href=&#34;https://www.weave.works/blog/flux-service-routing/&#34; target=&#34;_blank&#34;&gt;where we started a while
+ago&lt;/a&gt;. But we
+discovered that automating deployments was more urgent for our own
+purposes.&lt;/p&gt;
+&lt;p&gt;Staging deployments with clever routing is useful, but it&amp;rsquo;s a later
+level of operational maturity.&lt;/p&gt;
+&lt;p&gt;There are some pretty good solutions for service routing:
+
+&lt;a href=&#34;https://www.envoyproxy.io/&#34; target=&#34;_blank&#34;&gt;Envoy&lt;/a&gt;, 
+&lt;a href=&#34;https://istio.io&#34; target=&#34;_blank&#34;&gt;Istio&lt;/a&gt; for
+example. We may return to the matter of staged deployments.&lt;/p&gt;
+&lt;h3 id=&#34;are-there-prerelease-builds-i-can-run&#34;&gt;Are there prerelease builds I can run?&lt;/h3&gt;
+&lt;p&gt;There are builds from CI for each merge to master branch. See
+
+&lt;a href=&#34;https://hub.docker.com/r/fluxcd/flux-prerelease/tags&#34; target=&#34;_blank&#34;&gt;fluxcd/flux-prerelease&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;technical-questions&#34;&gt;Technical questions&lt;/h2&gt;
+&lt;h3 id=&#34;does-it-work-only-with-one-git-repository&#34;&gt;Does it work only with one git repository?&lt;/h3&gt;
+&lt;p&gt;At present, yes it works only with a single git repository containing
+Kubernetes manifests. You can have as many git repositories with
+application code as you like, to be clear &amp;ndash; see
+
+&lt;a href=&#34;#do-i-have-to-put-my-application-code-and-config-in-the-same-git-repo&#34;&gt;below&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;There&amp;rsquo;s no principled reason for this, it&amp;rsquo;s just
+a consequence of time and effort being in finite supply. If you have a
+use for multiple git repo support, please comment in
+&lt;a href=&#34;https://github.com/fluxcd/flux/issues/1164&#34;&gt;https://github.com/fluxcd/flux/issues/1164&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In the meantime, for some use cases you can run more than one Flux
+daemon and point them at different repos. If you do this, consider
+trimming the RBAC permissions you give each daemon&amp;rsquo;s service account.&lt;/p&gt;
+&lt;p&gt;This
+
+&lt;a href=&#34;https://github.com/justinbarrick/flux-operator&#34; target=&#34;_blank&#34;&gt;Flux (daemon) operator&lt;/a&gt;
+project may be of use for managing multiple daemons.&lt;/p&gt;
+&lt;h3 id=&#34;do-i-have-to-put-my-application-code-and-config-in-the-same-git-repo&#34;&gt;Do I have to put my application code and config in the same git repo?&lt;/h3&gt;
+&lt;p&gt;Nope, but they can be if you want to keep them together. Flux doesn&amp;rsquo;t
+need to know about your application code, since it deals with
+container images (i.e., once your application code has already been
+built).&lt;/p&gt;
+&lt;h3 id=&#34;is-there-any-special-directory-layout-i-need-in-my-git-repo&#34;&gt;Is there any special directory layout I need in my git repo?&lt;/h3&gt;
+&lt;p&gt;Nope. Flux doesn&amp;rsquo;t place any significance on the directory structure,
+and will descend into subdirectories in search of YAMLs. Although 
+&lt;a href=&#34;https://kubernetes.io/docs/concepts/configuration/overview/#using-kubectl&#34; target=&#34;_blank&#34;&gt;kubectl works with JSON files&lt;/a&gt;, Flux will ignore JSON. It avoids
+directories that look like Helm charts.&lt;/p&gt;
+&lt;p&gt;If you have YAML files in the repo that &lt;em&gt;aren&amp;rsquo;t&lt;/em&gt; for applying to
+Kubernetes, use &lt;code&gt;--git-path&lt;/code&gt; to constrain where Flux starts looking.&lt;/p&gt;
+&lt;p&gt;See also 
+&lt;a href=&#34;/legacy/flux/requirements/&#34;&gt;requirements.md&lt;/a&gt; for a little more
+explanation.&lt;/p&gt;
+&lt;h3 id=&#34;why-does-flux-need-a-git-ssh-key-with-write-access&#34;&gt;Why does Flux need a git ssh key with write access?&lt;/h3&gt;
+&lt;p&gt;There are a number of Flux commands and API calls which will update the git repo in the course of
+applying the command. This is done to ensure that git remains the single source of truth.&lt;/p&gt;
+&lt;p&gt;For example, if you use the following &lt;code&gt;fluxctl&lt;/code&gt; command:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl release --controller&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;deployment/foo --update-image&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;bar:v2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The image tag will be updated in the git repository upon applying the command.&lt;/p&gt;
+&lt;p&gt;For more information about Flux commands see 
+&lt;a href=&#34;/legacy/flux/references/fluxctl/&#34;&gt;the &lt;code&gt;fluxctl&lt;/code&gt; docs&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;can-i-run-flux-with-readonly-git-access&#34;&gt;Can I run Flux with readonly Git access?&lt;/h3&gt;
+&lt;p&gt;Yes. You can use the &lt;code&gt;--git-readonly&lt;/code&gt; command line argument.  The Helm
+chart exposes this as &lt;code&gt;git.readonly&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;This will prevent Flux from trying to write to your repository. You
+should also provide a readonly SSH key; e.g., on GitHub, leave the
+&lt;code&gt;Allow write access&lt;/code&gt; box unchecked when you add the deploy key.&lt;/p&gt;
+&lt;h3 id=&#34;does-flux-automatically-sync-changes-back-to-git&#34;&gt;Does Flux automatically sync changes back to git?&lt;/h3&gt;
+&lt;p&gt;No, Flux will not update Git based on changes to the clusters performed through some other means. It applies changes to git only when a Flux command or API call makes them. For example, when 
+&lt;a href=&#34;/legacy/flux/references/automated-image-update/&#34;&gt;automated image updates&lt;/a&gt; are enabled.&lt;/p&gt;
+&lt;h3 id=&#34;will-flux-delete-resources-when-i-remove-them-from-git&#34;&gt;Will Flux delete resources when I remove them from git?&lt;/h3&gt;
+&lt;p&gt;Flux has an garbage collection feature, enabled by passing the command-line
+flag &lt;code&gt;--sync-garbage-collection&lt;/code&gt; to &lt;code&gt;fluxd&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The garbage collection is conservative: it is designed to not delete
+resources that were not created by &lt;code&gt;fluxd&lt;/code&gt;. This means it will sometimes
+&lt;em&gt;not&lt;/em&gt; delete resources that &lt;em&gt;were&lt;/em&gt; created by &lt;code&gt;fluxd&lt;/code&gt;, when reconfigured.
+Read more about garbage collection 
+&lt;a href=&#34;/legacy/flux/references/garbagecollection/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;how-do-i-give-flux-access-to-an-image-registry&#34;&gt;How do I give Flux access to an image registry?&lt;/h3&gt;
+&lt;p&gt;Flux transparently looks at the image pull secrets that you attach to
+workloads and service accounts, and thereby uses the same credentials
+that Kubernetes uses for pulling each image. In general, if your pods
+are running, then Kubernetes has pulled the images, and Flux should be
+able to access them too.&lt;/p&gt;
+&lt;p&gt;There are exceptions:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;One way of supplying credentials in Kubernetes is to put them on each
+node; Flux does not have access to those credentials.&lt;/li&gt;
+&lt;li&gt;In some environments, authorisation provided by the platform is
+used instead of image pull secrets:
+&lt;ul&gt;
+&lt;li&gt;Google Container Registry works this way; Flux will
+automatically attempt to use platform-provided credentials when
+scanning images in GCR.&lt;/li&gt;
+&lt;li&gt;Amazon Elastic Container Registry (ECR) has its own
+authentication using IAM. If your worker nodes can read from
+ECR, then Flux will be able to access it too.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To work around exceptional cases, you can mount a docker config into
+the Flux container. See the argument &lt;code&gt;--docker-config&lt;/code&gt; in 
+&lt;a href=&#34;/legacy/flux/references/daemon/&#34;&gt;the daemon
+arguments reference&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;For ECR, Flux requires access to the EC2 instance metadata API to
+obtain AWS credentials. Kube2iam, Kiam, and potentially other
+Kuberenetes IAM utilities may block pod level access to the EC2
+metadata APIs. If this is the case, Flux will be unable to poll ECR
+for automated workloads.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;If you are using Kiam, you need to whitelist the following API routes:
+&lt;pre&gt;&lt;code&gt;--whitelist-route-regexp=(/latest/meta-data/placement/availability-zone|/latest/dynamic/instance-identity/document)
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;If you are using kube2iam, ensure the values of &amp;ndash;iptables and
+&amp;ndash;in-interface are 
+&lt;a href=&#34;https://github.com/jtblin/kube2iam#iptables&#34; target=&#34;_blank&#34;&gt;configured correctly for your virtual network
+provider&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;See also
+
+&lt;a href=&#34;#why-are-my-images-not-showing-up-in-the-list-of-images&#34;&gt;Why are my images not showing up in the list of images?&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;how-often-does-flux-check-for-new-images&#34;&gt;How often does Flux check for new images?&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Flux scans image registries for metadata as quickly as it can,
+given rate limiting; and,&lt;/li&gt;
+&lt;li&gt;checks if any automated workloads needs updates every five minutes,
+by default.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The latter default is quite conservative, so you can try lowering it
+(it&amp;rsquo;s set with the flag &lt;code&gt;--automation-interval&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;Please don&amp;rsquo;t &lt;em&gt;increase&lt;/em&gt; the rate limiting numbers (&lt;code&gt;--registry-rps&lt;/code&gt;
+and &lt;code&gt;--registry-burst&lt;/code&gt;) &amp;ndash; it&amp;rsquo;s possible to get blacklisted by image
+registries if you spam them with requests.&lt;/p&gt;
+&lt;p&gt;If you are using GCP/GKE/GCR, you will likely want much lower rate
+limits. Please see
+
+&lt;a href=&#34;https://github.com/fluxcd/flux/issues/1016&#34; target=&#34;_blank&#34;&gt;fluxcd/flux#1016&lt;/a&gt;
+for specific advice.&lt;/p&gt;
+&lt;h3 id=&#34;how-often-does-flux-check-for-new-git-commits-and-can-i-make-it-sync-faster&#34;&gt;How often does Flux check for new git commits (and can I make it sync faster)?&lt;/h3&gt;
+&lt;p&gt;Short answer: every five minutes; and yes.&lt;/p&gt;
+&lt;p&gt;There are two flags that control how often Flux syncs the cluster with
+git. They are&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;--git-poll-interval&lt;/code&gt;, which controls how often it looks for new
+commits&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;--sync-interval&lt;/code&gt;, which controls how often it will apply what&amp;rsquo;s in
+git, to the cluster, absent new commits.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Both of these have five minutes as the default. When there are new
+commits, it will run a sync then and there, so in practice syncs
+happen more often than &lt;code&gt;--sync-interval&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;If you want to be more responsive to new commits, then give a shorter
+duration for &lt;code&gt;--git-poll-interval&lt;/code&gt;, so it will check more often.&lt;/p&gt;
+&lt;p&gt;It is less useful to shorten the duration for &lt;code&gt;--sync-interval&lt;/code&gt;, since
+that just controls how often it will sync &lt;em&gt;without&lt;/em&gt; there being new
+commits. Reducing it below a minute or so may hinder Flux, since syncs
+can take tens of seconds, leaving not much time to do other
+operations.&lt;/p&gt;
+&lt;h3 id=&#34;how-do-i-use-my-own-deploy-key&#34;&gt;How do I use my own deploy key?&lt;/h3&gt;
+&lt;p&gt;Flux uses a k8s secret to hold the git ssh deploy key. It is possible
+to provide your own.&lt;/p&gt;
+&lt;p&gt;First delete the secret (if it exists):&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl delete secret flux-git-deploy&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Then create a new secret named &lt;code&gt;flux-git-deploy&lt;/code&gt;, using your private key as the content of the secret (you can generate the key with &lt;code&gt;ssh-keygen -q -N &amp;quot;&amp;quot; -f /full/path/to/private_key&lt;/code&gt;):&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl create secret generic flux-git-deploy --from-file=identity=/full/path/to/private_key&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Now restart &lt;code&gt;fluxd&lt;/code&gt; to re-read the k8s secret (if it is running):&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl delete $(kubectl get pod -o name -l name=flux)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;If you have installed flux through Helm, make sure to pass
+&lt;code&gt;--set git.secretName=flux-git-deploy&lt;/code&gt; when installing/upgrading the chart.&lt;/p&gt;
+&lt;h3 id=&#34;how-do-i-use-a-private-git-host-or-one-thats-not-githubcom-gitlabcom-bitbucketorg-devazurecom-or-vs-sshvisualstudiocom&#34;&gt;How do I use a private git host (or one that&amp;rsquo;s not github.com, gitlab.com, bitbucket.org, dev.azure.com, or vs-ssh.visualstudio.com)?&lt;/h3&gt;
+&lt;p&gt;As part of using git+ssh securely from the Flux daemon, we make sure
+&lt;code&gt;StrictHostKeyChecking&lt;/code&gt; is on in the
+
+&lt;a href=&#34;https://man7.org/linux/man-pages/man5/ssh_config.5.html&#34; target=&#34;_blank&#34;&gt;SSH config&lt;/a&gt;. This
+mitigates against man-in-the-middle attacks.&lt;/p&gt;
+&lt;p&gt;We bake host keys for &lt;code&gt;github.com&lt;/code&gt;, &lt;code&gt;gitlab.com&lt;/code&gt;, &lt;code&gt;bitbucket.org&lt;/code&gt;, &lt;code&gt;dev.azure.com&lt;/code&gt;, and &lt;code&gt;vs-ssh.visualstudio.com&lt;/code&gt;
+into the image to cover some common cases. If you&amp;rsquo;re using another
+service, or running your own git host, you need to supply your own
+host key(s).&lt;/p&gt;
+&lt;p&gt;How to do this is documented in
+
+&lt;a href=&#34;/legacy/flux/guides/use-private-git-host/&#34;&gt;&amp;ldquo;Using a private Git host&amp;rdquo;&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;why-does-my-ci-pipeline-keep-getting-triggered&#34;&gt;Why does my CI pipeline keep getting triggered?&lt;/h3&gt;
+&lt;p&gt;There&amp;rsquo;s a couple of reasons this can happen.&lt;/p&gt;
+&lt;p&gt;The first is that Flux pushes commits to your git repo, and if that
+repo is configured to go through CI, usually those commits will
+trigger a build. You can avoid this by supplying the flag &lt;code&gt;--git-ci-skip&lt;/code&gt;
+so that Flux&amp;rsquo;s commit will append &lt;code&gt;[ci skip]&lt;/code&gt; to its commit
+messages. Many CI systems will treat that as meaning they should not
+run a build for that commit. You can use &lt;code&gt;--git-ci-skip-message&lt;/code&gt;, if you
+need a different piece of text appended to commit messages.&lt;/p&gt;
+&lt;p&gt;The other thing that can trigger CI is that Flux pushes a tag to the
+upstream git repo whenever it has applied new commits. This acts as a
+&amp;ldquo;high water mark&amp;rdquo; for Flux to know which commits have already been
+seen. The default name for this tag is &lt;code&gt;flux-sync&lt;/code&gt;, but it can be
+changed with the flags &lt;code&gt;--git-sync-tag&lt;/code&gt; and &lt;code&gt;--git-label&lt;/code&gt;. The
+simplest way to avoid triggering builds is to exclude this tag from
+builds &amp;ndash; how to do that will depend on how your CI system is
+configured.&lt;/p&gt;
+&lt;p&gt;Here&amp;rsquo;s the relevant docs for some common CI systems:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://circleci.com/docs/2.0/workflows/#git-tag-job-execution&#34; target=&#34;_blank&#34;&gt;CircleCI&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://docs.travis-ci.com/user/customizing-the-build#Building-Specific-Branches&#34; target=&#34;_blank&#34;&gt;TravisCI&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://docs.gitlab.com/ee/ci/yaml/#only-and-except-simplified&#34; target=&#34;_blank&#34;&gt;GitLab&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://confluence.atlassian.com/bitbucket/configure-bitbucket-pipelines-yml-792298910.html#Configurebitbucket-pipelines.yml-ci_defaultdefault&#34; target=&#34;_blank&#34;&gt;Bitbucket Pipelines&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://docs.microsoft.com/en-us/azure/devops/pipelines/index?view=azure-devops&#34; target=&#34;_blank&#34;&gt;Azure Pipelines&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;can-i-restrict-the-namespaces-that-flux-can-see-or-operate-on&#34;&gt;Can I restrict the namespaces that Flux can see or operate on?&lt;/h3&gt;
+&lt;p&gt;Flux will only operate on the namespaces that its service account has
+access to; so the most effective way to restrict it to certain
+namespaces is to use Kubernetes&#39; role-based access control (RBAC) to
+make a service account that has restricted access itself. You may need
+to experiment to find the most restrictive permissions that work for
+your case.&lt;/p&gt;
+&lt;p&gt;You will need to use the command-line flag &lt;code&gt;--k8s-allow-namespace&lt;/code&gt;
+to enumerate the namespaces that Flux attempts to scan for workloads.&lt;/p&gt;
+&lt;h3 id=&#34;can-i-change-the-namespace-flux-puts-things-in-by-default&#34;&gt;Can I change the namespace Flux puts things in by default?&lt;/h3&gt;
+&lt;p&gt;Yes. The default namespace can be changed by passing the command-line flag
+&lt;code&gt;--k8s-default-namespace&lt;/code&gt; to &lt;code&gt;fluxd&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;can-i-temporarily-make-flux-ignore-a-manifest&#34;&gt;Can I temporarily make Flux ignore a manifest?&lt;/h3&gt;
+&lt;p&gt;Yes. The easiest way to do that is to use the following annotation in the manifest, and commit
+the change to git:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;fluxcd.io/ignore&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To stop ignoring these annotated resources, you simply remove the annotation from the manifests in git.&lt;/p&gt;
+&lt;p&gt;Flux will ignore any resource that has the annotation &lt;em&gt;either&lt;/em&gt; in git, or in the cluster itself;
+sometimes it may be easier to annotate a &lt;em&gt;running resource in the cluster&lt;/em&gt; as opposed to committing
+a change to git.&lt;/p&gt;
+&lt;p&gt;Mixing both kinds of annotations (in git, and in the cluster), can make it a bit hard to figure out
+how/where to undo the change (cf 
+&lt;a href=&#34;https://github.com/fluxcd/flux/issues/1211&#34; target=&#34;_blank&#34;&gt;flux#1211&lt;/a&gt;). If the
+annotation exists in either the cluster or in git, it will be respected, so you may need to remove
+it from both places.&lt;/p&gt;
+&lt;p&gt;Additionally, when garbage collection is enabled, Flux will not garbage collect resources in the cluster
+with the ignore annotation if the resource is removed from git.&lt;/p&gt;
+&lt;h3 id=&#34;can-i-disable-garbage-collection-for-a-specific-resource&#34;&gt;Can I disable garbage collection for a specific resource?&lt;/h3&gt;
+&lt;p&gt;Yes. By adding the annotation below to a resource Flux will sync updates from git, but it will not
+garbage collect when the resource is removed from git.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;fluxcd.io/ignore&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;sync_only&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;how-can-i-prevent-flux-overriding-the-replicas-when-using-hpa&#34;&gt;How can I prevent Flux overriding the replicas when using HPA?&lt;/h3&gt;
+&lt;p&gt;When using a horizontal pod autoscaler you have to remove the &lt;code&gt;spec.replicas&lt;/code&gt; from your deployment definition.
+If the replicas field is not present in Git, Flux will not override the replica count set by the HPA.&lt;/p&gt;
+&lt;h3 id=&#34;can-i-disable-flux-registry-scanning&#34;&gt;Can I disable Flux registry scanning?&lt;/h3&gt;
+&lt;p&gt;You can completely disable registry scanning by using the
+&lt;code&gt;--registry-disable-scanning&lt;/code&gt; flag. This allows deploying Flux without
+Memcached.&lt;/p&gt;
+&lt;p&gt;If you only want to scan certain images, don&amp;rsquo;t set
+&lt;code&gt;--registry-disable-scanning&lt;/code&gt;. Instead, you can tell Flux what images
+to include or exclude by supplying a list of glob expressions to the
+&lt;code&gt;--registry-include-image&lt;/code&gt; and &lt;code&gt;--registry-exclude-image&lt;/code&gt; flags:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;--registry-exclude-image&lt;/code&gt; takes patterns to be excluded; the
+default is to exclude the Kubernetes base images (&lt;code&gt;k8s.gcr.io/*&lt;/code&gt;);
+and,&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--registry-include-image&lt;/code&gt; takes patterns to be included; no
+patterns (the default) means &amp;ldquo;include everything&amp;rdquo;. If you provide a
+pattern, &lt;em&gt;only&lt;/em&gt; images matching the pattern will be included (less
+any that are explicitly excluded).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To restrict scanning to only images from organisations &lt;code&gt;example&lt;/code&gt; and &lt;code&gt;example-dev&lt;/code&gt;,
+you might use:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;--registry-include-image=*/example/*,*/example-dev/*
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;To exclude images from quay.io, use:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;--registry-exclude-image=quay.io/*
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Here are the Helm install equivalents (note the &lt;code&gt;\,&lt;/code&gt; separator):&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;--set registry.includeImage=&amp;quot;*/example/*\,*/example-dev/*&amp;quot; --set registry.excludeImage=&amp;quot;quay.io/*&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;does-flux-support-kustomizetemplatingmy-favorite-manifest-factorization-technology&#34;&gt;Does Flux support Kustomize/Templating/My favorite manifest factorization technology?&lt;/h3&gt;
+&lt;p&gt;Yes!&lt;/p&gt;
+&lt;p&gt;Flux supports technology-agnostic manifest factorization through &lt;code&gt;.flux.yaml&lt;/code&gt; configuration
+files placed in the Git repository. To enable it supply the command-line flag
+&lt;code&gt;--manifest-generation=true&lt;/code&gt; to &lt;code&gt;fluxd&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;See 
+&lt;a href=&#34;/legacy/flux/references/fluxyaml-config-files/&#34;&gt;&lt;code&gt;.flux.yaml&lt;/code&gt; configuration files documentation&lt;/a&gt; for
+further details.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Troubleshooting</title>
+      <link>/legacy/flux/troubleshooting/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/troubleshooting/</guid>
+      <description>
+        
+        
+        &lt;p&gt;Also see the 
+&lt;a href=&#34;https://github.com/fluxcd/flux/labels/FAQ&#34; target=&#34;_blank&#34;&gt;issues labeled with
+&lt;code&gt;FAQ&lt;/code&gt;&lt;/a&gt;, which often
+explain workarounds.&lt;/p&gt;
+&lt;h2 id=&#34;flux-is-taking-a-long-time-to-apply-manifests-when-it-syncs&#34;&gt;Flux is taking a long time to apply manifests when it syncs&lt;/h2&gt;
+&lt;p&gt;If you notice that Flux takes tens of seconds or minutes to get
+through each sync, while you can apply the same manifests very quickly
+by hand, you may be running into this issue:
+
+&lt;a href=&#34;https://github.com/fluxcd/flux/issues/1422&#34; target=&#34;_blank&#34;&gt;fluxcd/flux#1422&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Briefly, the problem is that mounting a volume into &lt;code&gt;$HOME/.kube&lt;/code&gt;
+effectively disables &lt;code&gt;kubectl&lt;/code&gt;&amp;rsquo;s caching, which makes it much much
+slower. You may have used such a volume mount to override
+&lt;code&gt;$HOME/.kube/config&lt;/code&gt;, possibly unknowingly &amp;ndash; the Helm chart did this
+for you, prior to
+
+&lt;a href=&#34;https://github.com/fluxcd/flux/pull/1435&#34; target=&#34;_blank&#34;&gt;fluxcd/flux#1435&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The remedy is to mount the override to some other place in the
+filesystem, and use the environment entry &lt;code&gt;KUBECONFIG&lt;/code&gt; to point
+&lt;code&gt;kubectl&lt;/code&gt; at it. This is what the Helm chart now does, so fixing it
+may be as easy as reapplying the chart if that&amp;rsquo;s what you&amp;rsquo;re using.&lt;/p&gt;
+&lt;p&gt;This is also documented in the
+
+&lt;a href=&#34;/legacy/flux/faq/&#34;&gt;FAQ&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;fluxctl-returns-a-500-internal-server-error&#34;&gt;&lt;code&gt;fluxctl&lt;/code&gt; returns a 500 Internal Server Error&lt;/h2&gt;
+&lt;p&gt;This usually indicates there&amp;rsquo;s a bug in the Flux daemon somewhere &amp;ndash; in which case please 
+&lt;a href=&#34;https://github.com/fluxcd/flux/issues/new&#34; target=&#34;_blank&#34;&gt;tell us about it&lt;/a&gt;!&lt;/p&gt;
+&lt;h2 id=&#34;flux-answers-everything-with-git-repo-is-not-configured&#34;&gt;Flux answers everything with &lt;code&gt;git repo is not configured&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;This means Flux can&amp;rsquo;t read from and write to the git repo. Check that&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&amp;hellip; you&amp;rsquo;ve supplied a git repo URL. If it&amp;rsquo;s of the form
+&lt;code&gt;https://github.com/user/repo&lt;/code&gt; then you will need to use the
+SSH-style URL, &lt;code&gt;git@github.com:user/repo&lt;/code&gt; instead.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&amp;hellip; the deploy key has read/write access to the repo. In
+GitHub, deploy keys are installed in the settings for a
+repository. To get the deploy key Flux is using, use &lt;code&gt;fluxctl identity&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&amp;hellip; that the host where your git repo lives is in
+&lt;code&gt;~/.ssh/known_hosts&lt;/code&gt; in the fluxd container. We prime the container
+&lt;em&gt;image&lt;/em&gt; with host keys for &lt;code&gt;github.com&lt;/code&gt;, &lt;code&gt;gitlab.com&lt;/code&gt;, &lt;code&gt;bitbucket.org&lt;/code&gt;, &lt;code&gt;dev.azure.com&lt;/code&gt;, and &lt;code&gt;vs-ssh.visualstudio.com&lt;/code&gt;, but if you&amp;rsquo;re using your own git server, you&amp;rsquo;ll
+need to add its host key. See 
+&lt;a href=&#34;/legacy/flux/guides/use-private-git-host/&#34;&gt;&amp;ldquo;Using a private Git host&amp;rdquo;&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;im-using-gcrgke-and-i-keep-seeing-quota-exceeded-in-logs&#34;&gt;I&amp;rsquo;m using GCR/GKE and I keep seeing &amp;ldquo;Quota exceeded&amp;rdquo; in logs&lt;/h2&gt;
+&lt;p&gt;GCP (in general) has quite conservative API rate limiting, and Flux&amp;rsquo;s
+default settings can bump API usage over the limits. See
+
+&lt;a href=&#34;https://github.com/fluxcd/flux/issues/1016&#34; target=&#34;_blank&#34;&gt;fluxcd/flux#1016&lt;/a&gt;
+for advice.&lt;/p&gt;
+&lt;h2 id=&#34;flux-doesnt-seem-to-be-able-to-use-my-imagepullsecrets&#34;&gt;Flux doesn&amp;rsquo;t seem to be able to use my imagePullSecrets&lt;/h2&gt;
+&lt;p&gt;If you&amp;rsquo;re using &lt;code&gt;kubectl&lt;/code&gt; v1.13.x to create them, then it may be due
+to 
+&lt;a href=&#34;https://github.com/fluxcd/flux/issues/1596&#34; target=&#34;_blank&#34;&gt;this problem&lt;/a&gt;. In
+short, there was a breaking change to how &lt;code&gt;kubectl&lt;/code&gt; creates secrets,
+that found its way into the Kubernetes 1.13.0 release. It has been
+corrected in 
+&lt;a href=&#34;https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.13.md#changelog-since-v1131&#34; target=&#34;_blank&#34;&gt;kubectl
+v1.13.2&lt;/a&gt;,
+so using that version or newer to create secrets should fix the
+problem.&lt;/p&gt;
+&lt;h2 id=&#34;why-are-my-images-not-showing-up-in-the-list-of-images&#34;&gt;Why are my images not showing up in the list of images?&lt;/h2&gt;
+&lt;p&gt;Sometimes, instead of seeing the various images and their tags, the
+output of &lt;code&gt;fluxctl list-images&lt;/code&gt; shows nothing. There&amp;rsquo;s a number of
+reasons this can happen:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Flux just hasn&amp;rsquo;t fetched the image metadata yet. This may be the case
+if you&amp;rsquo;ve only just started using a particular image in a workload.&lt;/li&gt;
+&lt;li&gt;Flux can&amp;rsquo;t get suitable credentials for the image repository. At
+present, it looks at &lt;code&gt;imagePullSecret&lt;/code&gt;s attached to workloads,
+service accounts, platform-provided credentials on GCP, AWS or Azure, and
+a Docker config file if you mount one into the &lt;code&gt;fluxd&lt;/code&gt; container (see
+the 
+&lt;a href=&#34;/legacy/flux/references/daemon/&#34;&gt;command-line usage&lt;/a&gt;).&lt;/li&gt;
+&lt;li&gt;When using images in ECR, from EC2, the &lt;code&gt;NodeInstanceRole&lt;/code&gt; for the
+worker node running &lt;code&gt;fluxd&lt;/code&gt; must have permissions to query the ECR
+registry (or registries) in
+question. 
+&lt;a href=&#34;https://github.com/weaveworks/eksctl&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;eksctl&lt;/code&gt;&lt;/a&gt; and
+
+&lt;a href=&#34;https://github.com/kubernetes/kops&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;kops&lt;/code&gt;&lt;/a&gt; (with
+
+&lt;a href=&#34;https://github.com/kubernetes/kops/blob/master/docs/iam_roles.md#iam-roles&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;.iam.allowContainerRegistry=true&lt;/code&gt;&lt;/a&gt;)
+both make sure this is the case.&lt;/li&gt;
+&lt;li&gt;When using images from ACR in AKS, the HostPath &lt;code&gt;/etc/kubernetes/azure.json&lt;/code&gt;
+should be 
+&lt;a href=&#34;https://kubernetes.io/docs/concepts/storage/volumes/&#34; target=&#34;_blank&#34;&gt;mounted&lt;/a&gt; into the Flux Pod.
+Set &lt;code&gt;registry.acr.enabled=True&lt;/code&gt; in the 
+&lt;a href=&#34;https://github.com/fluxcd/flux/blob/master/chart/flux/README.md#&#34; target=&#34;_blank&#34;&gt;helm chart&lt;/a&gt;
+or alter the 
+&lt;a href=&#34;https://github.com/fluxcd/flux/blob/master/deploy/flux-deployment.yaml&#34; target=&#34;_blank&#34;&gt;Deployment&lt;/a&gt;:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;   &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;containers&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;docker.io/fluxcd/flux&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;...&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;volumeMounts&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;acr-credentials&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;       &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;mountPath&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;/etc/kubernetes/azure.json&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;       &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;readOnly&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;   &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;volumes&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;   &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;acr-credentials&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;hostPath&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;       &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;path&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;/etc/kubernetes/azure.json&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;       &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;type&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If you encounter 
+&lt;a href=&#34;https://github.com/Azure/AKS/issues/729&#34; target=&#34;_blank&#34;&gt;permission errors&lt;/a&gt;,
+you can alternatively create a secret &lt;code&gt;acr-credentials&lt;/code&gt; based on the
+&lt;code&gt;azure.json&lt;/code&gt; file and set &lt;code&gt;registry.acr.secretName=acr-credentials&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;Flux excludes images with no suitable manifest (linux amd64) in manifestlist&lt;/li&gt;
+&lt;li&gt;Flux doesn&amp;rsquo;t yet understand image refs that use digests instead of
+tags; see
+
+&lt;a href=&#34;https://github.com/fluxcd/flux/issues/885&#34; target=&#34;_blank&#34;&gt;fluxcd/flux#885&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If none of these explanations seem to apply, please
+
+&lt;a href=&#34;https://github.com/fluxcd/flux/issues/new&#34; target=&#34;_blank&#34;&gt;file an issue&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;why-do-my-image-tags-appear-out-of-order&#34;&gt;Why do my image tags appear out of order?&lt;/h2&gt;
+&lt;p&gt;You may notice that the ordering given to image tags does not always
+correspond with the order in which you pushed the images. That&amp;rsquo;s
+because Flux sorts them by the image creation time; and, if you have
+retagged an older image, the creation time won&amp;rsquo;t correspond to when
+you pushed the image. (Why does Flux look at the image creation time?
+In general there is no way for Flux to retrieve the time at which a
+tag was pushed from an image registry.)&lt;/p&gt;
+&lt;p&gt;This can happen if you explicitly tag an image that already
+exists. Because of the way Docker shares image layers, it can also
+happen &lt;em&gt;implicitly&lt;/em&gt; if you happen to build an image that is identical
+to an existing image.&lt;/p&gt;
+&lt;p&gt;If this appears to be a problem for you, one way to ensure each image
+build has its own creation time is to label it with a build time;
+e.g., using
+
+&lt;a href=&#34;https://github.com/opencontainers/image-spec/blob/master/annotations.md&#34; target=&#34;_blank&#34;&gt;OpenContainers pre-defined annotations&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;what-is-the-sync-tag-or-why-do-i-see-a-flux-sync-tag-in-my-git-repo&#34;&gt;What is the &amp;ldquo;sync tag&amp;rdquo;; or, why do I see a &lt;code&gt;flux-sync&lt;/code&gt; tag in my git repo?&lt;/h2&gt;
+&lt;p&gt;Flux keeps track of the last commit that it&amp;rsquo;s applied to the cluster,
+by pushing a tag (controlled by the command-line flags
+&lt;code&gt;--git-sync-tag&lt;/code&gt; and &lt;code&gt;--git-label&lt;/code&gt;) to the git repository. This gives
+it a persistent high water mark, so even if it is restarted from
+scratch, it will be able to tell where it got to.&lt;/p&gt;
+&lt;p&gt;Technically, it only needs this to be able to determine which image
+releases (including automated upgrades) it has applied, and that only
+matters if it has been asked to report those with the &lt;code&gt;--connect&lt;/code&gt;
+flag. Future versions of Flux may be more sparing in use of the sync
+tag.&lt;/p&gt;
+&lt;h2 id=&#34;flux-fails-with-an-error-log-similar-to-_couldnt-get-resource-list-for-examplecomversion-the-server-is-currently-unable-to-handle-the-request_&#34;&gt;Flux fails with an error log similar to &lt;em&gt;couldn&amp;rsquo;t get resource list for example.com/version: the server is currently unable to handle the request&lt;/em&gt;&lt;/h2&gt;
+&lt;p&gt;This means your Kubernetes cluster fails to respond to list queries
+for resources in &lt;em&gt;example.com/version&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;If the error is transient, Flux will work once the error recedes.&lt;/p&gt;
+&lt;p&gt;However, the error won&amp;rsquo;t normally go away since most of the time it&amp;rsquo;s caused by
+a misconfiguration of your cluster.&lt;/p&gt;
+&lt;p&gt;For instance, you can run into this problem:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;When a
+
+&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/&#34; target=&#34;_blank&#34;&gt;Kubernetes Webhook server&lt;/a&gt;
+is removed without removing its Webhook definition.&lt;/li&gt;
+&lt;li&gt;When a custom resource definition (CRD) is not available due to
+a &lt;code&gt;FailedDiscoveryCheck&lt;/code&gt; error.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We recommend trying to address the root cause by fixing your cluster
+configuration. In the examples above, you would need to remove the Webhook
+definition or add the CRD.&lt;/p&gt;
+&lt;p&gt;However, fixing your cluster configuration may not always be possible. The
+problem is common enough that Flux provides a flag called
+&lt;code&gt;--k8s-unsafe-exclude-resource&lt;/code&gt;. The name says it all, you should only use it
+if you know what you are doing.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;--k8s-unsafe-exclude-resource&lt;/code&gt; will tell Flux to avoid querying the cluster
+for those resources. This in turn means that Flux won&amp;rsquo;t take into account those
+excluded cluster resources when syncing. This can cause excluded resources:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;to be unexpectedly overwritten by their corresponding definition in
+Git during a sync (even if they are annotated with
+&lt;code&gt;flux.weave.works/ignore: &amp;quot;true&amp;quot;&lt;/code&gt; on the cluster-side).&lt;/li&gt;
+&lt;li&gt;not to be garbage-collected.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The rule of thumb is that you can use &lt;code&gt;--k8s-unsafe-exclude-resource&lt;/code&gt; on
+resources not matching any manifests in your Git repository.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Contributing</title>
+      <link>/legacy/flux/contributing/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/contributing/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,2745 @@
+<!doctype html>
+<html lang="zh-cn" class="no-js">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.84.3" /><META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+<link rel="shortcut icon" href="/favicon.png" >
+<link rel="apple-touch-icon" href="/favicon.png" sizes="180x180">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="16x16">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="36x36">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="48x48">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="72x72">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="96x96">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="144x144">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="192x192">
+
+<title>fluxctl | 道场</title>
+<meta name="description" content="Open and extensible continuous delivery solution for Kubernetes."><meta property="og:title" content="fluxctl" />
+<meta property="og:description" content="fluxctl provides an API that can be used from the command line.
+The --help for fluxctl is described below.
+Installing fluxctl Mac OS If you are using a Mac and use Homebrew, you can simply run:
+brew install fluxctl Linux Ubuntu (and others): snaps  Many Linux distributions support snaps these days, which makes it very easy to install fluxctl and stay up to date.
+To install it, simply run:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/legacy/flux/references/fluxctl/" /><meta property="og:image" content="/img/flux-social.png"/><meta property="article:section" content="legacy" />
+
+
+
+<meta itemprop="name" content="fluxctl">
+<meta itemprop="description" content="fluxctl provides an API that can be used from the command line.
+The --help for fluxctl is described below.
+Installing fluxctl Mac OS If you are using a Mac and use Homebrew, you can simply run:
+brew install fluxctl Linux Ubuntu (and others): snaps  Many Linux distributions support snaps these days, which makes it very easy to install fluxctl and stay up to date.
+To install it, simply run:">
+
+<meta itemprop="wordCount" content="2689"><meta itemprop="image" content="/img/flux-social.png"/>
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="/img/flux-social.png"/>
+
+<meta name="twitter:title" content="fluxctl"/>
+<meta name="twitter:description" content="fluxctl provides an API that can be used from the command line.
+The --help for fluxctl is described below.
+Installing fluxctl Mac OS If you are using a Mac and use Homebrew, you can simply run:
+brew install fluxctl Linux Ubuntu (and others): snaps  Many Linux distributions support snaps these days, which makes it very easy to install fluxctl and stay up to date.
+To install it, simply run:"/>
+
+
+
+
+<link rel="preload" href="/scss/main.min.4a9db146ac33069ee85be0885ccf5f1ce3a4387f774ad3c60af13d7316e8cedc.css" as="style">
+<link href="/scss/main.min.4a9db146ac33069ee85be0885ccf5f1ce3a4387f774ad3c60af13d7316e8cedc.css" rel="stylesheet" integrity="">
+
+
+<script
+  src="https://code.jquery.com/jquery-3.5.1.min.js"
+  integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+  crossorigin="anonymous"></script>
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css" />
+
+
+
+
+
+  </head>
+  <body class="td-page">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
+        <a class="navbar-brand" href="/">
+		<span class="navbar-logo"><svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><title>flux-icon</title><desc>Created with Sketch.</desc><g id="flux-icon" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="Group" transform="translate(11.000000, 2.000000)"><path d="M.803134615 15.7791346c-1.049423077-.682500000000001-1.049423077-2.2188461.0-2.9007692L20.1819808.279519231c.573461499999997-.3726923079 1.3125-.3726923079 1.8859615.0L41.4473654 12.8783654c1.0494231.681923100000001 1.0494231 2.2182692.0 2.9007692L22.0679423 28.3779808C21.4944808 28.7506731 20.7554423 28.7506731 20.1819808 28.3779808L.803134615 15.7791346z" id="Fill-1" fill="#326ce5"/><path d="M24.1851346 18.0023077h1.3442308C26.3145577 18.0023077 26.8055192 17.1525 26.4126346 16.4728846L22.0084038 8.84423077C21.6160962 8.16461538 20.63475 8.16461538 20.2418654 8.84423077L15.8376346 16.4728846C15.4453269 17.1525 15.9357115 18.0023077 16.7209038 18.0023077h1.3448077c.563077.0 1.0194231.456923100000001 1.0194231 1.02v8.7075L19.9874423 28.3165385C20.6791731 28.7665385 21.5710962 28.7665385 22.2628269 28.3165385L23.1651346 27.7298077v-8.7075c0-.563076899999999.456346200000002-1.02 1.02-1.02" id="Fill-3" fill="#c1d2f7"/><path d="M27.8390769 34.8375577l-4.6742307-3.0386539v1.44C24.6902308 33.8919808 26.2588846 34.4008269 27.8390769 34.8375577" id="Fill-5" fill="#326ce5"/><path d="M23.1650769 35.8280192v2.0215385C24.7095 38.3209038 26.2723846 38.7080192 27.8191154 39.0893654c5.0515384 1.2455769 9.8226923 2.4213461 13.6592308 6.2584615C41.6733462 45.54225 41.8562308 45.7407115 42.0373846 45.93975 42.4308462 45.1880192 42.2335385 44.1957115 41.4466154 43.6845577l-7.5905769-4.9355769c-1.8426923-.608077000000002-3.72-1.073077-5.5753847-1.53C26.5308462 36.7874423 24.8196923 36.3570577 23.1650769 35.8280192" id="Fill-7" fill="#326ce5"/><path d="M19.08525 34.1699423C18.4304423 33.8318654 17.7854423 33.4689808 17.1629423 33.0489808l-1.7359615 1.1284615c1.1705769.8607692 2.3965384 1.5588462 3.6582692 2.1438462V34.1699423z" id="Fill-9" fill="#326ce5"/><path d="M24.8941731 40.6051154C24.3137885 40.4620385 23.7374423 40.3195385 23.1651346 40.1735769V42.1605C23.5885962 42.2666538 24.0114808 42.3722308 24.4326346 42.4760769c5.0515385 1.245 9.8226923 2.4207693 13.6598077 6.2578846C38.0987885 48.7408846 38.1045577 48.7472308 38.1114808 48.7541538L39.75225 47.6868462C39.6524423 47.5824231 39.5584038 47.4751154 39.4545577 47.3718462c-4.2161539-4.2167308-9.4753846-5.513077-14.5603846-6.7667308" id="Fill-11" fill="#326ce5"/><path d="M19.08525 38.9907115C16.8900577 38.2389808 14.8096731 37.2714808 12.9115962 35.8124423l-1.6996154 1.1053846c2.4167307 1.9932693 5.1075 3.2025 7.8732692 4.0990385V38.9907115z" id="Fill-13" fill="#326ce5"/><path d="M19.08525 43.3809808C15.3069808 42.3909808 11.7537115 41.18175 8.71794231 38.5388654L7.04717308 39.6252115c3.56538462 3.285 7.80692312 4.658077 12.03807692 5.745577V43.3809808z" id="Fill-15" fill="#326ce5"/><path d="M23.1650769 46.3935c3.9525 1.02057689999999 7.6690385 2.2407692 10.8173077 5.0446154l1.6615385-1.08c-3.6784616-3.4580769-8.0925-4.8386539-12.4788462-5.9532692V46.3935z" id="Fill-17" fill="#326ce5"/><path d="M4.57875 41.2299231 2.92990385 42.3018462C2.98759615 42.3612692 3.04009615 42.423 3.09951923 42.4818462 7.31625 46.6985769 12.5743269 47.9949231 17.6599038 49.2485769c4.4042308 1.0851923 8.5944231 2.1201923 12.1390385 4.9096154L31.4893269 53.0591538C27.4958654 49.6968462 22.7385577 48.5158846 18.1214423 47.3781923 13.1206731 46.1453077 8.39567308 44.9758846 4.57875 41.2299231" id="Fill-19" fill="#326ce5"/><path d="M1.07555769 44.5060962C.883442308 44.3139808.702865385 44.1184038.524019231 43.9216731-.227711538 44.6745577-.139442308 45.9726346.80325 46.5853269l5.70634615 3.7101923c2.52576923 1.0453846 5.16692305 1.6990385 7.76423075 2.3394231 4.0546154.999230799999999 7.9280769 1.9575 11.2840385 4.2807692l1.7255769-1.1226923C23.4676731 52.9245577 19.0403654 51.8255192 14.7347885 50.7639808c-5.05096158-1.245-9.82211542-2.4207693-13.65923081-6.2578846" id="Fill-21" fill="#326ce5"/><path d="M19.6441154 58.8342692C20.0243077 59.0188846 20.3998846 59.2133077 20.7691154 59.4221538 21.2093077 59.5150385 21.6771923 59.4383077 22.0683462 59.1838846L23.0260385 58.5613846C19.9493077 56.5035 16.5287308 55.461 13.1196923 54.5927308l6.5244231 4.2415384z" id="Fill-23" fill="#326ce5"/></g></g></svg></span><span class="text-uppercase font-weight-bold">道场</span>
+	</a>
+		<ul class="navbar-nav mt-2 mt-lg-0">
+			
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="/docs" ><span>修习</span></a>
+				
+			</li>
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="/blog/" ><span>动态</span></a>
+				
+			</li>
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="https://github.com/devopschina/sig/" target="_blank" ><i class='fab fa-github'></i> <span>Github</span></a>
+				
+			</li>
+			
+			
+			
+			<li class="nav-item nav-search-item">
+<input type="search" class="form-control td-search-input" placeholder="&#xf002; " aria-label="" autocomplete="off">
+
+</li>
+		</ul>
+</nav>
+
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-xl-nowrap">
+          <aside class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            
+
+
+
+
+  
+
+
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+  
+  <div id="content-mobile">
+  <form class="td-sidebar__search d-flex align-items-center">
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  </div>
+  <div id="content-desktop"></div>
+  
+  <nav class="collapse td-sidebar-nav foldable-nav" id="td-section-nav">
+    
+    
+    
+    
+    
+    <ul class="td-sidebar-nav__section pr-md-3 ul-0">
+      
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-legacy-li">
+    
+      <a href="/legacy/" class="align-left pl-0 td-sidebar-link td-sidebar-link__section tree-root" id="m-legacy"><span class="">Legacy documentation</span></a>
+    
+    
+      
+      <ul class="ul-1">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-legacyflux-li">
+    
+      <input type="checkbox" id="m-legacyflux-check" checked/>
+      <label for="m-legacyflux-check"><a href="/legacy/flux/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyflux"><span class="">Flux</span></a></label>
+    
+    
+      
+      <ul class="ul-2 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxintroduction-li">
+    
+      <input type="checkbox" id="m-legacyfluxintroduction-check"/>
+      <label for="m-legacyfluxintroduction-check"><a href="/legacy/flux/introduction/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxintroduction"><span class="">Introducing Flux</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxrequirements-li">
+    
+      <input type="checkbox" id="m-legacyfluxrequirements-check"/>
+      <label for="m-legacyfluxrequirements-check"><a href="/legacy/flux/requirements/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxrequirements"><span class="">Requirements and limitations</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxget-started-li">
+    
+      <input type="checkbox" id="m-legacyfluxget-started-check"/>
+      <label for="m-legacyfluxget-started-check"><a href="/legacy/flux/get-started/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxget-started"><span class="">Get started</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-legacyfluxreferences-li">
+    
+      <input type="checkbox" id="m-legacyfluxreferences-check" checked/>
+      <label for="m-legacyfluxreferences-check"><a href="/legacy/flux/references/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyfluxreferences"><span class="">References</span></a></label>
+    
+    
+      
+      <ul class="ul-3 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxreferencesblueprint-li">
+    
+      <input type="checkbox" id="m-legacyfluxreferencesblueprint-check"/>
+      <label for="m-legacyfluxreferencesblueprint-check"><a href="/legacy/flux/references/blueprint/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxreferencesblueprint"><span class="">Blueprint</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxreferencesdaemon-li">
+    
+      <input type="checkbox" id="m-legacyfluxreferencesdaemon-check"/>
+      <label for="m-legacyfluxreferencesdaemon-check"><a href="/legacy/flux/references/daemon/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxreferencesdaemon"><span class="">Daemon (fluxd)</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-legacyfluxreferencesfluxctl-li">
+    
+      <input type="checkbox" id="m-legacyfluxreferencesfluxctl-check" checked/>
+      <label for="m-legacyfluxreferencesfluxctl-check"><a href="/legacy/flux/references/fluxctl/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-legacyfluxreferencesfluxctl"><span class="td-sidebar-nav-active-item">fluxctl</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxreferencesfluxyaml-config-files-li">
+    
+      <input type="checkbox" id="m-legacyfluxreferencesfluxyaml-config-files-check"/>
+      <label for="m-legacyfluxreferencesfluxyaml-config-files-check"><a href="/legacy/flux/references/fluxyaml-config-files/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxreferencesfluxyaml-config-files"><span class="">Manifest generation through .flux.yaml configuration files</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxreferencesgarbagecollection-li">
+    
+      <input type="checkbox" id="m-legacyfluxreferencesgarbagecollection-check"/>
+      <label for="m-legacyfluxreferencesgarbagecollection-check"><a href="/legacy/flux/references/garbagecollection/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxreferencesgarbagecollection"><span class="">Garbage collection</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxreferencesgit-gpg-li">
+    
+      <input type="checkbox" id="m-legacyfluxreferencesgit-gpg-check"/>
+      <label for="m-legacyfluxreferencesgit-gpg-check"><a href="/legacy/flux/references/git-gpg/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxreferencesgit-gpg"><span class="">Git commit signing and verification</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxreferencesautomated-image-update-li">
+    
+      <input type="checkbox" id="m-legacyfluxreferencesautomated-image-update-check"/>
+      <label for="m-legacyfluxreferencesautomated-image-update-check"><a href="/legacy/flux/references/automated-image-update/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxreferencesautomated-image-update"><span class="">Automated deployment of new container images</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxreferencesmonitoring-li">
+    
+      <input type="checkbox" id="m-legacyfluxreferencesmonitoring-check"/>
+      <label for="m-legacyfluxreferencesmonitoring-check"><a href="/legacy/flux/references/monitoring/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxreferencesmonitoring"><span class="">Monitoring Flux</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxreferenceshelm-operator-integration-li">
+    
+      <input type="checkbox" id="m-legacyfluxreferenceshelm-operator-integration-check"/>
+      <label for="m-legacyfluxreferenceshelm-operator-integration-check"><a href="/legacy/flux/references/helm-operator-integration/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxreferenceshelm-operator-integration"><span class="">Integration with the Helm Operator</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-legacyfluxguides-li">
+    
+      <input type="checkbox" id="m-legacyfluxguides-check"/>
+      <label for="m-legacyfluxguides-check"><a href="/legacy/flux/guides/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyfluxguides"><span class="">Guides</span></a></label>
+    
+    
+      
+      <ul class="ul-3 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxguidesprovide-own-ssh-key-li">
+    
+      <input type="checkbox" id="m-legacyfluxguidesprovide-own-ssh-key-check"/>
+      <label for="m-legacyfluxguidesprovide-own-ssh-key-check"><a href="/legacy/flux/guides/provide-own-ssh-key/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxguidesprovide-own-ssh-key"><span class="">Providing your own SSH key</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxguidesuse-git-https-li">
+    
+      <input type="checkbox" id="m-legacyfluxguidesuse-git-https-check"/>
+      <label for="m-legacyfluxguidesuse-git-https-check"><a href="/legacy/flux/guides/use-git-https/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxguidesuse-git-https"><span class="">Using Git over HTTPS</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxguidesuse-private-git-host-li">
+    
+      <input type="checkbox" id="m-legacyfluxguidesuse-private-git-host-check"/>
+      <label for="m-legacyfluxguidesuse-private-git-host-check"><a href="/legacy/flux/guides/use-private-git-host/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxguidesuse-private-git-host"><span class="">Using a private Git host</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxguidesupgrading-to-10-li">
+    
+      <input type="checkbox" id="m-legacyfluxguidesupgrading-to-10-check"/>
+      <label for="m-legacyfluxguidesupgrading-to-10-check"><a href="/legacy/flux/guides/upgrading-to-1.0/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxguidesupgrading-to-10"><span class="">Upgrading to Flux v1</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxguidesuse-gke-workload-identity-li">
+    
+      <input type="checkbox" id="m-legacyfluxguidesuse-gke-workload-identity-check"/>
+      <label for="m-legacyfluxguidesuse-gke-workload-identity-check"><a href="/legacy/flux/guides/use-gke-workload-identity/" title="Using GKE Workload Identity with Flux" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxguidesuse-gke-workload-identity"><span class="">Using GKE Workload Identity</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-legacyfluxtutorials-li">
+    
+      <input type="checkbox" id="m-legacyfluxtutorials-check"/>
+      <label for="m-legacyfluxtutorials-check"><a href="/legacy/flux/tutorials/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyfluxtutorials"><span class="">Tutorials</span></a></label>
+    
+    
+      
+      <ul class="ul-3 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxtutorialsget-started-li">
+    
+      <input type="checkbox" id="m-legacyfluxtutorialsget-started-check"/>
+      <label for="m-legacyfluxtutorialsget-started-check"><a href="/legacy/flux/tutorials/get-started/" title="Get started with Flux" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxtutorialsget-started"><span class="">Get started</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxtutorialsget-started-helm-li">
+    
+      <input type="checkbox" id="m-legacyfluxtutorialsget-started-helm-check"/>
+      <label for="m-legacyfluxtutorialsget-started-helm-check"><a href="/legacy/flux/tutorials/get-started-helm/" title="Get started with Flux using Helm" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxtutorialsget-started-helm"><span class="">Get started using Helm</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxtutorialsget-started-kustomize-li">
+    
+      <input type="checkbox" id="m-legacyfluxtutorialsget-started-kustomize-check"/>
+      <label for="m-legacyfluxtutorialsget-started-kustomize-check"><a href="/legacy/flux/tutorials/get-started-kustomize/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxtutorialsget-started-kustomize"><span class="">How to bootstrap Flux using Kustomize</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxtutorialsdriving-flux-li">
+    
+      <input type="checkbox" id="m-legacyfluxtutorialsdriving-flux-check"/>
+      <label for="m-legacyfluxtutorialsdriving-flux-check"><a href="/legacy/flux/tutorials/driving-flux/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxtutorialsdriving-flux"><span class="">Automations, locks and annotations</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxfaq-li">
+    
+      <input type="checkbox" id="m-legacyfluxfaq-check"/>
+      <label for="m-legacyfluxfaq-check"><a href="/legacy/flux/faq/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxfaq"><span class="">Frequently asked questions</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxtroubleshooting-li">
+    
+      <input type="checkbox" id="m-legacyfluxtroubleshooting-check"/>
+      <label for="m-legacyfluxtroubleshooting-check"><a href="/legacy/flux/troubleshooting/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxtroubleshooting"><span class="">Troubleshooting</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-legacyfluxcontributing-li">
+    
+      <input type="checkbox" id="m-legacyfluxcontributing-check"/>
+      <label for="m-legacyfluxcontributing-check"><a href="/legacy/flux/contributing/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyfluxcontributing"><span class="">Contributing</span></a></label>
+    
+    
+      
+      <ul class="ul-3 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxcontributingget-started-developing-li">
+    
+      <input type="checkbox" id="m-legacyfluxcontributingget-started-developing-check"/>
+      <label for="m-legacyfluxcontributingget-started-developing-check"><a href="/legacy/flux/contributing/get-started-developing/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxcontributingget-started-developing"><span class="">Get started developing</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyfluxcontributingbuilding-li">
+    
+      <input type="checkbox" id="m-legacyfluxcontributingbuilding-check"/>
+      <label for="m-legacyfluxcontributingbuilding-check"><a href="/legacy/flux/contributing/building/" title="Building" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyfluxcontributingbuilding"><span class="">Building Flux</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-legacyhelm-operator-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operator-check"/>
+      <label for="m-legacyhelm-operator-check"><a href="/legacy/helm-operator/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyhelm-operator"><span class="">Helm Operator</span></a></label>
+    
+    
+      
+      <ul class="ul-2 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-legacyhelm-operatorget-started-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorget-started-check"/>
+      <label for="m-legacyhelm-operatorget-started-check"><a href="/legacy/helm-operator/get-started/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyhelm-operatorget-started"><span class="">Get started</span></a></label>
+    
+    
+      
+      <ul class="ul-3 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorget-startedquickstart-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorget-startedquickstart-check"/>
+      <label for="m-legacyhelm-operatorget-startedquickstart-check"><a href="/legacy/helm-operator/get-started/quickstart/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorget-startedquickstart"><span class="">Quickstart</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorget-startedusing-helm-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorget-startedusing-helm-check"/>
+      <label for="m-legacyhelm-operatorget-startedusing-helm-check"><a href="/legacy/helm-operator/get-started/using-helm/" title="Get started using Helm" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorget-startedusing-helm"><span class="">Using Helm</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorget-startedusing-kustomize-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorget-startedusing-kustomize-check"/>
+      <label for="m-legacyhelm-operatorget-startedusing-kustomize-check"><a href="/legacy/helm-operator/get-started/using-kustomize/" title="Get started using Kustomize" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorget-startedusing-kustomize"><span class="">Using Kustomize</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorget-startedusing-yamls-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorget-startedusing-yamls-check"/>
+      <label for="m-legacyhelm-operatorget-startedusing-yamls-check"><a href="/legacy/helm-operator/get-started/using-yamls/" title="Get started using YAMLs" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorget-startedusing-yamls"><span class="">Using YAMLs</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-legacyhelm-operatorreferences-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorreferences-check"/>
+      <label for="m-legacyhelm-operatorreferences-check"><a href="/legacy/helm-operator/references/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyhelm-operatorreferences"><span class="">References</span></a></label>
+    
+    
+      
+      <ul class="ul-3 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorreferencesoperator-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorreferencesoperator-check"/>
+      <label for="m-legacyhelm-operatorreferencesoperator-check"><a href="/legacy/helm-operator/references/operator/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorreferencesoperator"><span class="">Operator reference</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorreferencesmonitoring-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorreferencesmonitoring-check"/>
+      <label for="m-legacyhelm-operatorreferencesmonitoring-check"><a href="/legacy/helm-operator/references/monitoring/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorreferencesmonitoring"><span class="">Monitoring</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-legacyhelm-operatorhelmrelease-guide-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhelmrelease-guide-check"/>
+      <label for="m-legacyhelm-operatorhelmrelease-guide-check"><a href="/legacy/helm-operator/helmrelease-guide/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyhelm-operatorhelmrelease-guide"><span class="">HelmRelease guides</span></a></label>
+    
+    
+      
+      <ul class="ul-3 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhelmrelease-guideintroduction-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhelmrelease-guideintroduction-check"/>
+      <label for="m-legacyhelm-operatorhelmrelease-guideintroduction-check"><a href="/legacy/helm-operator/helmrelease-guide/introduction/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhelmrelease-guideintroduction"><span class="">Introduction</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhelmrelease-guidechart-sources-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhelmrelease-guidechart-sources-check"/>
+      <label for="m-legacyhelm-operatorhelmrelease-guidechart-sources-check"><a href="/legacy/helm-operator/helmrelease-guide/chart-sources/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhelmrelease-guidechart-sources"><span class="">Chart sources</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhelmrelease-guidevalues-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhelmrelease-guidevalues-check"/>
+      <label for="m-legacyhelm-operatorhelmrelease-guidevalues-check"><a href="/legacy/helm-operator/helmrelease-guide/values/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhelmrelease-guidevalues"><span class="">Values</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhelmrelease-guiderelease-configuration-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhelmrelease-guiderelease-configuration-check"/>
+      <label for="m-legacyhelm-operatorhelmrelease-guiderelease-configuration-check"><a href="/legacy/helm-operator/helmrelease-guide/release-configuration/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhelmrelease-guiderelease-configuration"><span class="">Release configuration</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhelmrelease-guidereconciliation-and-upgrades-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhelmrelease-guidereconciliation-and-upgrades-check"/>
+      <label for="m-legacyhelm-operatorhelmrelease-guidereconciliation-and-upgrades-check"><a href="/legacy/helm-operator/helmrelease-guide/reconciliation-and-upgrades/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhelmrelease-guidereconciliation-and-upgrades"><span class="">Reconciliation and upgrades</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhelmrelease-guiderollbacks-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhelmrelease-guiderollbacks-check"/>
+      <label for="m-legacyhelm-operatorhelmrelease-guiderollbacks-check"><a href="/legacy/helm-operator/helmrelease-guide/rollbacks/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhelmrelease-guiderollbacks"><span class="">Rollbacks</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhelmrelease-guidetests-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhelmrelease-guidetests-check"/>
+      <label for="m-legacyhelm-operatorhelmrelease-guidetests-check"><a href="/legacy/helm-operator/helmrelease-guide/tests/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhelmrelease-guidetests"><span class="">Tests</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhelmrelease-guideautomation-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhelmrelease-guideautomation-check"/>
+      <label for="m-legacyhelm-operatorhelmrelease-guideautomation-check"><a href="/legacy/helm-operator/helmrelease-guide/automation/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhelmrelease-guideautomation"><span class="">Automation</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhelmrelease-guidedebugging-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhelmrelease-guidedebugging-check"/>
+      <label for="m-legacyhelm-operatorhelmrelease-guidedebugging-check"><a href="/legacy/helm-operator/helmrelease-guide/debugging/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhelmrelease-guidedebugging"><span class="">Debugging</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-legacyhelm-operatorhow-to-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhow-to-check"/>
+      <label for="m-legacyhelm-operatorhow-to-check"><a href="/legacy/helm-operator/how-to/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyhelm-operatorhow-to"><span class="">How-to</span></a></label>
+    
+    
+      
+      <ul class="ul-3 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhow-toupgrade-to-ga-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhow-toupgrade-to-ga-check"/>
+      <label for="m-legacyhelm-operatorhow-toupgrade-to-ga-check"><a href="/legacy/helm-operator/how-to/upgrade-to-ga/" title="Upgrade from beta (&gt;=0.5.0) to stable (&gt;=1.0.0)" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhow-toupgrade-to-ga"><span class="">Upgrade to GA</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorhow-toupgrade-to-beta-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorhow-toupgrade-to-beta-check"/>
+      <label for="m-legacyhelm-operatorhow-toupgrade-to-beta-check"><a href="/legacy/helm-operator/how-to/upgrade-to-beta/" title="Upgrade from alpha (&lt;=0.4.0) to beta" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorhow-toupgrade-to-beta"><span class="">Upgrade to beta</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorfaq-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorfaq-check"/>
+      <label for="m-legacyhelm-operatorfaq-check"><a href="/legacy/helm-operator/faq/" title="Frequently asked questions" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorfaq"><span class="">FAQ</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatortroubleshooting-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatortroubleshooting-check"/>
+      <label for="m-legacyhelm-operatortroubleshooting-check"><a href="/legacy/helm-operator/troubleshooting/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatortroubleshooting"><span class="">Troubleshooting</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-legacyhelm-operatorcontributing-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorcontributing-check"/>
+      <label for="m-legacyhelm-operatorcontributing-check"><a href="/legacy/helm-operator/contributing/" class="align-left pl-0  td-sidebar-link td-sidebar-link__section" id="m-legacyhelm-operatorcontributing"><span class="">Contributing</span></a></label>
+    
+    
+      
+      <ul class="ul-3 foldable">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorcontributingbuilding-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorcontributingbuilding-check"/>
+      <label for="m-legacyhelm-operatorcontributingbuilding-check"><a href="/legacy/helm-operator/contributing/building/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorcontributingbuilding"><span class="">Building</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatorcontributingget-started-developing-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatorcontributingget-started-developing-check"/>
+      <label for="m-legacyhelm-operatorcontributingget-started-developing-check"><a href="/legacy/helm-operator/contributing/get-started-developing/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatorcontributingget-started-developing"><span class="">Get started developing</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatortutorialsget-started-kustomize-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatortutorialsget-started-kustomize-check"/>
+      <label for="m-legacyhelm-operatortutorialsget-started-kustomize-check"><a href="/legacy/helm-operator/tutorials/get-started-kustomize/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatortutorialsget-started-kustomize"><span class=""></span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-legacyhelm-operatortutorialsget-started-li">
+    
+      <input type="checkbox" id="m-legacyhelm-operatortutorialsget-started-check"/>
+      <label for="m-legacyhelm-operatortutorialsget-started-check"><a href="/legacy/helm-operator/tutorials/get-started/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-legacyhelm-operatortutorialsget-started"><span class=""></span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+    </ul>
+  </nav>
+</div>
+
+
+
+
+          </aside>
+          
+          <aside class="d-none d-xl-block col-xl-2 td-sidebar-toc d-print-none">
+            
+  
+  
+  
+  
+  
+  
+  
+  <div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
+  
+    
+    
+      
+    
+    
+    
+    
+    
+    
+    
+
+    
+    <a href="https://github.com/fluxcd/website/edit/main/content/zh-cn/legacy/flux/references/fluxctl.md" target="_blank"><i class="fa fa-edit fa-fw"></i> </a>
+    <a href="https://github.com/fluxcd/website/new/main/content/zh-cn/legacy/flux/references/fluxctl.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> </a>
+    
+    <a href="https://github.com/fluxcd/website/issues/new?title=fluxctl" target="_blank"><i class="fab fa-github fa-fw"></i> </a>
+    
+      
+      <a href="https://github.com/fluxcd/flux2/issues/new" target="_blank"><i class="fas fa-tasks fa-fw"></i> </a>
+    
+
+  
+  
+  </div>
+
+
+            
+
+
+<div class="td-toc"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#installing-fluxctl">Installing <code>fluxctl</code></a>
+      <ul>
+        <li><a href="#mac-os">Mac OS</a></li>
+        <li><a href="#linux">Linux</a></li>
+        <li><a href="#windows">Windows</a></li>
+        <li><a href="#binary-releases">Binary releases</a></li>
+      </ul>
+    </li>
+    <li><a href="#connecting-fluxctl-to-the-daemon">Connecting <code>fluxctl</code> to the daemon</a>
+      <ul>
+        <li><a href="#flux-api-service">Flux API service</a></li>
+        <li><a href="#add-an-ssh-deploy-key-to-the-repository">Add an SSH deploy key to the repository</a></li>
+        <li><a href="#using-fluxctl-install">Using <code>fluxctl install</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#workloads">Workloads</a>
+      <ul>
+        <li><a href="#what-is-a-workload">What is a Workload?</a></li>
+        <li><a href="#viewing-workloads">Viewing Workloads</a></li>
+        <li><a href="#inspecting-the-version-of-a-container">Inspecting the Version of a Container</a></li>
+        <li><a href="#releasing-a-workload">Releasing a Workload</a></li>
+        <li><a href="#turning-on-automation">Turning on Automation</a></li>
+        <li><a href="#turning-off-automation">Turning off Automation</a></li>
+        <li><a href="#rolling-back-a-workload">Rolling back a Workload</a></li>
+        <li><a href="#locking-a-workload">Locking a Workload</a></li>
+        <li><a href="#releasing-an-image-to-a-locked-workload">Releasing an image to a locked workload</a></li>
+        <li><a href="#unlocking-a-workload">Unlocking a Workload</a></li>
+        <li><a href="#recording-user-and-message-with-the-triggered-action">Recording user and message with the triggered action</a></li>
+      </ul>
+    </li>
+    <li><a href="#image-tag-filtering">Image Tag Filtering</a>
+      <ul>
+        <li><a href="#filter-pattern-types">Filter pattern types</a></li>
+        <li><a href="#controlling-image-timestamps-with-labels">Controlling image timestamps with labels</a></li>
+      </ul>
+    </li>
+    <li><a href="#actions-triggered-through-fluxctl">Actions triggered through <code>fluxctl</code></a>
+      <ul>
+        <li><a href="#commit-customization">Commit customization</a></li>
+        <li><a href="#errors-due-to-author-customization">Errors due to author customization</a></li>
+      </ul>
+    </li>
+    <li><a href="#using-annotations">Using Annotations</a></li>
+  </ul>
+</nav></div>
+
+
+
+            
+
+	
+		
+
+
+
+  
+  
+
+	
+		
+
+
+
+  
+  
+
+	
+
+          </aside>
+          
+          
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+          
+            
+  
+
+            <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
+	<ol class="breadcrumb spb-1">
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="/legacy/">Legacy documentation</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="/legacy/flux/">Flux</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="/legacy/flux/references/">References</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="/legacy/flux/references/fluxctl/">fluxctl</a>
+</li>
+
+	</ol>
+</nav	>
+
+            <div class="pageinfo pageinfo-warning">
+    <h2>Upgrade Advisory</h2>
+    <p>This documentation is for Flux (v1) and Helm Operator (v1).
+       Both projects are in maintenance mode and will soon reach end-of-life.
+       We strongly recommend you familiarise yourself with the newest Flux and
+       <a href="/docs/migration/">start looking at your migration path</a>.</p>
+    <p>For documentation regarding the latest Flux, please refer to
+       <a href="/docs/">this section</a>.</p>
+</div>
+
+            
+<div class="td-content">
+	<h1>fluxctl</h1>
+	
+	<header class="article-meta">
+		
+		
+			
+				
+
+
+			
+				
+
+
+			
+		
+		
+	</header>    
+	<p><code>fluxctl</code> provides an API that can be used from the command line.</p>
+<p>The <code>--help</code> for <code>fluxctl</code> is described below.</p>
+<h2 id="installing-fluxctl">Installing <code>fluxctl</code></h2>
+<h3 id="mac-os">Mac OS</h3>
+<p>If you are using a Mac and use Homebrew, you can simply run:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">brew install fluxctl
+</code></pre></div><h3 id="linux">Linux</h3>
+<h4 id="ubuntu-and-others-snaps">Ubuntu (and others): snaps</h4>
+<p>
+<a href="https://docs.snapcraft.io/installing-snapd" target="_blank">Many Linux distributions</a> support
+snaps these days, which makes it very easy to install <code>fluxctl</code> and stay up to
+date.</p>
+<p>To install it, simply run:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">sudo snap install fluxctl --classic
+</code></pre></div><p>If you would prefer to track builds from master, run</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">sudo snap install fluxctl --edge --classic
+</code></pre></div><p>instead.</p>
+<h4 id="arch-linux">Arch Linux</h4>
+<p>Install <code>fluxctl</code> via pacman:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">pacman -S fluxctl
+</code></pre></div><h3 id="windows">Windows</h3>
+<h4 id="chocolatey">Chocolatey</h4>
+<p>
+<a href="https://chocolatey.org/" target="_blank">Chocolatey</a> is a third party package manager for Windows.</p>
+<p>If you haven&rsquo;t already installed chocolatey you will need to 
+<a href="https://chocolatey.org/install" target="_blank">do this first</a>.</p>
+<p>fluxctl can then be installed from the 
+<a href="https://chocolatey.org/packages/fluxctl" target="_blank">public package repository</a>:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">choco install fluxctl
+</code></pre></div><h3 id="binary-releases">Binary releases</h3>
+<p>With every release of Flux, we release binaries of <code>fluxctl</code> for Mac, Linux
+and Windows. Download them from the 
+<a href="https://github.com/fluxcd/flux/releases" target="_blank">Flux release
+page</a>.</p>
+<h2 id="connecting-fluxctl-to-the-daemon">Connecting <code>fluxctl</code> to the daemon</h2>
+<p>By default, <code>fluxctl</code> will attempt to port-forward to your Flux
+instance, assuming it runs in the <code>&quot;default&quot;</code> namespace. You can
+specify a different namespace with the <code>--k8s-fwd-ns</code> flag:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">fluxctl --k8s-fwd-ns<span style="color:#666">=</span>weave list-workloads
+</code></pre></div><p>The namespace can also be given in the environment variable
+<code>FLUX_FORWARD_NAMESPACE</code>:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#007020">export</span> <span style="color:#bb60d5">FLUX_FORWARD_NAMESPACE</span><span style="color:#666">=</span>weave
+fluxctl list-workloads
+</code></pre></div><p>If you are not able to use the port forward to connect, you will need
+some way of connecting to the Flux API directly (NodePort,
+LoadBalancer, VPN, etc). <strong>Be aware that exposing the Flux API in this
+way is a security hole, because it can be accessed without
+authentication.</strong></p>
+<p>Once that is set up, you can specify an API URL with <code>--url</code> or the
+environment variable <code>FLUX_URL</code>:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">fluxctl --url http://127.0.0.1:3030/api/flux list-workloads
+</code></pre></div><h3 id="flux-api-service">Flux API service</h3>
+<p>Now you can easily query the Flux API:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">fluxctl list-workloads --all-namespaces
+</code></pre></div><h3 id="add-an-ssh-deploy-key-to-the-repository">Add an SSH deploy key to the repository</h3>
+<p>Flux connects to the repository using an SSH key. You have two
+options:</p>
+<h4 id="1-allow-flux-to-generate-a-key-for-you">1. Allow Flux to generate a key for you</h4>
+<p>If you don&rsquo;t specify a key to use, Flux will create one for you. Obtain
+the public key through <code>fluxctl</code>:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ fluxctl identity
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQDCN2ECqUFMR413CURbLBcG41fLY75SfVZCd3LCsJBClVlEcMk4lwXxA3X4jowpv2v4Jw2qqiWKJepBf2UweBLmbWYicHc6yboj5o297//+ov0qGt/uRuexMN7WUx6c93VFGV7Pjd60Yilb6GSF8B39iEVq7GQUC1OZRgQnKZWLSQ<span style="color:#666">==</span>
+</code></pre></div><p>Alternatively, you can see the public key in the <code>flux</code> log.</p>
+<p>The public key will need to be given to the service hosting the Git
+repository. For example, in GitHub you would create an SSH deploy key
+in the repository, supplying that public key.</p>
+<p>The <code>flux</code> logs should show that it has now connected to the
+repository and synchronised the cluster.</p>
+<p>When using Kubernetes, this key is stored as a Kubernetes secret. You
+can restart <code>flux</code> and it will continue to use the same key.</p>
+<h4 id="2-specify-a-key-to-use">2. Specify a key to use</h4>
+<p>Create a Kubernetes Secret from a private key:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl create secret generic flux-git-deploy --from-file<span style="color:#666">=</span><span style="color:#bb60d5">identity</span><span style="color:#666">=</span>/full/path/to/private_key
+</code></pre></div><p>this will result in a secret that has the structure:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#bbb">  </span><span style="color:#062873;font-weight:bold">apiVersion</span>:<span style="color:#bbb"> </span>v1<span style="color:#bbb">
+</span><span style="color:#bbb">  </span><span style="color:#062873;font-weight:bold">data</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#062873;font-weight:bold">identity</span>:<span style="color:#bbb"> </span>&lt;base64 encoded RSA PRIVATE KEY&gt;<span style="color:#bbb">
+</span><span style="color:#bbb">  </span><span style="color:#062873;font-weight:bold">kind</span>:<span style="color:#bbb"> </span>Secret<span style="color:#bbb">
+</span><span style="color:#bbb">  </span><span style="color:#062873;font-weight:bold">type</span>:<span style="color:#bbb"> </span>Opaque<span style="color:#bbb">
+</span><span style="color:#bbb">  </span><span style="color:#062873;font-weight:bold">metadata</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>...<span style="color:#bbb">
+</span></code></pre></div><p>Now add the secret to the <code>flux-deployment.yaml</code> manifest:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#bbb">    </span>...<span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#062873;font-weight:bold">spec</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">      </span><span style="color:#062873;font-weight:bold">volumes</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>- <span style="color:#062873;font-weight:bold">name</span>:<span style="color:#bbb"> </span>git-key<span style="color:#bbb">
+</span><span style="color:#bbb">        </span><span style="color:#062873;font-weight:bold">secret</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">          </span><span style="color:#062873;font-weight:bold">secretName</span>:<span style="color:#bbb"> </span>flux-git-deploy<span style="color:#bbb">
+</span></code></pre></div><p>And add a volume mount for the container:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#bbb">    </span>...<span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#062873;font-weight:bold">spec</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">      </span><span style="color:#062873;font-weight:bold">containers</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>- <span style="color:#062873;font-weight:bold">name</span>:<span style="color:#bbb"> </span>fluxd<span style="color:#bbb">
+</span><span style="color:#bbb">        </span><span style="color:#062873;font-weight:bold">volumeMounts</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>- <span style="color:#062873;font-weight:bold">name</span>:<span style="color:#bbb"> </span>git-key<span style="color:#bbb">
+</span><span style="color:#bbb">          </span><span style="color:#062873;font-weight:bold">mountPath</span>:<span style="color:#bbb"> </span>/etc/fluxd/ssh<span style="color:#bbb">
+</span></code></pre></div><p>You can customise the paths and names of the chosen key with the
+arguments (examples with defaults): <code>--k8s-secret-name=flux-git-deploy</code>,
+<code>--k8s-secret-volume-mount-path=/etc/fluxd/ssh</code> and
+<code>--k8s-secret-data-key=identity</code></p>
+<p>Using an SSH key allows you to maintain control of the repository. You
+can revoke permission for <code>flux</code> to access the repository at any time
+by removing the deploy key.</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">fluxctl helps you deploy your code.
+
+Connecting:
+
+  <span style="color:#60a0b0;font-style:italic"># To a fluxd running in namespace &#34;default&#34; in your current kubectl context</span>
+  fluxctl list-workloads
+
+  <span style="color:#60a0b0;font-style:italic"># To a fluxd running in namespace &#34;weave&#34; in your current kubectl context</span>
+  fluxctl --k8s-fwd-ns<span style="color:#666">=</span>weave list-workloads
+
+  <span style="color:#60a0b0;font-style:italic"># To a Weave Cloud instance, with your instance token in $TOKEN</span>
+  fluxctl --token <span style="color:#bb60d5">$TOKEN</span> list-workloads
+
+Workflow:
+  fluxctl list-workloads                                                   <span style="color:#60a0b0;font-style:italic"># Which workloads are running?</span>
+  fluxctl list-images --workload<span style="color:#666">=</span>default:deployment/foo                    <span style="color:#60a0b0;font-style:italic"># Which images are running/available?</span>
+  fluxctl release --workload<span style="color:#666">=</span>default:deployment/foo --update-image<span style="color:#666">=</span>bar:v2  <span style="color:#60a0b0;font-style:italic"># Release new version.</span>
+
+Usage:
+  fluxctl <span style="color:#666">[</span>command<span style="color:#666">]</span>
+
+Available Commands:
+  automate       Turn on automatic deployment <span style="color:#007020;font-weight:bold">for</span> a workload.
+  deautomate     Turn off automatic deployment <span style="color:#007020;font-weight:bold">for</span> a workload.
+  <span style="color:#007020">help</span>           Help about any <span style="color:#007020">command</span>
+  identity       Display SSH public key
+  install        Print and tweak Kubernetes manifests needed to install Flux in a Cluster
+  list-images    Show deployed and available images.
+  list-workloads List workloads currently running in the cluster.
+  lock           Lock a workload, so it cannot be deployed.
+  policy         Manage policies <span style="color:#007020;font-weight:bold">for</span> a workload.
+  release        Release a new version of a workload.
+  save           save workload definitions to <span style="color:#007020">local</span> files in cluster-native format
+  sync           synchronize the cluster with the git repository, now
+  unlock         Unlock a workload, so it can be deployed.
+  version        Output the version of fluxctl
+
+Flags:
+      --context string                  The kubeconfig context to use
+  -h, --help                            <span style="color:#007020">help</span> <span style="color:#007020;font-weight:bold">for</span> fluxctl
+      --k8s-fwd-labels stringToString   Labels used to <span style="color:#007020;font-weight:bold">select</span> the fluxd pod a port forward should be created <span style="color:#007020;font-weight:bold">for</span>. You can also <span style="color:#007020">set</span> the environment variable FLUX_FORWARD_LABELS <span style="color:#666">(</span>default <span style="color:#666">[</span><span style="color:#bb60d5">app</span><span style="color:#666">=</span>flux<span style="color:#666">])</span>
+      --k8s-fwd-ns string               Namespace in which fluxd is running, <span style="color:#007020;font-weight:bold">for</span> creating a port forward to access the API. No port forward will be created <span style="color:#007020;font-weight:bold">if</span> a URL or token is given. You can also <span style="color:#007020">set</span> the environment variable FLUX_FORWARD_NAMESPACE <span style="color:#666">(</span>default <span style="color:#4070a0">&#34;default&#34;</span><span style="color:#666">)</span>
+      --timeout duration                Global <span style="color:#007020">command</span> timeout; you can also <span style="color:#007020">set</span> the environment variable FLUX_TIMEOUT <span style="color:#666">(</span>default 1m0s<span style="color:#666">)</span>
+  -t, --token string                    Weave Cloud authentication token; you can also <span style="color:#007020">set</span> the environment variable WEAVE_CLOUD_TOKEN or FLUX_SERVICE_TOKEN
+  -u, --url string                      Base URL of the Flux API <span style="color:#666">(</span>defaults to <span style="color:#4070a0">&#34;https://cloud.weave.works/api/flux&#34;</span> <span style="color:#007020;font-weight:bold">if</span> a token is provided<span style="color:#666">)</span>; you can also <span style="color:#007020">set</span> the environment variable FLUX_URL
+
+Use <span style="color:#4070a0">&#34;fluxctl [command] --help&#34;</span> <span style="color:#007020;font-weight:bold">for</span> more information about a command.
+</code></pre></div><h3 id="using-fluxctl-install">Using <code>fluxctl install</code></h3>
+<p>Installs Flux into your cluster, taking as input your Git details and namespace you want to target.</p>
+<p>Example:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">fluxctl install --git-url <span style="color:#4070a0">&#39;git@github.com:&lt;your username&gt;/flux-get-started&#39;</span> | kubectl -f -
+</code></pre></div><p>See 
+<a href="/legacy/flux/tutorials/get-started/#set-up-flux">here</a> for a full tutorial which makes use of <code>fluxctl install</code>.</p>
+<h2 id="workloads">Workloads</h2>
+<h3 id="what-is-a-workload">What is a Workload?</h3>
+<p>This term refers to any cluster resource responsible for the creation of
+containers from versioned images - in Kubernetes these are objects such as
+Deployments, DaemonSets, StatefulSets and CronJobs.</p>
+<h3 id="viewing-workloads">Viewing Workloads</h3>
+<p>The first thing to do is to check whether Flux can see any running
+workloads. To do this, use the <code>list-workloads</code> subcommand:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ fluxctl list-workloads
+WORKLOAD                       CONTAINER   IMAGE                                         RELEASE  POLICY
+default:deployment/helloworld  helloworld  quay.io/weaveworks/helloworld:master-a000001  ready
+                               sidecar     quay.io/weaveworks/sidecar:master-a000002
+default:deployment/busybox     busybox     busybox:1.31.1                                ready
+default:deployment/nginx       nginx       nginx:stable-alpine                           ready
+</code></pre></div><p>Note that the actual images running will depend on your cluster.</p>
+<p>You can also filter workloads by container name, using the <code>--container|-c</code> option:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ fluxctl list-workloads --container helloworld
+WORKLOAD                       CONTAINER   IMAGE                                         RELEASE  POLICY
+default:deployment/helloworld  helloworld  quay.io/weaveworks/helloworld:master-a000001  ready
+                               sidecar     quay.io/weaveworks/sidecar:master-a000002
+</code></pre></div><h3 id="inspecting-the-version-of-a-container">Inspecting the Version of a Container</h3>
+<p>Once we have a list of workloads, we can begin to inspect which versions
+of the image are running.</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ fluxctl list-images --workload default:deployment/helloworld
+WORKLOAD                       CONTAINER   IMAGE                          CREATED
+default:deployment/helloworld  helloworld  quay.io/weaveworks/helloworld
+                                           |   master-9a16ff945b9e        <span style="color:#40a070">20</span> Jul <span style="color:#40a070">16</span> 13:19 UTC
+                                           |   master-b31c617a0fe3        <span style="color:#40a070">20</span> Jul <span style="color:#40a070">16</span> 13:19 UTC
+                                           |   master-a000002             <span style="color:#40a070">12</span> Jul <span style="color:#40a070">16</span> 17:17 UTC
+                                           <span style="color:#4070a0">&#39;-&gt; master-a000001             12 Jul 16 17:16 UTC
+</span><span style="color:#4070a0">                               sidecar     quay.io/weaveworks/sidecar
+</span><span style="color:#4070a0">                                           &#39;</span>-&gt; master-a000002             <span style="color:#40a070">23</span> Aug <span style="color:#40a070">16</span> 10:05 UTC
+                                               master-a000001             <span style="color:#40a070">23</span> Aug <span style="color:#40a070">16</span> 09:53 UTC
+</code></pre></div><p>The arrows will point to the version that is currently running
+alongside a list of other versions and their timestamps.</p>
+<p>When using <code>fluxctl</code> in scripts, you can remove the table headers with <code>--no-headers</code> for both <code>list-images</code> and <code>list-workloads</code> command to suppress the header:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ fluxctl list-workloads --no-headers
+default:deployment/helloworld  helloworld  quay.io/weaveworks/helloworld:master-a000001  ready
+                               sidecar     quay.io/weaveworks/sidecar:master-a000002
+$ fluxctl list-images --workload default:deployment/helloworld --no-headers
+default:deployment/helloworld  helloworld  quay.io/weaveworks/helloworld
+</code></pre></div><h3 id="releasing-a-workload">Releasing a Workload</h3>
+<p>We can now go ahead and update a workload with the <code>release</code> subcommand.
+This will check whether each workload needs to be updated, and if so,
+write the new configuration to the repository.</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ fluxctl release --workload<span style="color:#666">=</span>default:deployment/helloworld --user<span style="color:#666">=</span>phil --message<span style="color:#666">=</span><span style="color:#4070a0">&#34;New version&#34;</span> --update-all-images
+Submitting release ...
+Commit pushed: 7dc025c
+Applied 7dc025c61fdbbfc2c32f792ad61e6ff52cf0590a
+WORKLOAD                     STATUS   UPDATES
+default:deployment/helloworld  success  helloworld: quay.io/weaveworks/helloworld:master-a000001 -&gt; master-9a16ff945b9e
+
+$ fluxctl list-images --workload default:deployment/helloworld
+WORKLOAD                       CONTAINER   IMAGE                          CREATED
+default:deployment/helloworld  helloworld  quay.io/weaveworks/helloworld
+                                           <span style="color:#4070a0">&#39;-&gt; master-9a16ff945b9e        20 Jul 16 13:19 UTC
+</span><span style="color:#4070a0">                                               master-b31c617a0fe3        20 Jul 16 13:19 UTC
+</span><span style="color:#4070a0">                                               master-a000002             12 Jul 16 17:17 UTC
+</span><span style="color:#4070a0">                                               master-a000001             12 Jul 16 17:16 UTC
+</span><span style="color:#4070a0">                               sidecar     quay.io/weaveworks/sidecar
+</span><span style="color:#4070a0">                                           &#39;</span>-&gt; master-a000002             <span style="color:#40a070">23</span> Aug <span style="color:#40a070">16</span> 10:05 UTC
+                                               master-a000001             <span style="color:#40a070">23</span> Aug <span style="color:#40a070">16</span> 09:53 UTC
+</code></pre></div><h3 id="turning-on-automation">Turning on Automation</h3>
+<p>Automation can be easily controlled from <code>fluxctl</code>
+with the <code>automate</code> subcommand.</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ fluxctl automate --workload<span style="color:#666">=</span>default:deployment/helloworld
+Commit pushed: af4bf73
+WORKLOAD                     STATUS   UPDATES
+default:deployment/helloworld  success
+
+$ fluxctl list-workloads --namespace<span style="color:#666">=</span>default
+WORKLOAD                       CONTAINER   IMAGE                                             RELEASE  POLICY
+default:deployment/helloworld  helloworld  quay.io/weaveworks/helloworld:master-9a16ff945b9e ready    automated
+                               sidecar     quay.io/weaveworks/sidecar:master-a000002
+</code></pre></div><p>Automation can also be enabled by adding the annotation
+<code>fluxcd.io/automated: &quot;true&quot;</code> to the deployment.</p>
+<p>We can see that the <code>list-workloads</code> subcommand reports that the
+helloworld application is automated. Flux will now automatically
+deploy a new version of a workload whenever one is available and commit
+the new configuration to the version control system.</p>
+<h3 id="turning-off-automation">Turning off Automation</h3>
+<p>Turning off automation is performed with the <code>deautomate</code> command:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ fluxctl deautomate --workload<span style="color:#666">=</span>default:deployment/helloworld
+Commit pushed: a54ef2c
+WORKLOAD                     STATUS   UPDATES
+default:deployment/helloworld  success
+
+$ fluxctl list-workloads --namespace<span style="color:#666">=</span>default
+WORKLOAD                       CONTAINER   IMAGE                                             RELEASE  POLICY
+default:deployment/helloworld  helloworld  quay.io/weaveworks/helloworld:master-9a16ff945b9e ready
+                               sidecar     quay.io/weaveworks/sidecar:master-a000002
+</code></pre></div><p>We can see that the workload is no longer automated.</p>
+<h3 id="rolling-back-a-workload">Rolling back a Workload</h3>
+<p>Rolling back can be achieved by combining:</p>
+<ul>
+<li>
+<a href="#turning-off-automation"><code>deautomate</code></a> to prevent Flux from automatically updating to newer versions, and</li>
+<li>
+<a href="#releasing-a-workload"><code>release</code></a> to deploy the version you want to roll back to.</li>
+</ul>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ fluxctl list-images --workload default:deployment/helloworld
+WORKLOAD                       CONTAINER   IMAGE                          CREATED
+default:deployment/helloworld  helloworld  quay.io/weaveworks/helloworld
+                                           <span style="color:#4070a0">&#39;-&gt; master-9a16ff945b9e        20 Jul 16 13:19 UTC
+</span><span style="color:#4070a0">                                               master-b31c617a0fe3        20 Jul 16 13:19 UTC
+</span><span style="color:#4070a0">                                               master-a000002             12 Jul 16 17:17 UTC
+</span><span style="color:#4070a0">                                               master-a000001             12 Jul 16 17:16 UTC
+</span><span style="color:#4070a0">                               sidecar     quay.io/weaveworks/sidecar
+</span><span style="color:#4070a0">                                           &#39;</span>-&gt; master-a000002             <span style="color:#40a070">23</span> Aug <span style="color:#40a070">16</span> 10:05 UTC
+                                               master-a000001             <span style="color:#40a070">23</span> Aug <span style="color:#40a070">16</span> 09:53 UTC
+
+$ fluxctl deautomate --workload<span style="color:#666">=</span>default:deployment/helloworld
+Commit pushed: c07f317
+WORKLOAD                       STATUS   UPDATES
+default:deployment/helloworld  success
+
+$ fluxctl release --workload<span style="color:#666">=</span>default:deployment/helloworld --update-image<span style="color:#666">=</span>quay.io/weaveworks/helloworld:master-a000001
+Submitting release ...
+Commit pushed: 33ce4e3
+Applied 33ce4e38048f4b787c583e64505485a13c8a7836
+WORKLOAD                     STATUS   UPDATES
+default:deployment/helloworld  success  helloworld: quay.io/weaveworks/helloworld:master-9a16ff945b9e -&gt; master-a000001
+
+$ fluxctl list-images --workload default:deployment/helloworld
+WORKLOAD                     CONTAINER   IMAGE                          CREATED
+default:deployment/helloworld  helloworld  quay.io/weaveworks/helloworld
+                                           |   master-9a16ff945b9e        <span style="color:#40a070">20</span> Jul <span style="color:#40a070">16</span> 13:19 UTC
+                                           |   master-b31c617a0fe3        <span style="color:#40a070">20</span> Jul <span style="color:#40a070">16</span> 13:19 UTC
+                                           |   master-a000002             <span style="color:#40a070">12</span> Jul <span style="color:#40a070">16</span> 17:17 UTC
+                                           <span style="color:#4070a0">&#39;-&gt; master-a000001             12 Jul 16 17:16 UTC
+</span><span style="color:#4070a0">                               sidecar     quay.io/weaveworks/sidecar
+</span><span style="color:#4070a0">                                           &#39;</span>-&gt; master-a000002             <span style="color:#40a070">23</span> Aug <span style="color:#40a070">16</span> 10:05 UTC
+                                               master-a000001             <span style="color:#40a070">23</span> Aug <span style="color:#40a070">16</span> 09:53 UTC
+</code></pre></div><h3 id="locking-a-workload">Locking a Workload</h3>
+<p>Locking a workload will stop manual or automated releases to that
+workload. Changes made in the file will still be synced.</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ fluxctl lock --workload<span style="color:#666">=</span>deployment/helloworld
+Commit pushed: d726722
+WORKLOAD                       STATUS   UPDATES
+default:deployment/helloworld  success
+</code></pre></div><h3 id="releasing-an-image-to-a-locked-workload">Releasing an image to a locked workload</h3>
+<p>It may be desirable to release an image to a locked workload while
+maintaining the lock afterwards. In order to not having to modify the
+lock policy (which includes author and reason), one may use <code>--force</code>:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">fluxctl release --workload<span style="color:#666">=</span>default:deployment/helloworld --update-all-images --force
+</code></pre></div><h3 id="unlocking-a-workload">Unlocking a Workload</h3>
+<p>Unlocking a workload allows it to have manual or automated releases
+(again).</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ fluxctl unlock --workload<span style="color:#666">=</span>deployment/helloworld
+Commit pushed: 708b63a
+WORKLOAD                       STATUS   UPDATES
+default:deployment/helloworld  success
+</code></pre></div><h3 id="recording-user-and-message-with-the-triggered-action">Recording user and message with the triggered action</h3>
+<p>Issuing a deployment change results in a version control change/git
+commit, keeping the history of the actions. The Flux daemon can be
+started with several flags that impact the commit information:</p>
+<table>
+<thead>
+<tr>
+<th>flag</th>
+<th>purpose</th>
+<th>default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>git-user</td>
+<td>committer name</td>
+<td><code>Weave Flux</code></td>
+</tr>
+<tr>
+<td>git-email</td>
+<td>committer email</td>
+<td><code>support@weave.works</code></td>
+</tr>
+<tr>
+<td>git-set-author</td>
+<td>override the commit author</td>
+<td>false</td>
+</tr>
+</tbody>
+</table>
+<p>Actions triggered by a user through the CLI <code>fluxctl</code>
+tool, can have the commit author information customized. This is handy for providing extra context in the
+notifications and history. Whether the customization is possible, depends on the Flux daemon (<code>fluxd</code>)
+<code>git-set-author</code> flag. If set, the commit author will be customized in the following way:</p>
+<h2 id="image-tag-filtering">Image Tag Filtering</h2>
+<p>When building images it is often useful to tag build images by the branch that they were built against for example:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">quay.io/weaveworks/helloworld:master-9a16ff945b9e
+</code></pre></div><p>Indicates that the <code>helloworld</code> image was built against master
+commit <code>9a16ff945b9e</code>.</p>
+<p>When automation is turned on Flux will, by default, use whatever
+is the latest image on a given repository. If you want to only
+auto-update your image against a certain subset of tags then you
+can do that using tag filtering.</p>
+<p>So for example, if you want to only update the &ldquo;helloworld&rdquo; image
+to tags that were built against the &ldquo;prod&rdquo; branch then you could
+do the following:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">fluxctl policy --workload<span style="color:#666">=</span>default:deployment/helloworld --tag-all<span style="color:#666">=</span><span style="color:#4070a0">&#39;prod-*&#39;</span>
+</code></pre></div><p>If your pod contains multiple containers then you tag each container
+individually:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">fluxctl policy --workload<span style="color:#666">=</span>default:deployment/helloworld --tag<span style="color:#666">=</span><span style="color:#4070a0">&#39;helloworld=prod-*&#39;</span> --tag<span style="color:#666">=</span><span style="color:#4070a0">&#39;sidecar=prod-*&#39;</span>
+</code></pre></div><p>Manual releases without explicit mention of the target image will
+also adhere to tag filters.
+This will only release the newest image matching the tag filter:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">fluxctl release --workload<span style="color:#666">=</span>default:deployment/helloworld --update-all-images
+</code></pre></div><p>To release an image outside of tag filters, either specify the image:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">fluxctl release --workload<span style="color:#666">=</span>default:deployment/helloworld --update-image<span style="color:#666">=</span>helloworld:dev-abc123
+</code></pre></div><p>or use <code>--force</code>:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">fluxctl release --workload<span style="color:#666">=</span>default:deployment/helloworld --update-all-images --force
+</code></pre></div><p>Please note that automation might immediately undo this.</p>
+<h3 id="filter-pattern-types">Filter pattern types</h3>
+<p>Flux currently offers support for <code>glob</code>, <code>semver</code> and <code>regexp</code> based filtering.</p>
+<h4 id="glob">Glob</h4>
+<p>The glob (<code>*</code>) filter is the simplest filter Flux supports, a filter can contain
+multiple globs:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">fluxctl policy --workload<span style="color:#666">=</span>default:deployment/helloworld --tag-all<span style="color:#666">=</span><span style="color:#4070a0">&#39;glob:master-v1.*.*&#39;</span>
+</code></pre></div><h4 id="semver">Semver</h4>
+<p>If your images use 
+<a href="https://semver.org" target="_blank">semantic versioning</a> you can filter by image tags
+that adhere to certain constraints:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">fluxctl policy --workload<span style="color:#666">=</span>default:deployment/helloworld --tag-all<span style="color:#666">=</span><span style="color:#4070a0">&#39;semver:~1&#39;</span>
+</code></pre></div><p>or only release images that have a stable semantic version tag (X.Y.Z):</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">fluxctl policy --workload<span style="color:#666">=</span>default:deployment/helloworld --tag-all<span style="color:#666">=</span><span style="color:#4070a0">&#39;semver:*&#39;</span>
+</code></pre></div><p>Using a semver filter will also affect how Flux sorts images, so
+that the higher versions will be considered newer.</p>
+<p>Semver has a concept of &ldquo;pre-release&rdquo; versions which have an extra
+label like <code>-beta</code> at the end.  If you want to include these then
+write a policy with a hyphen; for example <code>&gt;=1.2.3</code> will skip
+prereleases while <code>&gt;=1.2.3-0</code> will include prereleases.</p>
+<h4 id="regexp">Regexp</h4>
+<p>If your images have complex tags you can filter by regular expression:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">fluxctl policy --workload<span style="color:#666">=</span>default:deployment/helloworld --tag-all<span style="color:#666">=</span><span style="color:#4070a0">&#39;regexp:^([a-zA-Z]+)$&#39;</span>
+</code></pre></div><p>Instead of <code>regexp</code> it is also possible to use its alias <code>regex</code>.
+Please bear in mind that if you want to match the whole tag,
+you must bookend your pattern with <code>^</code> and <code>$</code>.</p>
+<h3 id="controlling-image-timestamps-with-labels">Controlling image timestamps with labels</h3>
+<p>Some image registries do not expose a reliable creation timestamp for
+image tags, which could pose a problem for the automated roll-out of
+images.</p>
+<p>To overcome this problem you can define one of the supported labels in
+your <code>Dockerfile</code>. Flux will prioritize labels over the timestamp it
+retrieves from the registry.</p>
+<h4 id="supported-label-formats">Supported label formats</h4>
+<ul>
+<li>
+<a href="https://github.com/opencontainers/image-spec/blob/master/annotations.md#pre-defined-annotation-keys" target="_blank"><code>org.opencontainers.image.created</code></a>
+date and time on which the image was built (string, date-time as defined by RFC 3339).</li>
+<li>
+<a href="http://label-schema.org/rc1/#build-time-labels" target="_blank"><code>org.label-schema.build-date</code></a>
+date and time on which the image was built (string, date-time as defined by RFC 3339).</li>
+</ul>
+<h2 id="actions-triggered-through-fluxctl">Actions triggered through <code>fluxctl</code></h2>
+<p><code>fluxctl</code> provides the following flags for the message and author customization:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">  -m, --message string      attach a message to the update
+      --user    string      override the user reported as initiating the update
+</code></pre></div><h3 id="commit-customization">Commit customization</h3>
+<ol>
+<li>
+<p>Commit message</p>
+<pre><code class="language-console" data-lang="console">fluxctl --message=&quot;Message providing more context for the action&quot; .....
+</code></pre></li>
+<li>
+<p>Committer</p>
+<p>Committer information can be overriden with the appropriate fluxd flags:</p>
+<pre><code class="language-console" data-lang="console">--git-user
+--git-email
+</code></pre><p>See 
+<a href="/legacy/flux/references/daemon/">daemon.md</a> for more information.</p>
+</li>
+<li>
+<p>Commit author</p>
+<p>The default for the author is the committer information, which can be overriden,
+in the following manner:</p>
+<p>a) Default override uses user&rsquo;s git configuration, ie <code>user.name</code>
+and <code>user.email</code> (.gitconfig) to set the commit author.
+If the user has neither user.name nor for
+user.email set up, the committer information will be used. If only one
+is set up, that will be used.</p>
+<p>b) This can be further overriden by the use of the <code>fluxctl --user</code> flag.</p>
+</li>
+</ol>
+<h4 id="examples">Examples</h4>
+<ol>
+<li>
+<p><code>fluxctl --user=&quot;Jane Doe &lt;jane@doe.com&gt;&quot; ......</code><br>
+This will always succeed as git expects a new author in the format
+&ldquo;some_string &lt;some_other_string&gt;&rdquo;.</p>
+</li>
+<li>
+<p><code>fluxctl --user=&quot;Jane Doe&quot; .......</code><br>
+This form will succeed if there is already a repo commit, done by
+Jane Doe.</p>
+</li>
+<li>
+<p><code>fluxctl --user=&quot;jane@doe.com&quot; .......</code><br>
+This form will succeed if there is already a repo commit, done by
+<a href="mailto:jane@doe.com">jane@doe.com</a>.</p>
+</li>
+</ol>
+<h3 id="errors-due-to-author-customization">Errors due to author customization</h3>
+<p>In case of no prior commit by the specified author, an error will be reported
+for 2) and 3):</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">git commit: fatal: --author <span style="color:#4070a0">&#39;unknown&#39;</span> is not <span style="color:#4070a0">&#39;Name &lt;email&gt;&#39;</span> and matches
+no existing author
+</code></pre></div><h2 id="using-annotations">Using Annotations</h2>
+<p>Automation and image tag filtering can also be managed using annotations
+(<code>fluxctl</code> is using the same mechanism).</p>
+<p>Automation can be enabled with <code>fluxcd.io/automated: &quot;true&quot;</code>. Image
+filtering annotations take the form
+<code>fluxcd.io/tag.&lt;container-name&gt;: &lt;filter-type&gt;:&lt;filter-value&gt;</code> or
+<code>filter.fluxcd.io/&lt;container-name&gt;: &lt;filter-type&gt;:&lt;filter-value&gt;</code>. Values of
+<code>filter-type</code> can be 
+<a href="#glob"><code>glob</code></a>, 
+<a href="#semver"><code>semver</code></a>, and
+
+<a href="#regexp"><code>regexp</code></a>. Filter values use the same syntax as when the filter is
+configured using <code>fluxctl</code>.</p>
+<p>Here&rsquo;s a simple but complete deployment file with annotations:</p>
+<div class="highlight"><pre style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#062873;font-weight:bold">apiVersion</span>:<span style="color:#bbb"> </span>apps/v1<span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#062873;font-weight:bold">kind</span>:<span style="color:#bbb"> </span>Deployment<span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#062873;font-weight:bold">metadata</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">  </span><span style="color:#062873;font-weight:bold">name</span>:<span style="color:#bbb"> </span>podinfo<span style="color:#bbb">
+</span><span style="color:#bbb">  </span><span style="color:#062873;font-weight:bold">namespace</span>:<span style="color:#bbb"> </span>demo<span style="color:#bbb">
+</span><span style="color:#bbb">  </span><span style="color:#062873;font-weight:bold">labels</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#062873;font-weight:bold">app</span>:<span style="color:#bbb"> </span>podinfo<span style="color:#bbb">
+</span><span style="color:#bbb">  </span><span style="color:#062873;font-weight:bold">annotations</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#062873;font-weight:bold">fluxcd.io/automated</span>:<span style="color:#bbb"> </span><span style="color:#4070a0">&#34;true&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#062873;font-weight:bold">fluxcd.io/tag.podinfod</span>:<span style="color:#bbb"> </span>semver:~1.3<span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#062873;font-weight:bold">spec</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">  </span><span style="color:#062873;font-weight:bold">selector</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#062873;font-weight:bold">matchLabels</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">      </span><span style="color:#062873;font-weight:bold">app</span>:<span style="color:#bbb"> </span>podinfo<span style="color:#bbb">
+</span><span style="color:#bbb">  </span><span style="color:#062873;font-weight:bold">template</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#062873;font-weight:bold">metadata</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">      </span><span style="color:#062873;font-weight:bold">labels</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">        </span><span style="color:#062873;font-weight:bold">app</span>:<span style="color:#bbb"> </span>podinfo<span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#062873;font-weight:bold">spec</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">      </span><span style="color:#062873;font-weight:bold">containers</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>- <span style="color:#062873;font-weight:bold">name</span>:<span style="color:#bbb"> </span>podinfod<span style="color:#bbb">
+</span><span style="color:#bbb">        </span><span style="color:#062873;font-weight:bold">image</span>:<span style="color:#bbb"> </span>stefanprodan/podinfo:1.3.2<span style="color:#bbb">
+</span><span style="color:#bbb">        </span><span style="color:#062873;font-weight:bold">ports</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>- <span style="color:#062873;font-weight:bold">containerPort</span>:<span style="color:#bbb"> </span><span style="color:#40a070">9898</span><span style="color:#bbb">
+</span><span style="color:#bbb">          </span><span style="color:#062873;font-weight:bold">name</span>:<span style="color:#bbb"> </span>http<span style="color:#bbb">
+</span><span style="color:#bbb">        </span><span style="color:#062873;font-weight:bold">command</span>:<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>- ./podinfo<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>- --port=9898<span style="color:#bbb">
+</span></code></pre></div><p>Things to notice:</p>
+<ol>
+<li>The annotations are made in <code>metadata.annotations</code>, not in <code>spec.template.metadata</code>.</li>
+<li>The <code>fluxcd.io/tag.</code>&hellip; references the container name <code>podinfod</code>, this will change based on your container name. If you have multiple containers you would have multiple lines like that.</li>
+<li>The value for the <code>fluxcd.io/tag.</code>&hellip; annotation should includes the filter pattern type, in this case <code>semver</code>.</li>
+</ol>
+<p>Annotations can also be used to tell Flux to temporarily ignore certain manifests
+using <code>fluxcd.io/ignore: &quot;true&quot;</code>. Read more about this in the 
+<a href="/legacy/flux/faq/">FAQ</a>.</p>
+
+	
+	
+	<div class="text-muted mt-5 pt-3 border-top">
+
+</div>
+
+</div>
+
+
+          </main>
+        </div>
+      </div>
+      
+<footer class="bg-dark py-5 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+        
+        
+<ul class="list-inline mb-0">
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Twitter" aria-label="Twitter">
+    <a class="text-white" target="_blank" rel="noopener" href="https://twitter.com/fluxcd" aria-label="Twitter">
+      <i class="fab fa-twitter"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="LinkedIn" aria-label="LinkedIn">
+    <a class="text-white" target="_blank" rel="noopener" href="https://linkedin.com/groups/8985374" aria-label="LinkedIn">
+      <i class="fab fa-linkedin"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="RSS Feed" aria-label="RSS Feed">
+    <a class="text-white" target="_blank" rel="noopener" href="/blog/index.xml" aria-label="RSS Feed">
+      <i class="fa fa-rss"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Support" aria-label="Support">
+    <a class="text-white" target="_blank" rel="noopener" href="/support" aria-label="Support">
+      <i class="fas fa-comments"></i>
+    </a>
+  </li>
+  
+</ul>
+
+        
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+        
+        
+<ul class="list-inline mb-0">
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Flux project on GitHub" aria-label="Flux project on GitHub">
+    <a class="text-white" target="_blank" rel="noopener" href="https://github.com/fluxcd" aria-label="Flux project on GitHub">
+      <i class="fab fa-github"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Slack" aria-label="Slack">
+    <a class="text-white" target="_blank" rel="noopener" href="https://cloud-native.slack.com/messages/flux" aria-label="Slack">
+      <i class="fab fa-slack"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Developer mailing list" aria-label="Developer mailing list">
+    <a class="text-white" target="_blank" rel="noopener" href="https://lists.cncf.io/g/cncf-flux-dev" aria-label="Developer mailing list">
+      <i class="fa fa-envelope"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Flux YouTube channel" aria-label="Flux YouTube channel">
+    <a class="text-white" target="_blank" rel="noopener" href="https://www.youtube.com/channel/UCoZxt-YMhGHb20ZkvcCc5KA" aria-label="Flux YouTube channel">
+      <i class="fab fa-youtube"></i>
+    </a>
+  </li>
+  
+</ul>
+
+        
+        
+      </div>
+      <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
+        <small class="text-white">&copy; 2021 The Flux authors </small>
+        
+	
+		
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+<script src="/js/main.min.5c74b870c6953931a705f390a49c7e4c0a842ec5c83b24354758dd674343ed0d.js" integrity="sha256-XHS4cMaVOTGnBfOQpJx&#43;TAqELsXIOyQ1R1jdZ0ND7Q0=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<script type="text/javascript"> docsearch({
+apiKey: '45f9f14d53600b0a2cafa46a26ee10f4',
+indexName: 'fluxcd',
+inputSelector: '.td-search-input',
+
+algoliaOptions: { 'facetFilters': ["tags:legacy"] },
+
+debug: false 
+});
+</script>
+
+
+
+  </body>
+</html>

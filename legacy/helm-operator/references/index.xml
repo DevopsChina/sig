@@ -1,0 +1,435 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>道场 – References</title>
+    <link>/legacy/helm-operator/references/</link>
+    <description>Recent content in References on 道场</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="/legacy/helm-operator/references/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Legacy: Operator reference</title>
+      <link>/legacy/helm-operator/references/operator/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/references/operator/</guid>
+      <description>
+        
+        
+        &lt;p&gt;The Helm Operator deals with Helm chart releases. The operator watches for
+changes of Custom Resources of kind &lt;code&gt;HelmRelease&lt;/code&gt;. It receives Kubernetes
+Events and acts accordingly.&lt;/p&gt;
+&lt;h2 id=&#34;responsibilities&#34;&gt;Responsibilities&lt;/h2&gt;
+&lt;p&gt;When the Helm Operator sees a &lt;code&gt;HelmRelease&lt;/code&gt; resource in the
+cluster, it either installs or upgrades the named Helm release so that
+the chart is released as specified.&lt;/p&gt;
+&lt;p&gt;It will also notice when a &lt;code&gt;HelmRelease&lt;/code&gt; resource is updated, and
+take action accordingly.&lt;/p&gt;
+&lt;h2 id=&#34;setup-and-configuration&#34;&gt;Setup and configuration&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;helm-operator&lt;/code&gt; requires setup and offers customization though a multitude of flags.&lt;/p&gt;
+&lt;h3 id=&#34;general-flags&#34;&gt;General flags&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Flag&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Purpose&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--log-format&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;fmt&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Changes the logging format; &lt;code&gt;fmt&lt;/code&gt; or &lt;code&gt;json&lt;/code&gt;.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--workers&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;2&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Number of workers processing releases.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--listen&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;:3030&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Listen address where &lt;code&gt;/metrics&lt;/code&gt; and API will be served.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;reconciliation-configuration&#34;&gt;Reconciliation configuration&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Flag&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Purpose&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--charts-sync-interval&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;3m&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Period on which to reconcile the Helm releases with &lt;code&gt;HelmRelease&lt;/code&gt; resources.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--status-update-interval&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;10s&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Period on which to update the Helm release status in &lt;code&gt;HelmRelease&lt;/code&gt; resources.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--log-release-diffs&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;false&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Log the diff when a chart release diverges. &lt;strong&gt;Potentially insecure due to logging of secret values.&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;cluster-configuration&#34;&gt;Cluster configuration&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Flag&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Purpose&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--kubeconfig&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;Path to a kubeconfig. Only required if out-of-cluster.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--master&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;The address of the Kubernetes API server. Overrides any value in kubeconfig. Only required if out-of-cluster.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--allow-namespace&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;If set, this limits the scope to a single namespace. if not specified, all namespaces will be watched.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;helm-configuration&#34;&gt;Helm configuration&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Flag&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Purpose&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--enabled-helm-versions&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;v2,v3&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The Helm client versions supported by this operator instance.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--helm-repository-import&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;Targeted version and the path of the Helm repository index to import, i.e. &lt;code&gt;v3:/tmp/v3/index.yaml,v2:/tmp/v2/index.yaml&lt;/code&gt;.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4 id=&#34;tiller-configuration&#34;&gt;Tiller configuration&lt;/h4&gt;
+&lt;p&gt;The following option flags are only applicable when support for Helm 2 is
+enabled and a connection to Tiller needs to be made.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Flag&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Purpose&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--tiller-ip&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;Tiller IP address. Only required if out-of-cluster.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--tiller-port&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;Tiller port.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--tiller-namespace&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;Tiller namespace. If not provided, the default is kube-system.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--tiller-tls-enable&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;false&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Enable TLS communication with Tiller. If provided, requires TLSKey and TLSCert to be provided as well.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--tiller-tls-verify&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;false&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Verify TLS certificate from Tiller. Will enable TLS communication when provided.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--tiller-tls-key-path&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;/etc/fluxd/helm/tls.key&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Path to private key file used to communicate with the Tiller server.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--tiller-tls-cert-path&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;/etc/fluxd/helm/tls.crt&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Path to certificate file used to communicate with the Tiller server.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--tiller-tls-ca-cert-path&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;Path to CA certificate file used to validate the Tiller server. Required if &lt;code&gt;--tiller-tls-verify&lt;/code&gt; is enabled.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--tiller-tls-hostname&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;The server name used to verify the hostname on the returned certificates from the Tiller server.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4 id=&#34;helm-2to3-convert-configurations&#34;&gt;Helm 2to3 convert configurations&lt;/h4&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Flag&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Purpose&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--convert-release-storage&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;secrets&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;v2 release storage type/object. It can be &amp;lsquo;secrets&amp;rsquo; or &amp;lsquo;configmaps&amp;rsquo;. This is only used with the &amp;lsquo;tiller-out-cluster&amp;rsquo; flag (default &amp;lsquo;secrets&amp;rsquo;)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--convert-tiller-out-cluster&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;false&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;When Tiller is not running in the cluster e.g. Tillerless&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;git-chart-source-configuration&#34;&gt;Git chart source configuration&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Flag&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Purpose&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--git-timeout&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;20s&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Duration after which Git operations time out.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--git-poll-interval&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;5m&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Period on which to poll Git chart sources for changes.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--update-chart-deps&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;true&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Update chart dependencies from a Git chart source before installing or upgrading a release.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Monitoring</title>
+      <link>/legacy/helm-operator/references/monitoring/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/references/monitoring/</guid>
+      <description>
+        
+        
+        &lt;p&gt;The Helm Operator exposes a metrics endpoint at &lt;code&gt;/metrics&lt;/code&gt;  on the configured
+
+&lt;a href=&#34;/legacy/helm-operator/references/operator/#general-flags&#34;&gt;&lt;code&gt;--listen&lt;/code&gt;&lt;/a&gt; address (defaults to &lt;code&gt;:3030&lt;/code&gt;) with data
+in Prometheus format.&lt;/p&gt;
+&lt;h2 id=&#34;metrics&#34;&gt;Metrics&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Metric&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;release_count&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Count of releases managed by the operator.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;release_action_duration_seconds&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Duration of release sync actions in seconds. See 
+&lt;a href=&#34;#release-actions&#34;&gt;release actions&lt;/a&gt;.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;release_condition_info&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Release condition status gauge, see 
+&lt;a href=&#34;#release-conditions&#34;&gt;release conditions&lt;/a&gt;.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;release_queue_length_count&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Count of release jobs waiting in the queue to be processed.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;release-actions&#34;&gt;Release actions&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;release_action_duration_seconds&lt;/code&gt; supports the following labels and label values.&lt;/p&gt;
+&lt;h4 id=&#34;labels&#34;&gt;Labels&lt;/h4&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Label&lt;/th&gt;
+&lt;th&gt;Label Value&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;target_namespace&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;targetNamespace&lt;/code&gt; of &lt;code&gt;HelmRelease&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;release_name&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;releaseName&lt;/code&gt; of &lt;code&gt;HelmRelease&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;success&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Whether the action was successful (&lt;code&gt;true&lt;/code&gt; or &lt;code&gt;false&lt;/code&gt;)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;action&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The release action, see below.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4 id=&#34;actions&#34;&gt;Actions&lt;/h4&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Action&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;sync&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;One entire release sync attempt, as configured to occur once every 
+&lt;a href=&#34;/legacy/helm-operator/references/operator/#reconciliation-configuration&#34;&gt;&amp;ndash;charts-sync-interval&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;install&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Installation attempt&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;upgrade&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Upgrade attempt&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;rollback&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Rollback attempt&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;uninstall&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Uninstallation attempt&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;dry-run-compare&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Dry run compare attempt to 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/reconciliation-and-upgrades/#what-triggers-an-upgrade&#34;&gt;determine whether to upgrade&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;annotate&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/reconciliation-and-upgrades/#the-antecedent-annotation&#34;&gt;Annotation&lt;/a&gt; attempt&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;release-conditions&#34;&gt;Release conditions&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;release_condition_info&lt;/code&gt; supports the following labels and label values.&lt;/p&gt;
+&lt;h4 id=&#34;labels-1&#34;&gt;Labels&lt;/h4&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Label&lt;/th&gt;
+&lt;th&gt;Label Value&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;target_namespace&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;targetNamespace&lt;/code&gt; of &lt;code&gt;HelmRelease&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;release_name&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;releaseName&lt;/code&gt; of &lt;code&gt;HelmRelease&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;condition&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;
+&lt;a href=&#34;helmrelease-custom-resource.md#helm.fluxcd.io/v1.HelmReleaseConditionType&#34;&gt;condition type&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4 id=&#34;values&#34;&gt;Values&lt;/h4&gt;
+&lt;p&gt;Values represent the 
+&lt;a href=&#34;helmrelease-custom-resource.md#helm.fluxcd.io/v1.ConditionStatus&#34;&gt;condition status&lt;/a&gt;.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Value&lt;/th&gt;
+&lt;th&gt;Condition Status&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;-1&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;False&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;0&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;Unknown&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;1&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;True&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;prometheus-alert-rules-examples&#34;&gt;Prometheus alert rules examples&lt;/h2&gt;
+&lt;p&gt;The following is a list of Prometheus alert rules examples possible
+with the exposed metrics. We are open to 
+&lt;a href=&#34;https://github.com/fluxcd/helm-operator/pulls&#34; target=&#34;_blank&#34;&gt;pull requests&lt;/a&gt; adding additional rules.&lt;/p&gt;
+&lt;h3 id=&#34;low-queue-throughput&#34;&gt;Low queue throughput&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;alert&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;HelmOperatorLowThroughput&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;expr&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux_helm_operator_release_queue_length_count &amp;gt; 0&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;for&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;30m&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;automatic-rollback-of-helmrelease&#34;&gt;Automatic rollback of &lt;code&gt;HelmRelease&lt;/code&gt;&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;alert&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;HelmReleaseRolledBack&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;expr&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux_helm_operator_release_condition_info{condition=&amp;#34;RolledBack&amp;#34;} == 1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;helmrelease-subject-to-an-error&#34;&gt;&lt;code&gt;HelmRelease&lt;/code&gt; subject to an error&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;alert&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;HelmReleaseError&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;expr&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux_helm_operator_release_condition_info{condition=&amp;#34;Released&amp;#34;} == -1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+      </description>
+    </item>
+    
+  </channel>
+</rss>

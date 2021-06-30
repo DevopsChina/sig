@@ -1,0 +1,456 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>道场 – Guides</title>
+    <link>/legacy/flux/guides/</link>
+    <description>Recent content in Guides on 道场</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="/legacy/flux/guides/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Legacy: Providing your own SSH key</title>
+      <link>/legacy/flux/guides/provide-own-ssh-key/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/guides/provide-own-ssh-key/</guid>
+      <description>
+        
+        
+        &lt;p&gt;Flux connects to the repository using an SSH key it retrieves from a
+Kubernetes secret, if the configured (&lt;code&gt;--k8s-secret-name&lt;/code&gt;) secret has
+no &lt;code&gt;identity&lt;/code&gt; key/value pair, it will generate new private key.&lt;/p&gt;
+&lt;p&gt;With this knowledge, providing your own SSH key is as simple as
+creating the configured secret in the expected format.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;create a Kubernetes secret from your own private key:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl create secret generic flux-git-deploy --from-file&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;identity&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;/full/path/to/private_key
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;this will result in a secret that has the structure:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;apiVersion&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;v1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;data&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;identity&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&amp;lt;base64 encoded RSA PRIVATE KEY&amp;gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;Secret&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;type&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;Opaque&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;...&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;(optional)&lt;/em&gt; if you created the secret with a non-default name
+(default: &lt;code&gt;flux-git-deploy&lt;/code&gt;), set the &lt;code&gt;--k8s-secret-name&lt;/code&gt; flag to
+the name of your secret (i.e. &lt;code&gt;--k8s-secret-name=foo&lt;/code&gt;).&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    The SSH key must be configured to have R/W access to the
+repository. More specifically, the SSH key must be able to create
+and update tags. E.g. in Gitlab, that means it requires &lt;code&gt;Maintainer&lt;/code&gt;
+permissions. The &lt;code&gt;Developer&lt;/code&gt; permission can create tags, but not
+update them.
+
+&lt;/div&gt;
+
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Using Git over HTTPS</title>
+      <link>/legacy/flux/guides/use-git-https/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/guides/use-git-https/</guid>
+      <description>
+        
+        
+        &lt;p&gt;Instead of making use of Flux&#39; capabilities to generate an SSH private
+key, or 
+&lt;a href=&#34;/legacy/flux/guides/provide-own-ssh-key/&#34;&gt;supplying your own&lt;/a&gt;, it is possible to
+set environment variables and use these in your &lt;code&gt;--git-url&lt;/code&gt; argument to
+provide your HTTPS basic auth credentials without having to expose them
+as a plain value in your workload.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    Setting an HTTP(S) URL as &lt;code&gt;--git-url&lt;/code&gt; will disable the
+generation of a private key and prevent the setup of the SSH keyring.
+
+&lt;/div&gt;
+
+
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    &lt;p&gt;The variables &lt;em&gt;must be escaped with &lt;code&gt;$()&lt;/code&gt;&lt;/em&gt; for Kubernetes
+to pass the values to the Flux container, e.g. &lt;code&gt;$(GIT_AUTHKEY)&lt;/code&gt;.
+&lt;p&gt;&lt;a href=&#34;https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/#using-environment-variables-inside-of-your-config&#34; target=&#34;_blank&#34;&gt;Read more about this Kubernetes feature&lt;/a&gt;.&lt;/p&gt;&lt;/p&gt;
+
+
+&lt;/div&gt;
+
+
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    &lt;p&gt;Each of the username and password must be percent-encoded, otherwise
+the git URL may end up being invalid once they have been interpolated
+in. You can encode a string with Perl (assuming your token is in the
+environment variable &lt;code&gt;TOKEN&lt;/code&gt;):&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;echo &amp;quot;$TOKEN&amp;quot; | perl -MURI::Escape -ne &#39;chomp;print uri_escape($_),&amp;quot;\n&amp;quot;&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;/div&gt;
+
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Create a personal access token to be used as the &lt;code&gt;GIT_AUTHKEY&lt;/code&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line&#34; target=&#34;_blank&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#creating-a-personal-access-token&#34; target=&#34;_blank&#34;&gt;GitLab&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://confluence.atlassian.com/bitbucketserver/personal-access-tokens-939515499.html&#34; target=&#34;_blank&#34;&gt;BitBucket&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Create a Kubernetes secret with two environment variables and their
+respective values (replace &lt;code&gt;&amp;lt;username&amp;gt;&lt;/code&gt; and &lt;code&gt;&amp;lt;token/password&amp;gt;&lt;/code&gt;):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl create secret generic flux-git-auth --from-literal&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;GIT_AUTHUSER&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&amp;lt;username&amp;gt; --from-literal&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;GIT_AUTHKEY&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&amp;lt;token/password&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;this will result in a secret that has the structure:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;apiVersion&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;v1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;data&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;GIT_AUTHKEY&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&amp;lt;base64 encoded token/password&amp;gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;GIT_AUTHUSER&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&amp;lt;base64 encoded username&amp;gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;Secret&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;type&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;Opaque&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;...&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Mount the Kubernetes secret as environment variables using &lt;code&gt;envFrom&lt;/code&gt;
+and use them in your &lt;code&gt;--git-url&lt;/code&gt; argument:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;apiVersion&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;apps/v1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;Deployment&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#0e84b5;font-weight:bold&#34;&gt;...&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;containers&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;envFrom&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;secretRef&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux-git-auth&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;args&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# Replace `github.com/...` with your git repository &lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;- --git-url=https://$(GIT_AUTHUSER):$(GIT_AUTHKEY)@github.com/fluxcd/flux-get-started.git&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;...&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Using a private Git host</title>
+      <link>/legacy/flux/guides/use-private-git-host/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/guides/use-private-git-host/</guid>
+      <description>
+        
+        
+        &lt;p&gt;If you&amp;rsquo;re using your own git host &amp;ndash; e.g., your own installation of
+gitlab, or bitbucket server &amp;ndash; you will need to add its host key to
+&lt;code&gt;~/.ssh/known_hosts&lt;/code&gt; in the Flux daemon container.&lt;/p&gt;
+&lt;p&gt;First, run a check that you can clone the repo. The following assumes
+that your git server&amp;rsquo;s hostname (e.g., &lt;code&gt;githost&lt;/code&gt;) is in &lt;code&gt;$GITHOST&lt;/code&gt; and
+the URL you&amp;rsquo;ll use to access the repository (e.g.,
+&lt;code&gt;user@githost:path/to/repo&lt;/code&gt;) is in &lt;code&gt;$GITREPO&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ &lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# Find the fluxd daemon pod:&lt;/span&gt;
+$ kubectl get pods --all-namespaces -l &lt;span style=&#34;color:#bb60d5&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;flux
+NAMESPACE   NAME                    READY     STATUS    RESTARTS   AGE
+weave       flux-85cdc6cdfc-n2tgf   1/1       Running   &lt;span style=&#34;color:#40a070&#34;&gt;0&lt;/span&gt;          1h
+
+$ kubectl &lt;span style=&#34;color:#007020&#34;&gt;exec&lt;/span&gt; -n weave flux-85cdc6cdfc-n2tgf -ti -- &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    env &lt;span style=&#34;color:#bb60d5&#34;&gt;GITHOST&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;$GITHOST&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;GITREPO&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;$GITREPO&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;PS1&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;container&lt;/span&gt;$&lt;span style=&#34;color:#4070a0&#34;&gt; &amp;#34;&lt;/span&gt; /bin/sh
+
+container$ git clone &lt;span style=&#34;color:#bb60d5&#34;&gt;$GITREPO&lt;/span&gt;
+Cloning into &amp;lt;repository name&amp;gt;...
+No ECDSA host key is known &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;for&lt;/span&gt;  &amp;lt;GITHOST&amp;gt; and you have requested strict checking.
+Host key verification failed.
+fatal: Could not &lt;span style=&#34;color:#007020&#34;&gt;read&lt;/span&gt; from remote repository
+
+container$ &lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# ^ that was expected. Now we&amp;#39;ll try with a modified known_hosts&lt;/span&gt;
+container$ ssh-keyscan &lt;span style=&#34;color:#bb60d5&#34;&gt;$GITHOST&lt;/span&gt; &amp;gt;&amp;gt; ~/.ssh/known_hosts
+container$ git clone &lt;span style=&#34;color:#bb60d5&#34;&gt;$GITREPO&lt;/span&gt;
+Cloning into &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;...&amp;#39;&lt;/span&gt;
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If &lt;code&gt;git clone&lt;/code&gt; doesn&amp;rsquo;t succeed, you&amp;rsquo;ll need to check that the SSH key
+has been installed properly first, then come back. &lt;code&gt;ssh -vv $GITHOST&lt;/code&gt;
+from within the container may help debug it.&lt;/p&gt;
+&lt;p&gt;If it &lt;em&gt;did&lt;/em&gt; work, you will need to make it a more permanent
+arrangement. Back in that shell, create a ConfigMap for the cluster. To
+make sure the ConfigMap is created in the namespace of the Flux
+deployment, the namespace is set explicitly:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;container$ kubectl create configmap flux-ssh-config --from-file&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;$HOME&lt;/span&gt;/.ssh/known_hosts -n &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;$(&lt;/span&gt;cat /var/run/secrets/kubernetes.io/serviceaccount/namespace&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;)&lt;/span&gt;
+configmap &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;flux-ssh-config&amp;#34;&lt;/span&gt; created
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To use the ConfigMap every time the Flux daemon restarts, you&amp;rsquo;ll need
+to mount it into the container. The example deployment manifest
+includes an example of doing this, commented out. Uncomment those two blocks:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;ssh-config&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;configMap&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;          &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux-ssh-config&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;ssh-config&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;          &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;mountPath&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;/root/.ssh&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;It assumes you used &lt;code&gt;flux-ssh-config&lt;/code&gt; as name of the ConfigMap and then reapply the
+manifest.&lt;/p&gt;
+&lt;p&gt;Another alternative is to create the ConfigMap from a template. This could be
+something like:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;apiVersion&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;v1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;data&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;known_hosts&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;|&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;    # github
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;    192.30.253.112 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;    # github
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;    192.30.253.113 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;    # private gitlab
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;    gitlab.________ ssh-rsa AAAAB3N...&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;ConfigMap&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux-ssh-config&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;namespace&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&amp;lt;OPTIONAL NAMESPACE (if not default)&amp;gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You will need to explicitly tell &lt;code&gt;fluxd&lt;/code&gt; to use that service account by
+uncommenting and possible adapting the line &lt;code&gt;# serviceAccountName: flux&lt;/code&gt; in the file &lt;code&gt;flux-deployment.yaml&lt;/code&gt; before applying it.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Upgrading to Flux v1</title>
+      <link>/legacy/flux/guides/upgrading-to-1.0/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/guides/upgrading-to-1.0/</guid>
+      <description>
+        
+        
+        &lt;p&gt;Flux v1 is a major improvement over the previous versions, and is
+different enough that you need to do a bit of work to upgrade it.&lt;/p&gt;
+&lt;p&gt;In previous releases of Flux, much of the work was done by the
+service. This meant that to get a useful system, you had to run both
+the daemon and the service in your cluster. In version 1, the daemon
+does all of the mechanical work by itself.&lt;/p&gt;
+&lt;h2 id=&#34;differences-between-old-flux-and-flux-v1&#34;&gt;Differences between old Flux and Flux v1&lt;/h2&gt;
+&lt;p&gt;In version 1 the daemon is more self-sufficient and easier to set
+up. It is also more capable, and in particular, it now synchronises
+your cluster with the manifests you keep in git &amp;ndash; enabling you to use
+git (and GitHub) workflows to manage your cluster.&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;&lt;th&gt;Old Flux&lt;/th&gt;&lt;th&gt;Flux v1&lt;/th&gt;&lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tr&gt;&lt;th&gt;Setting up the repo&lt;/th&gt;&lt;/tr&gt;
+ &lt;tr&gt;
+  &lt;td&gt;
+   &lt;ul&gt;
+    &lt;li&gt;Create an SSH keypair&lt;/li&gt;
+    &lt;li&gt;Construct a YAML file with the git repo and private key in it&lt;/li&gt;
+    &lt;li&gt;Feed the config YAML file to the Flux service&lt;/li&gt;
+    &lt;li&gt;Add the public key to GitHub/wherever&lt;/li&gt;
+   &lt;/ul&gt;
+  &lt;/td&gt;
+  &lt;td&gt;
+   &lt;ul&gt;
+    &lt;li&gt;The git repo can be supplied as an argument&lt;/li&gt;
+    &lt;li&gt;The daemon  creates an SSH keypair&lt;/li&gt;
+    &lt;li&gt;Add the public key to GitHub/wherever&lt;/li&gt;
+   &lt;/ul&gt;
+  &lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;&lt;th&gt;Supplying Docker registry credentials&lt;/th&gt;&lt;/tr&gt;
+ &lt;tr&gt;
+  &lt;td&gt;
+   &lt;ul&gt;
+    &lt;li&gt;Assemble Docker credentials in a config.json file&lt;/li&gt;
+    &lt;li&gt;Translate that file into entries in the config YAML file&lt;/li&gt;
+    &lt;li&gt;Feed the config YAML file to the Flux service (again)&lt;/li&gt;
+   &lt;/ul&gt;
+  &lt;/td&gt;
+  &lt;td&gt;
+    The daemon finds credentials for itself by looking at Kubernetes resources
+  &lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;&lt;th&gt;Managing your cluster with Flux&lt;/th&gt;&lt;/tr&gt;
+ &lt;tr&gt;
+  &lt;td&gt;
+   &lt;ul&gt;
+    &lt;li&gt;For releasing images, use the UI or fluxctl; Flux will apply the changes to the cluster&lt;/li&gt;
+    &lt;li&gt;For other changes, commit them to config, then apply to the cluster with kubectl&lt;/li&gt;
+   &lt;/ul&gt;
+  &lt;/td&gt;
+  &lt;td&gt;
+   &lt;ul&gt;
+    &lt;li&gt;For releasing images, use the UI or fluxctl; Flux will commit changes to your git repo&lt;/li&gt;
+    &lt;li&gt;For other changes, commit them to your git repo&lt;/li&gt;
+    &lt;li&gt;Flux applies all changes to the git repo to the cluster&lt;/li&gt;
+   &lt;/ul&gt;
+  &lt;/td&gt;
+ &lt;/tr&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;upgrade-process&#34;&gt;Upgrade process&lt;/h2&gt;
+&lt;p&gt;In summary, you will need to:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Remove the old Flux resources from your cluster&lt;/li&gt;
+&lt;li&gt;Delete any deployment keys&lt;/li&gt;
+&lt;li&gt;Run the new Flux resources&lt;/li&gt;
+&lt;li&gt;Install a new deploy key&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;First, it will help in a few places to have an old fluxctl
+around. Download it from GitHub:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;curl -o fluxctl_030 https://github.com/fluxcd/flux/releases/download/0.3.0/fluxctl_linux_amd64
+&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# or if using macOS,&lt;/span&gt;
+&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# curl -o fluxctl_030 https://github.com/fluxcd/flux/releases/download/0.3.0/fluxctl_darwin_amd64&lt;/span&gt;
+chmod a+x ./fluxctl_030
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;if-you-are-running-flux-in-standalone-mode&#34;&gt;If you are running Flux in &amp;ldquo;standalone&amp;rdquo; mode&lt;/h2&gt;
+&lt;p&gt;Set the environment variable FLUX_URL to point to the Flux service you
+are running, as described in
+
+&lt;a href=&#34;https://github.com/fluxcd/flux/blob/0.3.0/site/using.md#fluxctl-setup&#34; target=&#34;_blank&#34;&gt;the old deployment docs&lt;/a&gt;. The
+particular URL will differ, depending on how you have told Kubernetes
+to expose the Flux service.&lt;/p&gt;
+&lt;p&gt;Before making any changes, get the config so that it can be consulted later:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;./fluxctl_030 get-config --fingerprint&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;md5 | tee old-config.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;remove-old-flux-resources&#34;&gt;Remove old Flux resources&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;Important! If you have Flux resources committed to git&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;The first thing to do here is to remove any manifests for running
+Flux you have stored in git, before deleting them in the cluster
+(below). If you don’t remove these, running the new Flux daemon will
+restore the old configuration.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;You can delete the Flux resources by referring to the manifest files
+used to create them. If you don’t have the files on hand, you can try
+using the example deployment as a stand-in:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;git clone --branch 0.3.0 git@github.com:fluxcd/flux flux-0.3.0
+kubectl delete --ignore-not-found -R -f ./flux-0.3.0/deploy
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;That’s something of a sledgehammer! But it should cover most cases.&lt;/p&gt;
+&lt;h3 id=&#34;delete-deployment-keys&#34;&gt;Delete deployment keys&lt;/h3&gt;
+&lt;p&gt;It’s good practice to remove any unused deployment keys. If you’re
+using GitHub, look at the settings for the repository you were
+pointing Flux at, and delete the key Flux was using. To check you are
+removing the correct key, you can see the fingerprint of the key used
+by Flux in the file &lt;code&gt;old-config.yaml&lt;/code&gt; that was created earlier.&lt;/p&gt;
+&lt;h3 id=&#34;configure-and-run-new-flux-resources&#34;&gt;Configure and run new Flux resources&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;First, it is important to understand that Flux manages more of your
+cluster resources now. It will automatically apply the manifests
+that appear in your config repo, either by creating or by updating
+them.  In other words, it tries to keep the cluster running whatever
+is represented in the repo. (Though it doesn’t delete things, yet).&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;To run Flux without connecting to Weave Cloud, adapt the manifests
+provided in the
+
+&lt;a href=&#34;https://github.com/fluxcd/flux/tree/master/deploy&#34; target=&#34;_blank&#34;&gt;Flux repo&lt;/a&gt;
+with the git parameters (URL, path, and branch) from
+&lt;code&gt;old-config.yaml&lt;/code&gt;, and then apply them with &lt;code&gt;kubectl&lt;/code&gt;. Consider adding
+these adapted manifests to your own config repo.&lt;/p&gt;
+&lt;p&gt;The daemon now has an API itself, so you can point fluxctl directly at
+it (the example manifests include a Kubernetes service so you can do
+just that).&lt;/p&gt;
+&lt;p&gt;You may find that you need to set FLUX_URL again, to take account of
+the new deployment. See the
+
+&lt;a href=&#34;https://github.com/fluxcd/flux/blob/1.0.1/site/standalone/setup.md#connecting-fluxctl-to-the-daemon&#34; target=&#34;_blank&#34;&gt;setup instructions&lt;/a&gt;
+for guidance.&lt;/p&gt;
+&lt;p&gt;To see the SSH key created by Flux, download the latest fluxctl from
+
+&lt;a href=&#34;https://github.com/fluxcd/flux/releases/tag/1.0.1&#34; target=&#34;_blank&#34;&gt;the release page&lt;/a&gt;
+and run:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl identity
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You will need to add this as a deploy key, which is also described in
+the setup instructions linked above.&lt;/p&gt;
+&lt;h2 id=&#34;troubleshooting&#34;&gt;Troubleshooting&lt;/h2&gt;
+&lt;h3 id=&#34;the-kubectl-delete-commands-didnt-delete-anything&#34;&gt;The &lt;code&gt;kubectl delete&lt;/code&gt; commands didn’t delete anything&lt;/h3&gt;
+&lt;p&gt;It’s possible that the Flux resources are in an unusual namespace or
+given a different name. As a last resort, you can hunt down the
+resources by name and delete them. Use kubectl to look for likely
+suspects.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get serviceaccount,service,deployment --all-namespaces
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Have a look for deployments and services with “flux” in the name.&lt;/p&gt;
+&lt;h3 id=&#34;i-deleted-the-flux-resources-but-when-i-install-flux-v1-they-come-back&#34;&gt;I deleted the Flux resources but when I install Flux v1 they come back&lt;/h3&gt;
+&lt;p&gt;The most likely explanation is that you have manifests for the
+resources in your config repo. When Flux v1 starts, it does a sync &amp;ndash;
+and if there are manifests for the old Flux still in git, it will
+create those as resources.&lt;/p&gt;
+&lt;p&gt;If that’s the case, you will need to remove the manifests from git
+before running Flux v1.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Using GKE Workload Identity with Flux</title>
+      <link>/legacy/flux/guides/use-gke-workload-identity/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/guides/use-gke-workload-identity/</guid>
+      <description>
+        
+        
+        &lt;p&gt;When Flux is running in a GKE cluster with 
+&lt;a href=&#34;https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity&#34; target=&#34;_blank&#34;&gt;Workload Identity&lt;/a&gt; enabled and you use Google Container Registry to host private images in your project, there are additional steps required for Flux to be able to check for updated images.&lt;/p&gt;
+&lt;p&gt;Without Workload Identity, Pods in the cluster by default assume the default IAM account of the GCP compute instances they are running on. With Workload Identity enabled, however, VM instance and Pod identity is completely separate. This results in Flux no longer being able to access a private GCR registry in the same project.&lt;/p&gt;
+&lt;p&gt;In this case, the Kubernetes service account as which Flux is running needs to be granted the Storage Object Viewer role to the registry&amp;rsquo;s underlying GCS bucket to scan for updated images.&lt;/p&gt;
+&lt;h2 id=&#34;configure-a-gcp-service-account&#34;&gt;Configure a GCP service account&lt;/h2&gt;
+&lt;p&gt;The first step is to create an 
+&lt;a href=&#34;https://cloud.google.com/docs/authentication/getting-started#creating_a_service_account&#34; target=&#34;_blank&#34;&gt;IAM service account&lt;/a&gt; in the GCP project and assign it the Storage Object Viewer (&lt;code&gt;storage.objectViewer&lt;/code&gt;) role in the GCS bucket that is backing the container registry in your project.&lt;/p&gt;
+&lt;p&gt;Next, the GCP service account needs to be assigned the &lt;code&gt;iam.workloadIdentityUser&lt;/code&gt; role:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;gcloud iam service-accounts add-iam-policy-binding &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;  --role roles/iam.workloadIdentityUser &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;  --member &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;serviceAccount:cluster_project.svc.id.goog[k8s_namespace/ksa_name]&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;  gsa_name@gsa_project.iam.gserviceaccount.com
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;So if your GCP project is called &lt;code&gt;total-mayhem-123456&lt;/code&gt; and the GCP service account &lt;code&gt;flux-gcp&lt;/code&gt; and Flux in your Kubernetes cluster(s) are running in the namespace &lt;code&gt;flux&lt;/code&gt; and using the service account &lt;code&gt;flux&lt;/code&gt; (the default), this would translate to the following:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;gcloud iam service-accounts add-iam-policy-binding &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;  --role roles/iam.workloadIdentityUser &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;  --member &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;serviceAccount:total-mayhem-123456.svc.id.goog[flux/flux]&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;  flux-gcp@total-mayhem-123456.iam.gserviceaccount.com
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;configure-k8s-service-account&#34;&gt;Configure K8s service account&lt;/h2&gt;
+&lt;p&gt;In the second step you need to add an annotation to the Kubernetes service account as which the Flux pod is running in the cluster, so Workload Identity knows the relationship of GCP to K8s service account.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;apiVersion&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;v1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;ServiceAccount&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;labels&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;namespace&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;annotations&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;iam.gke.io/gcp-service-account=flux-gcp@total-mayhem-123456.iam.gserviceaccount.com&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Alternatively, if you use the Helm chart to install Flux, you can set the annotations during installation:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# You need to escape the dots in the annotation key, else Helm will throw an error&lt;/span&gt;
+helm upgrade -i flux fluxcd/flux &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--set serviceAccount.annotations.&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;iam\.gke\.io/gcp-service-account&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;flux-gcp@total-mayhem-123456.iam.gserviceaccount.com&amp;#39;&lt;/span&gt;
+--set &lt;span style=&#34;color:#666&#34;&gt;[&lt;/span&gt;your other settings here&lt;span style=&#34;color:#666&#34;&gt;]&lt;/span&gt; &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--namespace flux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+      </description>
+    </item>
+    
+  </channel>
+</rss>

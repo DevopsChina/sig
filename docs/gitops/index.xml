@@ -1,0 +1,557 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>道场 – GitOps</title>
+    <link>/docs/gitops/</link>
+    <description>Recent content in GitOps on 道场</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="/docs/gitops/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: Using the GitOps Toolkit APIs with Go</title>
+      <link>/docs/gitops/packages/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/gitops/packages/</guid>
+      <description>
+        
+        
+        &lt;p&gt;While you can use the GitOps Toolkit APIs in a declarative manner with &lt;code&gt;kubectl apply&lt;/code&gt;,
+we provide client library code for all our toolkit APIs that makes it easier to access them from Go.&lt;/p&gt;
+&lt;h2 id=&#34;go-packages&#34;&gt;Go Packages&lt;/h2&gt;
+&lt;p&gt;The GitOps Toolkit Go modules and controllers are released by following the 
+&lt;a href=&#34;https://semver.org&#34; target=&#34;_blank&#34;&gt;semver&lt;/a&gt; conventions.&lt;/p&gt;
+&lt;p&gt;The API schema definitions modules have the following dependencies:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://pkg.go.dev/github.com/fluxcd/pkg/apis/meta&#34; target=&#34;_blank&#34;&gt;github.com/fluxcd/pkg/apis/meta&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://pkg.go.dev/github.com/fluxcd/pkg/runtime&#34; target=&#34;_blank&#34;&gt;github.com/fluxcd/pkg/runtime&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://pkg.go.dev/k8s.io/apimachinery&#34; target=&#34;_blank&#34;&gt;k8s.io/apimachinery&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://pkg.go.dev/sigs.k8s.io/controller-runtime&#34; target=&#34;_blank&#34;&gt;sigs.k8s.io/controller-runtime&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The APIs can be consumed with the 
+&lt;a href=&#34;https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client&#34; target=&#34;_blank&#34;&gt;controller-runtime client&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;sourcetoolkitfluxcdio&#34;&gt;source.toolkit.fluxcd.io&lt;/h3&gt;
+&lt;p&gt;Download package&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;go get github.com/fluxcd/source-controller/api
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Import package&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;import&lt;/span&gt; sourcev1 &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;github.com/fluxcd/source-controller/api/v1beta1&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;API Types&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Name&lt;/th&gt;
+&lt;th&gt;Version&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;a href=&#34;../components/source/gitrepositories.md&#34;&gt;GitRepository&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;v1beta1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;a href=&#34;../components/source/helmrepositories.md&#34;&gt;HelmRepository&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;v1beta1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;a href=&#34;../components/source/helmcharts.md&#34;&gt;HelmChart&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;v1beta1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;a href=&#34;../components/source/buckets.md&#34;&gt;Bucket&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;v1beta1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;kustomizetoolkitfluxcdio&#34;&gt;kustomize.toolkit.fluxcd.io&lt;/h3&gt;
+&lt;p&gt;Download package&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;go get github.com/fluxcd/kustomize-controller/api
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Import package&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;import&lt;/span&gt; kustomizev1 &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;github.com/fluxcd/kustomize-controller/api/v1beta1&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;API Types&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Name&lt;/th&gt;
+&lt;th&gt;Version&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;a href=&#34;../components/kustomize/kustomization.md&#34;&gt;Kustomization&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;v1beta1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;helmtoolkitfluxcdio&#34;&gt;helm.toolkit.fluxcd.io&lt;/h3&gt;
+&lt;p&gt;Download package&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;go get github.com/fluxcd/helm-controller/api
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Import package&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;import&lt;/span&gt; helmv2 &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;github.com/fluxcd/helm-controller/api/v2beta1&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;API Types&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Name&lt;/th&gt;
+&lt;th&gt;Version&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;a href=&#34;../components/helm/helmreleases.md&#34;&gt;HelmRelease&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;v2beta1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;notificationtoolkitfluxcdio&#34;&gt;notification.toolkit.fluxcd.io&lt;/h3&gt;
+&lt;p&gt;Download package&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;go get github.com/fluxcd/notification-controller/api
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Import package&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;import&lt;/span&gt; helmv2 &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;github.com/fluxcd/notification-controller/api/v1beta1&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;API Types&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Name&lt;/th&gt;
+&lt;th&gt;Version&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;a href=&#34;../components/notification/receiver.md&#34;&gt;Receiver&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;v1beta1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;a href=&#34;../components/notification/provider.md&#34;&gt;Provider&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;v1beta1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;a href=&#34;../components/notification/alert.md&#34;&gt;Alert&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;v1beta1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;imagetoolkitfluxcdio&#34;&gt;image.toolkit.fluxcd.io&lt;/h3&gt;
+&lt;p&gt;Download package&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;go get github.com/fluxcd/image-reflector-controller/api
+go get github.com/fluxcd/imame-automation-controller/api
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Import package&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;import&lt;/span&gt; (
+	imagev1 &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;github.com/fluxcd/image-reflector-controller/api/v1alpha2&amp;#34;&lt;/span&gt;
+	autov1 &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;github.com/fluxcd/image-automation-controller/api/v1alpha2&amp;#34;&lt;/span&gt;
+)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;API Types&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Name&lt;/th&gt;
+&lt;th&gt;Version&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;a href=&#34;../components/image/imagerepositories.md&#34;&gt;ImageRepository&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;v1alpha2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;a href=&#34;../components/image/imagepolicies.md&#34;&gt;ImagePolicy&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;v1alpha2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;a href=&#34;../components/image/imageupdateautomations.md&#34;&gt;ImageUpdateAutomation&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;v1alpha2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;crud-example&#34;&gt;CRUD Example&lt;/h2&gt;
+&lt;p&gt;Here is an example of how to create a Helm release, wait for it to install, then delete it:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;package&lt;/span&gt; main
+
+&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;import&lt;/span&gt; (
+  &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;context&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;fmt&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;time&amp;#34;&lt;/span&gt;
+
+  apiextensionsv1 &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;k8s.io/apimachinery/pkg/api/meta&amp;#34;&lt;/span&gt;
+  metav1 &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;k8s.io/apimachinery/pkg/apis/meta/v1&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;k8s.io/apimachinery/pkg/runtime&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;k8s.io/apimachinery/pkg/types&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;k8s.io/apimachinery/pkg/util/wait&amp;#34;&lt;/span&gt;
+  _ &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;k8s.io/client-go/plugin/pkg/client/auth&amp;#34;&lt;/span&gt;
+  ctrl &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;sigs.k8s.io/controller-runtime&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;sigs.k8s.io/controller-runtime/pkg/client&amp;#34;&lt;/span&gt;
+
+  helmv2 &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;github.com/fluxcd/helm-controller/api/v2beta1&amp;#34;&lt;/span&gt;
+  apimeta &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;github.com/fluxcd/pkg/apis/meta&amp;#34;&lt;/span&gt;
+  sourcev1 &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;github.com/fluxcd/source-controller/api/v1beta1&amp;#34;&lt;/span&gt;
+)
+
+&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#06287e&#34;&gt;main&lt;/span&gt;() {
+  &lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;// register the GitOps Toolkit schema definitions
+&lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;&lt;/span&gt;  scheme &lt;span style=&#34;color:#666&#34;&gt;:=&lt;/span&gt; runtime.&lt;span style=&#34;color:#06287e&#34;&gt;NewScheme&lt;/span&gt;()
+  _ = sourcev1.&lt;span style=&#34;color:#06287e&#34;&gt;AddToScheme&lt;/span&gt;(scheme)
+  _ = helmv2.&lt;span style=&#34;color:#06287e&#34;&gt;AddToScheme&lt;/span&gt;(scheme)
+
+  &lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;// init Kubernetes client
+&lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;&lt;/span&gt;  kubeClient, err &lt;span style=&#34;color:#666&#34;&gt;:=&lt;/span&gt; client.&lt;span style=&#34;color:#06287e&#34;&gt;New&lt;/span&gt;(ctrl.&lt;span style=&#34;color:#06287e&#34;&gt;GetConfigOrDie&lt;/span&gt;(), client.Options{Scheme: scheme})
+  &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;if&lt;/span&gt; err &lt;span style=&#34;color:#666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;nil&lt;/span&gt; {
+    &lt;span style=&#34;color:#007020&#34;&gt;panic&lt;/span&gt;(err)
+  }
+
+  &lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;// set a deadline for the Kubernetes API operations
+&lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;&lt;/span&gt;  ctx, cancel &lt;span style=&#34;color:#666&#34;&gt;:=&lt;/span&gt; context.&lt;span style=&#34;color:#06287e&#34;&gt;WithTimeout&lt;/span&gt;(context.&lt;span style=&#34;color:#06287e&#34;&gt;Background&lt;/span&gt;(), &lt;span style=&#34;color:#40a070&#34;&gt;60&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;*&lt;/span&gt;time.Second)
+  &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;defer&lt;/span&gt; &lt;span style=&#34;color:#06287e&#34;&gt;cancel&lt;/span&gt;()
+
+  &lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;// create a Helm repository pointing to Bitnami
+&lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;&lt;/span&gt;  helmRepository &lt;span style=&#34;color:#666&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&lt;/span&gt;sourcev1.HelmRepository{
+    ObjectMeta: metav1.ObjectMeta{
+      Name:      &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;bitnami&amp;#34;&lt;/span&gt;,
+      Namespace: &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;default&amp;#34;&lt;/span&gt;,
+    },
+    Spec: sourcev1.HelmRepositorySpec{
+      URL: &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;https://charts.bitnami.com/bitnami&amp;#34;&lt;/span&gt;,
+      Interval: metav1.Duration{
+        Duration: &lt;span style=&#34;color:#40a070&#34;&gt;30&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;*&lt;/span&gt; time.Minute,
+      },
+    },
+  }
+  &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;if&lt;/span&gt; err &lt;span style=&#34;color:#666&#34;&gt;:=&lt;/span&gt; kubeClient.&lt;span style=&#34;color:#06287e&#34;&gt;Create&lt;/span&gt;(ctx, helmRepository); err &lt;span style=&#34;color:#666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;nil&lt;/span&gt; {
+    fmt.&lt;span style=&#34;color:#06287e&#34;&gt;Println&lt;/span&gt;(err)
+  } &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;else&lt;/span&gt; {
+    fmt.&lt;span style=&#34;color:#06287e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;HelmRepository bitnami created&amp;#34;&lt;/span&gt;)
+  }
+
+  &lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;// create a Helm release for nginx
+&lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;&lt;/span&gt;  helmRelease &lt;span style=&#34;color:#666&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&lt;/span&gt;helmv2.HelmRelease{
+    ObjectMeta: metav1.ObjectMeta{
+      Name:      &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;nginx&amp;#34;&lt;/span&gt;,
+      Namespace: &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;default&amp;#34;&lt;/span&gt;,
+    },
+    Spec: helmv2.HelmReleaseSpec{
+      ReleaseName: &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;nginx&amp;#34;&lt;/span&gt;,
+      Interval: metav1.Duration{
+        Duration: &lt;span style=&#34;color:#40a070&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;+&lt;/span&gt; time.Minute,
+      },
+      Chart: helmv2.HelmChartTemplate{
+        Spec: helmv2.HelmChartTemplateSpec{
+          Chart:   &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;nginx&amp;#34;&lt;/span&gt;,
+          Version: &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;8.x&amp;#34;&lt;/span&gt;,
+          SourceRef: helmv2.CrossNamespaceObjectReference{
+            Kind: sourcev1.HelmRepositoryKind,
+            Name: &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;bitnami&amp;#34;&lt;/span&gt;,
+          },
+        },
+      },
+      Values: &lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&lt;/span&gt;apiextensionsv1.JSON{Raw: []&lt;span style=&#34;color:#007020&#34;&gt;byte&lt;/span&gt;(&lt;span style=&#34;color:#4070a0&#34;&gt;`{&amp;#34;service&amp;#34;: {&amp;#34;type&amp;#34;: &amp;#34;ClusterIP&amp;#34;}}`&lt;/span&gt;)},
+    },
+  }
+  &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;if&lt;/span&gt; err &lt;span style=&#34;color:#666&#34;&gt;:=&lt;/span&gt; kubeClient.&lt;span style=&#34;color:#06287e&#34;&gt;Create&lt;/span&gt;(ctx, helmRelease); err &lt;span style=&#34;color:#666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;nil&lt;/span&gt; {
+    fmt.&lt;span style=&#34;color:#06287e&#34;&gt;Println&lt;/span&gt;(err)
+  } &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;else&lt;/span&gt; {
+    fmt.&lt;span style=&#34;color:#06287e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;HelmRelease nginx created&amp;#34;&lt;/span&gt;)
+  }
+
+  &lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;// wait for the a Helm release to be reconciled
+&lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;&lt;/span&gt;  fmt.&lt;span style=&#34;color:#06287e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;Waiting for nginx to be installed&amp;#34;&lt;/span&gt;)
+  &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;if&lt;/span&gt; err &lt;span style=&#34;color:#666&#34;&gt;:=&lt;/span&gt; wait.&lt;span style=&#34;color:#06287e&#34;&gt;PollImmediate&lt;/span&gt;(&lt;span style=&#34;color:#40a070&#34;&gt;2&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;*&lt;/span&gt;time.Second, &lt;span style=&#34;color:#40a070&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;*&lt;/span&gt;time.Minute,
+    &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;func&lt;/span&gt;() (done &lt;span style=&#34;color:#902000&#34;&gt;bool&lt;/span&gt;, err &lt;span style=&#34;color:#902000&#34;&gt;error&lt;/span&gt;) {
+      namespacedName &lt;span style=&#34;color:#666&#34;&gt;:=&lt;/span&gt; types.NamespacedName{
+        Namespace: helmRelease.&lt;span style=&#34;color:#06287e&#34;&gt;GetNamespace&lt;/span&gt;(),
+        Name:      helmRelease.&lt;span style=&#34;color:#06287e&#34;&gt;GetName&lt;/span&gt;(),
+      }
+      &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;if&lt;/span&gt; err &lt;span style=&#34;color:#666&#34;&gt;:=&lt;/span&gt; kubeClient.&lt;span style=&#34;color:#06287e&#34;&gt;Get&lt;/span&gt;(ctx, namespacedName, helmRelease); err &lt;span style=&#34;color:#666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;nil&lt;/span&gt; {
+        &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;false&lt;/span&gt;, err
+      }
+      &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;return&lt;/span&gt; meta.&lt;span style=&#34;color:#06287e&#34;&gt;IsStatusConditionTrue&lt;/span&gt;(helmRelease.Status.Conditions, apimeta.ReadyCondition), &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;nil&lt;/span&gt;
+    }); err &lt;span style=&#34;color:#666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;nil&lt;/span&gt; {
+    fmt.&lt;span style=&#34;color:#06287e&#34;&gt;Println&lt;/span&gt;(err)
+  }
+
+  &lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;// print the reconciliation status
+&lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;&lt;/span&gt;  fmt.&lt;span style=&#34;color:#06287e&#34;&gt;Println&lt;/span&gt;(meta.&lt;span style=&#34;color:#06287e&#34;&gt;FindStatusCondition&lt;/span&gt;(helmRelease.Status.Conditions, apimeta.ReadyCondition).Message)
+
+  &lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;// uninstall the release and delete the repository
+&lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;&lt;/span&gt;  &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;if&lt;/span&gt; err &lt;span style=&#34;color:#666&#34;&gt;:=&lt;/span&gt; kubeClient.&lt;span style=&#34;color:#06287e&#34;&gt;Delete&lt;/span&gt;(ctx, helmRelease); err &lt;span style=&#34;color:#666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;nil&lt;/span&gt; {
+    fmt.&lt;span style=&#34;color:#06287e&#34;&gt;Println&lt;/span&gt;(err)
+  }
+  &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;if&lt;/span&gt; err &lt;span style=&#34;color:#666&#34;&gt;:=&lt;/span&gt; kubeClient.&lt;span style=&#34;color:#06287e&#34;&gt;Delete&lt;/span&gt;(ctx, helmRepository); err &lt;span style=&#34;color:#666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;nil&lt;/span&gt; {
+    fmt.&lt;span style=&#34;color:#06287e&#34;&gt;Println&lt;/span&gt;(err)
+  }
+  fmt.&lt;span style=&#34;color:#06287e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;Helm repository and release deleted&amp;#34;&lt;/span&gt;)
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;For an example on how to build a Kubernetes controller that interacts with the GitOps Toolkit APIs see
+
+&lt;a href=&#34;/docs/gitops/source-watcher/&#34;&gt;source-watcher&lt;/a&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Watching for source changes</title>
+      <link>/docs/gitops/source-watcher/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/gitops/source-watcher/</guid>
+      <description>
+        
+        
+        &lt;p&gt;In this guide you&amp;rsquo;ll be developing a Kubernetes controller with
+
+&lt;a href=&#34;https://github.com/kubernetes-sigs/kubebuilder&#34; target=&#34;_blank&#34;&gt;Kubebuilder&lt;/a&gt;
+that subscribes to 
+&lt;a href=&#34;../components/source/gitrepositories.md&#34;&gt;GitRepository&lt;/a&gt;
+events and reacts to revision changes by downloading the artifact produced by
+
+&lt;a href=&#34;../components/source/_index.md&#34;&gt;source-controller&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
+&lt;p&gt;On your dev machine install the following tools:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;go &amp;gt;= 1.16&lt;/li&gt;
+&lt;li&gt;kubebuilder &amp;gt;= 3.0&lt;/li&gt;
+&lt;li&gt;kind &amp;gt;= 0.8&lt;/li&gt;
+&lt;li&gt;kubectl &amp;gt;= 1.18&lt;/li&gt;
+&lt;li&gt;kustomize &amp;gt;= 4.0&lt;/li&gt;
+&lt;li&gt;docker &amp;gt;= 19.03&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;install-flux&#34;&gt;Install Flux&lt;/h2&gt;
+&lt;p&gt;Create a cluster for testing:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kind create cluster --name dev
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Install the Flux CLI:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;curl -s https://fluxcd.io/install.sh | sudo bash
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Verify that your dev machine satisfies the prerequisites with:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;flux check --pre
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Install source-controller on the dev cluster:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;flux install &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--namespace&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;flux-system &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--network-policy&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#007020&#34;&gt;false&lt;/span&gt; &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--components&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;source-controller
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;clone-the-sample-controller&#34;&gt;Clone the sample controller&lt;/h2&gt;
+&lt;p&gt;You&amp;rsquo;ll be using 
+&lt;a href=&#34;https://github.com/fluxcd/source-watcher&#34; target=&#34;_blank&#34;&gt;fluxcd/source-watcher&lt;/a&gt; as
+a template for developing your own controller. The source-watcher was scaffolded with &lt;code&gt;kubebuilder init&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Clone the source-watcher repository:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;git clone https://github.com/fluxcd/source-watcher
+&lt;span style=&#34;color:#007020&#34;&gt;cd&lt;/span&gt; source-watcher
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Build the controller:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;make
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;run-the-controller&#34;&gt;Run the controller&lt;/h2&gt;
+&lt;p&gt;Port forward to source-controller artifacts server:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl -n flux-system port-forward svc/source-controller 8181:80
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Export the local address as &lt;code&gt;SOURCE_HOST&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span style=&#34;color:#007020&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;SOURCE_HOST&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;localhost:8181
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Run source-watcher locally:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;make run
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Create a Git source:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;flux create &lt;span style=&#34;color:#007020&#34;&gt;source&lt;/span&gt; git &lt;span style=&#34;color:#007020&#34;&gt;test&lt;/span&gt; &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--url&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;https://github.com/stefanprodan/podinfo &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--tag&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;4.0.0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The source-watcher should log the revision:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;New revision detected   &lt;span style=&#34;color:#666&#34;&gt;{&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;gitrepository&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;flux-system/test&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;revision&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;4.0.0/ab953493ee14c3c9800bda0251e0c507f9741408&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;}&lt;/span&gt;
+Extracted tarball into /var/folders/77/3y6x_p2j2g9fspdkzjbm5_s40000gn/T/test292235827: &lt;span style=&#34;color:#40a070&#34;&gt;123&lt;/span&gt; files, &lt;span style=&#34;color:#40a070&#34;&gt;29&lt;/span&gt; &lt;span style=&#34;color:#007020&#34;&gt;dirs&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;32.603415ms&lt;span style=&#34;color:#666&#34;&gt;)&lt;/span&gt;
+Processing files...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Change the Git tag:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;flux create &lt;span style=&#34;color:#007020&#34;&gt;source&lt;/span&gt; git &lt;span style=&#34;color:#007020&#34;&gt;test&lt;/span&gt; &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--url&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;https://github.com/stefanprodan/podinfo &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--tag&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;4.0.1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The source-watcher should log the new revision:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;New revision detected   &lt;span style=&#34;color:#666&#34;&gt;{&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;gitrepository&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;flux-system/test&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;revision&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;4.0.1/113360052b3153e439a0cf8de76b8e3d2a7bdf27&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The source-controller reports the revision under &lt;code&gt;GitRepository.Status.Artifact.Revision&lt;/code&gt; in the format: &lt;code&gt;&amp;lt;branch|tag&amp;gt;/&amp;lt;commit&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;how-it-works&#34;&gt;How it works&lt;/h2&gt;
+&lt;p&gt;The 
+&lt;a href=&#34;https://github.com/fluxcd/source-watcher/blob/main/controllers/gitrepository_watcher.go&#34; target=&#34;_blank&#34;&gt;GitRepositoryWatcher&lt;/a&gt;
+controller does the following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;subscribes to &lt;code&gt;GitRepository&lt;/code&gt; events&lt;/li&gt;
+&lt;li&gt;detects when the Git revision changes&lt;/li&gt;
+&lt;li&gt;downloads and extracts the source artifact&lt;/li&gt;
+&lt;li&gt;write to stdout the extracted file names&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;// GitRepositoryWatcher watches GitRepository objects for revision changes
+&lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;type&lt;/span&gt; GitRepositoryWatcher &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;struct&lt;/span&gt; {
+	client.Client
+	Scheme &lt;span style=&#34;color:#666&#34;&gt;*&lt;/span&gt;runtime.Scheme
+}
+
+&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;// +kubebuilder:rbac:groups=source.toolkit.fluxcd.io,resources=gitrepositories,verbs=get;list;watch
+&lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;// +kubebuilder:rbac:groups=source.toolkit.fluxcd.io,resources=gitrepositories/status,verbs=get
+&lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;func&lt;/span&gt; (r &lt;span style=&#34;color:#666&#34;&gt;*&lt;/span&gt;GitRepositoryWatcher) &lt;span style=&#34;color:#06287e&#34;&gt;Reconcile&lt;/span&gt;(ctx context.Context, req ctrl.Request) (ctrl.Result, &lt;span style=&#34;color:#902000&#34;&gt;error&lt;/span&gt;) {
+	log &lt;span style=&#34;color:#666&#34;&gt;:=&lt;/span&gt; logr.&lt;span style=&#34;color:#06287e&#34;&gt;FromContext&lt;/span&gt;(ctx)
+
+	&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;// get source object
+&lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;&lt;/span&gt;	&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;var&lt;/span&gt; repository sourcev1.GitRepository
+	&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;if&lt;/span&gt; err &lt;span style=&#34;color:#666&#34;&gt;:=&lt;/span&gt; r.&lt;span style=&#34;color:#06287e&#34;&gt;Get&lt;/span&gt;(ctx, req.NamespacedName, &lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&lt;/span&gt;repository); err &lt;span style=&#34;color:#666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;nil&lt;/span&gt; {
+		&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;return&lt;/span&gt; ctrl.Result{}, client.&lt;span style=&#34;color:#06287e&#34;&gt;IgnoreNotFound&lt;/span&gt;(err)
+	}
+
+	log.&lt;span style=&#34;color:#06287e&#34;&gt;Info&lt;/span&gt;(&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;New revision detected&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;revision&amp;#34;&lt;/span&gt;, repository.Status.Artifact.Revision)
+
+	&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;// create tmp dir
+&lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;&lt;/span&gt;	tmpDir, err &lt;span style=&#34;color:#666&#34;&gt;:=&lt;/span&gt; ioutil.&lt;span style=&#34;color:#06287e&#34;&gt;TempDir&lt;/span&gt;(&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;, repository.Name)
+	&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;if&lt;/span&gt; err &lt;span style=&#34;color:#666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;nil&lt;/span&gt; {
+		&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;return&lt;/span&gt; ctrl.Result{}, fmt.&lt;span style=&#34;color:#06287e&#34;&gt;Errorf&lt;/span&gt;(&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;failed to create temp dir, error: %w&amp;#34;&lt;/span&gt;, err)
+	}
+	&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;defer&lt;/span&gt; os.&lt;span style=&#34;color:#06287e&#34;&gt;RemoveAll&lt;/span&gt;(tmpDir)
+
+	&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;// download and extract artifact
+&lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;&lt;/span&gt;	summary, err &lt;span style=&#34;color:#666&#34;&gt;:=&lt;/span&gt; r.&lt;span style=&#34;color:#06287e&#34;&gt;fetchArtifact&lt;/span&gt;(ctx, repository, tmpDir)
+	&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;if&lt;/span&gt; err &lt;span style=&#34;color:#666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;nil&lt;/span&gt; {
+		log.&lt;span style=&#34;color:#06287e&#34;&gt;Error&lt;/span&gt;(err, &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;unable to fetch artifact&amp;#34;&lt;/span&gt;)
+		&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;return&lt;/span&gt; ctrl.Result{}, err
+	}
+	log.&lt;span style=&#34;color:#06287e&#34;&gt;Info&lt;/span&gt;(summary)
+
+	&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;// list artifact content
+&lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;&lt;/span&gt;	files, err &lt;span style=&#34;color:#666&#34;&gt;:=&lt;/span&gt; ioutil.&lt;span style=&#34;color:#06287e&#34;&gt;ReadDir&lt;/span&gt;(tmpDir)
+	&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;if&lt;/span&gt; err &lt;span style=&#34;color:#666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;nil&lt;/span&gt; {
+		&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;return&lt;/span&gt; ctrl.Result{}, fmt.&lt;span style=&#34;color:#06287e&#34;&gt;Errorf&lt;/span&gt;(&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;failed to list files, error: %w&amp;#34;&lt;/span&gt;, err)
+	}
+
+	&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;// do something with the artifact content
+&lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;&lt;/span&gt;	&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;for&lt;/span&gt; _, f &lt;span style=&#34;color:#666&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;range&lt;/span&gt; files {
+		log.&lt;span style=&#34;color:#06287e&#34;&gt;Info&lt;/span&gt;(&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;Processing &amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;+&lt;/span&gt; f.&lt;span style=&#34;color:#06287e&#34;&gt;Name&lt;/span&gt;())
+	}
+
+	&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;return&lt;/span&gt; ctrl.Result{}, &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;nil&lt;/span&gt;
+}
+
+&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;func&lt;/span&gt; (r &lt;span style=&#34;color:#666&#34;&gt;*&lt;/span&gt;GitRepositoryWatcher) &lt;span style=&#34;color:#06287e&#34;&gt;SetupWithManager&lt;/span&gt;(mgr ctrl.Manager) &lt;span style=&#34;color:#902000&#34;&gt;error&lt;/span&gt; {
+	&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;return&lt;/span&gt; ctrl.&lt;span style=&#34;color:#06287e&#34;&gt;NewControllerManagedBy&lt;/span&gt;(mgr).
+		&lt;span style=&#34;color:#06287e&#34;&gt;For&lt;/span&gt;(&lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&lt;/span&gt;sourcev1.GitRepository{}, builder.&lt;span style=&#34;color:#06287e&#34;&gt;WithPredicates&lt;/span&gt;(GitRepositoryRevisionChangePredicate{})).
+		&lt;span style=&#34;color:#06287e&#34;&gt;Complete&lt;/span&gt;(r)
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To add the watcher to an existing project, copy the controller and the revision change predicate to your &lt;code&gt;controllers&lt;/code&gt; dir:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://github.com/fluxcd/source-watcher/blob/main/controllers/gitrepository_watcher.go&#34; target=&#34;_blank&#34;&gt;gitrepository_watcher.go&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://github.com/fluxcd/source-watcher/blob/main/controllers/gitrepository_predicate.go&#34; target=&#34;_blank&#34;&gt;gitrepository_predicate.go&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In your &lt;code&gt;main.go&lt;/code&gt; init function, register the Source API schema:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;import&lt;/span&gt; (
+	utilruntime &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;k8s.io/apimachinery/pkg/util/runtime&amp;#34;&lt;/span&gt;
+	clientgoscheme &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;k8s.io/client-go/kubernetes/scheme&amp;#34;&lt;/span&gt;
+
+	sourcev1 &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;github.com/fluxcd/source-controller/api/v1beta1&amp;#34;&lt;/span&gt;
+)
+
+&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#06287e&#34;&gt;init&lt;/span&gt;() {
+	utilruntime.&lt;span style=&#34;color:#06287e&#34;&gt;Must&lt;/span&gt;(clientgoscheme.&lt;span style=&#34;color:#06287e&#34;&gt;AddToScheme&lt;/span&gt;(scheme))
+	utilruntime.&lt;span style=&#34;color:#06287e&#34;&gt;Must&lt;/span&gt;(sourcev1.&lt;span style=&#34;color:#06287e&#34;&gt;AddToScheme&lt;/span&gt;(scheme)
+
+	&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;// +kubebuilder:scaffold:scheme
+&lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;&lt;/span&gt;}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Start the controller in the main function:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#06287e&#34;&gt;main&lt;/span&gt;()  {
+
+	&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;if&lt;/span&gt; err = (&lt;span style=&#34;color:#666&#34;&gt;&amp;amp;&lt;/span&gt;controllers.GitRepositoryWatcher{
+		Client: mgr.&lt;span style=&#34;color:#06287e&#34;&gt;GetClient&lt;/span&gt;(),
+		Scheme: mgr.&lt;span style=&#34;color:#06287e&#34;&gt;GetScheme&lt;/span&gt;(),
+	}).&lt;span style=&#34;color:#06287e&#34;&gt;SetupWithManager&lt;/span&gt;(mgr); err &lt;span style=&#34;color:#666&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;nil&lt;/span&gt; {
+		setupLog.&lt;span style=&#34;color:#06287e&#34;&gt;Error&lt;/span&gt;(err, &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;unable to create controller&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;controller&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;GitRepositoryWatcher&amp;#34;&lt;/span&gt;)
+		os.&lt;span style=&#34;color:#06287e&#34;&gt;Exit&lt;/span&gt;(&lt;span style=&#34;color:#40a070&#34;&gt;1&lt;/span&gt;)
+	}
+
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Note that the watcher controller depends on Kubernetes client-go &amp;gt;= 1.21.
+Your &lt;code&gt;go.mod&lt;/code&gt; should require controller-runtime v0.9 or newer:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#06287e&#34;&gt;require&lt;/span&gt; (
+    k8s.io&lt;span style=&#34;color:#666&#34;&gt;/&lt;/span&gt;apimachinery v0&lt;span style=&#34;color:#40a070&#34;&gt;.21.1&lt;/span&gt;
+    k8s.io&lt;span style=&#34;color:#666&#34;&gt;/&lt;/span&gt;client&lt;span style=&#34;color:#666&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;go&lt;/span&gt; v0&lt;span style=&#34;color:#40a070&#34;&gt;.21.1&lt;/span&gt;
+    sigs.k8s.io&lt;span style=&#34;color:#666&#34;&gt;/&lt;/span&gt;controller&lt;span style=&#34;color:#666&#34;&gt;-&lt;/span&gt;runtime v0&lt;span style=&#34;color:#40a070&#34;&gt;.9.0&lt;/span&gt;
+)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;That&amp;rsquo;s it! Happy hacking!&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Advanced debugging</title>
+      <link>/docs/gitops/debugging/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/gitops/debugging/</guid>
+      <description>
+        
+        
+        &lt;p&gt;This guide covers more advanced debugging topics such as collecting
+runtime profiling data from GitOps Toolkit components.&lt;/p&gt;
+&lt;p&gt;As a user, this page normally should be a last resort, but you may
+be asked by a maintainer to share a 
+&lt;a href=&#34;#collecting-a-profile&#34;&gt;collected profile&lt;/a&gt;
+to debug e.g. performance issues.&lt;/p&gt;
+&lt;h2 id=&#34;pprof&#34;&gt;Pprof&lt;/h2&gt;
+&lt;p&gt;The 
+&lt;a href=&#34;../components/_index.md&#34;&gt;GitOps Toolkit components&lt;/a&gt; serve 
+&lt;a href=&#34;https://golang.org/pkg/net/http/pprof/&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;pprof&lt;/code&gt;&lt;/a&gt;
+runtime profiling data on their metrics HTTP server (default &lt;code&gt;:8080&lt;/code&gt;).&lt;/p&gt;
+&lt;h3 id=&#34;endpoints&#34;&gt;Endpoints&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Endpoint&lt;/th&gt;
+&lt;th&gt;Path&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Index&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;/debug/pprof/&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;CPU profile&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;/debug/pprof/profile&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Symbol&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;/debug/pprof/symbol&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Trace&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;/debug/pprof/trace&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;collecting-a-profile&#34;&gt;Collecting a profile&lt;/h3&gt;
+&lt;p&gt;To collect a profile, port-forward to the component&amp;rsquo;s metrics endpoint
+and collect the data from the 
+&lt;a href=&#34;#endpoints&#34;&gt;endpoint&lt;/a&gt; of choice:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ kubectl port-forward -n &amp;lt;namespace&amp;gt; deploy/&amp;lt;component&amp;gt; &lt;span style=&#34;color:#40a070&#34;&gt;8080&lt;/span&gt;
+$ curl -Sk -v http://localhost:8080/debug/pprof/heap &amp;gt; heap.out
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The collected profile 
+&lt;a href=&#34;https://blog.golang.org/pprof&#34; target=&#34;_blank&#34;&gt;can be analyzed using &lt;code&gt;go&lt;/code&gt;&lt;/a&gt;,
+or shared with one of the maintainers.&lt;/p&gt;
+&lt;h2 id=&#34;resource-usage&#34;&gt;Resource usage&lt;/h2&gt;
+&lt;p&gt;As &lt;code&gt;kubectl top&lt;/code&gt; gives a limited (and at times inaccurate) overview of
+resource usage, it is often better to make use of the Grafana metrics
+to gather insights. See 
+&lt;a href=&#34;../guides/monitoring.md&#34;&gt;monitoring&lt;/a&gt; for a
+guide on how to visualize this data with a Grafana dashboard.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,297 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>道场 – 动态</title>
+    <link>/blog/</link>
+    <description>Recent content in 动态 on 道场</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 28 Jun 2021 08:30:00 +0000</lastBuildDate>
+    
+	  <atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Blog: Flux Bug Scrub Announce</title>
+      <link>/blog/2021/06/flux-bug-scrub-announce/</link>
+      <pubDate>Mon, 28 Jun 2021 08:30:00 +0000</pubDate>
+      
+      <guid>/blog/2021/06/flux-bug-scrub-announce/</guid>
+      <description>
+        
+        
+        &lt;h2 id=&#34;what-is-the-flux-bug-scrub&#34;&gt;What is the Flux Bug Scrub&lt;/h2&gt;
+&lt;p&gt;In the past months we have had many folks reach out to us and ask where
+they could get involved, make their first steps in the Flux community
+and give back in a way.&lt;/p&gt;
+&lt;p&gt;We started looking around and got inspired by a concept from SIG Node
+(who in turn were inspired by SIG CLI) over in the Kubernetes community.
+For us, a great way to get started, is to learn more about Flux
+through direct experience, when e.g. trying to reproduce issues reported by
+other Flux users, and the general business of chopping wood and
+carrying water. The &lt;strong&gt;Flux Bug Scrub&lt;/strong&gt; is born.&lt;/p&gt;
+&lt;h2 id=&#34;here-is-how-it-works&#34;&gt;Here is how it works&lt;/h2&gt;
+&lt;p&gt;Show up at the appointed time, if you can. The first Bug Scrub is&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;June 30 12:00 UTC, 8:00AM ET.&lt;/li&gt;
+&lt;li&gt;Meet at #flux on the 
+&lt;a href=&#34;https://slack.cncf.io&#34; target=&#34;_blank&#34;&gt;CNCF Slack&lt;/a&gt;,&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;we will provide a Zoom link closer to the event time.&lt;/p&gt;
+&lt;p&gt;We will have one or more contributors with triage access in attendance,
+and attempt to review each issue in the target group. (The targets will
+vary by week, or by event date, as this will be a recurring event on
+some TBD schedule.) A key goal is to figure out if a given issue can be
+reproduced, and report our findings. Some issues don&#39;t provide enough
+info to get us all the way to reproduction, so we may ask more questions
+and wait for the submitter to respond.&lt;/p&gt;
+&lt;p&gt;If someone present wants to volunteer to follow up an issue, we will
+make an assignment then. If all we can do is read the thread once and
+confirm that labels are still correct, (or fix them up when they were
+not) then it will be providing a valuable service to Flux maintainers
+and the community at large. A process will be demonstrated to avoid
+backtracking from week to week and maximize coverage. This is not a race
+to close the issues, but if an issue has received no reply and it looks
+like the submitter has lost interest, it could be closed.&lt;/p&gt;
+&lt;h2 id=&#34;heres-what-you-need&#34;&gt;Here&amp;rsquo;s what you need&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;A web browser&lt;/li&gt;
+&lt;li&gt;a GitHub account&lt;/li&gt;
+&lt;li&gt;the Google Drive spreadsheet app&lt;/li&gt;
+&lt;li&gt;a user on the CNCF Slack&lt;/li&gt;
+&lt;li&gt;have the Zoom app installed and up to date&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;before you arrive, and bring your burning desire to get to know more
+about Flux through reviewing open issues and PRs in the queue.&lt;/p&gt;
+&lt;p&gt;We are performing a service for the Flux project by reviewing open
+issues and pull requests, applying labels, checking status, and closing
+issues wherever it looks appropriate. If we have enough attendees, we
+may use a breakout room.&lt;/p&gt;
+&lt;p&gt;Attending the Zoom meeting, though not required for participating
+contributors, means you get to commiserate with other Flux community
+members in real time over issues in the queue. We will not likely be
+able to dwell on any individual issue for much longer than 2-5 minutes
+to keep the pace of progress moving at our event. Our artifacts for
+coordination will be published where everyone can see them (GitHub
+issues, milestones, Drive spreadsheet, public Slack conversations), and
+we will help shape and inform the roadmap of Flux for future development
+efforts.&lt;/p&gt;
+&lt;p&gt;Not every issue will get a response from us but we will try to hit every
+issue with an Emoji in our spreadsheet, to signal what state we found it
+in, whether it can be moved ahead, and if it needs attention or is
+blocked somehow. These notes will carry forward to the next Bug Scrub
+event, insofar as any issues we visit are still open next time.&lt;/p&gt;
+&lt;p&gt;We are very much looking forward to seeing you there! 🎈&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Blog: June 2021 update</title>
+      <link>/blog/2021/05/june-2021-update/</link>
+      <pubDate>Mon, 31 May 2021 08:30:00 +0000</pubDate>
+      
+      <guid>/blog/2021/05/june-2021-update/</guid>
+      <description>
+        
+        
+        &lt;p&gt;As the Flux family of projects and its communities are growing, we
+strive to inform you each month about what has already landed, new
+possibilities which are available for integration and where you can get
+involved. Read last month&amp;rsquo;s update 
+&lt;a href=&#34;/blog/2021/04/may-2021-update&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s recap what happened in May - there has been so much happening!&lt;/p&gt;
+&lt;h2 id=&#34;newest-flux-release&#34;&gt;Newest Flux release&lt;/h2&gt;
+&lt;p&gt;With the 0.14 release of Flux we added a number of big features to Flux.&lt;/p&gt;
+&lt;p&gt;The highlights are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;We replaced the Flux monitoring stack with Prometheus Operator and
+kube-prometheus-stack.&lt;/li&gt;
+&lt;li&gt;Support for a wider range of SSH key formats (CLI)&lt;/li&gt;
+&lt;li&gt;Send Flux events to Azure Event Hub (notification-controller)&lt;/li&gt;
+&lt;li&gt;Support for a wider range of OpenPGP key formats (source-controller)&lt;/li&gt;
+&lt;li&gt;Reduce the memory usage when cloning repositories with large files
+(source-controller)&lt;/li&gt;
+&lt;li&gt;Support for including the content of app repos into the main config
+one (better alternative to git submodules and kustomize remote
+bases) (source-controller)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Docs:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;📔 
+&lt;a href=&#34;/docs/components/source/gitrepositories/#including-gitrepository&#34;&gt;GitRepository include
+documentation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;🎁 Checkout the new 
+&lt;a href=&#34;/docs/guides/repository-structure/&#34;&gt;guide on ways of structuring your
+repositories&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If you are entirely new to Flux, check out our 
+&lt;a href=&#34;/docs/get-started/&#34;&gt;get started
+guide&lt;/a&gt;. If you are on
+an older version of Flux, check out our 
+&lt;a href=&#34;/docs/migration/&#34;&gt;migration
+documentation&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;flagger-111-is-here&#34;&gt;Flagger 1.11 is here&lt;/h2&gt;
+&lt;p&gt;Over in the Flagger project, since our last blog the versions 1.9, 1.10 and
+1.11 were released and they bring a number of nice new features and
+improvements.&lt;/p&gt;
+&lt;p&gt;1.9.0 came with improvements to the Gloo Edge integration:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Starting with this version, Flagger no longer requires Gloo
+discovery to be enabled. Flagger generated the Gloo upstream
+objects on its own and optionally it can use an existing upstream
+(specified with .spec.upstreamRef) as a template.&lt;/li&gt;
+&lt;li&gt;Also: Adjusted Nginx ingress canary headers on init and promotion&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;1.10.0 comes with support for Graphite metric templates, additionally:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ConfigTracker: Scan envFrom in init-containers&lt;/li&gt;
+&lt;li&gt;e2e: Update Istio to v1.10 and Contour to v1.15&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;⚠️ Flagger 1.11.0 comes with a breaking change: the minimum supported
+version of Kubernetes is v1.19.0.&lt;/p&gt;
+&lt;p&gt;This release comes with support for Kubernetes Ingress &lt;code&gt;networking.k8s.io/v1&lt;/code&gt;.
+The Ingress from &lt;code&gt;networking.k8s.io/v1beta1&lt;/code&gt; is no longer supported, affected
+integrations: NGINX and Skipper ingress controllers.&lt;/p&gt;
+&lt;h2 id=&#34;kubecon-round-up&#34;&gt;KubeCon round-up&lt;/h2&gt;
+&lt;p&gt;KubeCon 2021 Europe happened in early May and the Flux team was happy to
+represent. If you entirely missed the event, here are a couple of links
+we&amp;rsquo;d like to share:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;05 May 2021 - 
+&lt;a href=&#34;https://youtu.be/kuzZpKHLoVM&#34; target=&#34;_blank&#34;&gt;Keynote: CNCF Project Update: Flux - Stefan
+Prodan&lt;/a&gt; at KubeCon 2021
+Europe&lt;/li&gt;
+&lt;li&gt;05 May 2021 - 
+&lt;a href=&#34;https://youtu.be/hCTgCRlU-M0&#34; target=&#34;_blank&#34;&gt;Helm Users! What Flux Can Do For
+You - Scott Rigby &amp;amp; Kingdon Barrett&lt;/a&gt; at KubeCon 2021 Europe&lt;/li&gt;
+&lt;li&gt;06 May 2021 - 
+&lt;a href=&#34;https://youtu.be/F7B_TBcIyl8&#34; target=&#34;_blank&#34;&gt;Flux: Multi-tenancy Deep Dive - Philip
+Laine&lt;/a&gt; at KubeCon 2021
+Europe&lt;/li&gt;
+&lt;li&gt;04 - 07 May 2021 - 
+&lt;a href=&#34;https://bit.ly/Flux_KubeConEU2021&#34; target=&#34;_blank&#34;&gt;Flux Pavilion at KubeCon EU! Talks and demos
+every 30 minutes! Say
+hello!&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These are recordings of talks which were given by Flux maintainers.&lt;/p&gt;
+&lt;p&gt;We were also present at the Flux booth at the CNCF Project Pavillion.
+This was new for us and we really enjoyed being part of this. A number
+of Flux maintainers and community members were at the virtual booth to
+meet and greet, answer questions and do impromptu lightning talks - we
+watched some of the keynotes together and shared feedback.&lt;/p&gt;
+&lt;p&gt;We had a fantastic time, laughed a lot and were pleased to learn more
+about how everyone uses Flux in production and how folks can start
+getting more involved in our community. Thanks everyone for supporting
+us at KubeCon!&lt;/p&gt;
+&lt;h2 id=&#34;the-cncf-flux-store-is-up&#34;&gt;The CNCF Flux Store is up&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2021-05-cncf-store.png&#34; alt=&#34;Flux at CNCF Store&#34;&gt;&lt;/p&gt;
+&lt;p&gt;As one of the perks of reaching Incubation status within the CNCF, there
+is now a Flux section in the CNCF Store. If you are looking for a new
+hoodie, new socks, a birthday present or anything else, please sure to
+check out &lt;a href=&#34;https://store.cncf.io/collections/flux&#34;&gt;https://store.cncf.io/collections/flux&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;If you have fully re-clothed yourself in Flux things, be sure to share a
+pic on 
+&lt;a href=&#34;https://cloud-native.slack.com/archives/CLAJ40HV3&#34; target=&#34;_blank&#34;&gt;our Slack
+channel&lt;/a&gt;!&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;(Learn more about the store and where its proceeds go
+
+&lt;a href=&#34;https://store.cncf.io/pages/about-us&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.)&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&#34;our-community-is-growing&#34;&gt;Our community is growing&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;/img/2021-05-flux-adopters.png&#34; alt=&#34;Flux Adopters&#34;&gt;&lt;/p&gt;
+&lt;p&gt;We finally built a nicer home to show off who all is part of our
+community: &lt;a href=&#34;https://fluxcd.io/adopters&#34;&gt;https://fluxcd.io/adopters&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;From start-ups to Fortune 500 companies many have accompanied us for a
+couple of years already, quite a few migrated to the latest of Flux and
+quite a few use Flagger.&lt;/p&gt;
+&lt;p&gt;If you use any of the Flux projects in your organisation, please
+consider adding yourself as well: instructions can be found
+
+&lt;a href=&#34;https://github.com/fluxcd/website/tree/main/adopters#readme&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Thanks a lot everyone who already added themselves - your support means
+a lot to us! 💖&lt;/p&gt;
+&lt;h2 id=&#34;upcoming-events&#34;&gt;Upcoming events&lt;/h2&gt;
+&lt;p&gt;It&amp;rsquo;s important to us to keep you up to date with new features and
+developments in Flux and provide simple ways to see our work in action
+and chat with our engineers.&lt;/p&gt;
+&lt;p&gt;We are very happy to be part of a big event that will definitely be
+worth your time: an entire two-day conference about the newest
+developments in the GitOps world with Keynotes from Justin Cormack (CTO,
+Docker), Katie Gamanji (Ecosystem Advocate, CNCF), and Lei &amp;ldquo;Harry&amp;rdquo; Zhang
+(Staff Engineer at Alibaba Cloud).&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;09-10 Jun 2021&lt;/strong&gt; - 
+&lt;a href=&#34;https://www.gitopsdays.com&#34; target=&#34;_blank&#34;&gt;GitOps Days 2021&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Sign up for it today, share it with your friends far and wide. It&amp;rsquo;s a
+free event!&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Apart from that, there&amp;rsquo;s also &lt;a href=&#34;https://fluxcd.io/community/#talks&#34;&gt;https://fluxcd.io/community/#talks&lt;/a&gt;
+for more links to recordings of past talks.&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&#34;in-other-news&#34;&gt;In other news&lt;/h2&gt;
+&lt;h3 id=&#34;reviewing-flux-governance&#34;&gt;Reviewing Flux Governance&lt;/h3&gt;
+&lt;p&gt;More than half a year ago we established our 
+&lt;a href=&#34;https://fluxcd.io/governance/&#34; target=&#34;_blank&#34;&gt;Flux Governance
+document&lt;/a&gt;. The idea behind
+it was to formalise our values around community, the roles and
+responsibilities and processes; many of which had been transparent and
+with our full integrity, but still quite ad-hoc up until that point.&lt;/p&gt;
+&lt;p&gt;For us it&amp;rsquo;s time to review this together with our
+
+&lt;a href=&#34;https://fluxcd.io/community/&#34; target=&#34;_blank&#34;&gt;Community&lt;/a&gt; and
+
+&lt;a href=&#34;https://fluxcd.io/docs/contributing/&#34; target=&#34;_blank&#34;&gt;Contributors docs&lt;/a&gt;.
+So we are turning to you for feedback: 
+&lt;a href=&#34;https://github.com/fluxcd/flux2/discussions/1457&#34; target=&#34;_blank&#34;&gt;please let us know what you
+think&lt;/a&gt;.
+What was your experience up until now? Do you feel things are clear
+enough?&lt;/p&gt;
+&lt;p&gt;We are striving for a great contributor experience, so your feedback on
+all of the above is going to make a difference.&lt;/p&gt;
+&lt;h3 id=&#34;representing-flux-and-flagger-at-cncf&#34;&gt;Representing Flux and Flagger at CNCF&lt;/h3&gt;
+&lt;p&gt;The CNCF does a great job of informing the world of its member projects
+and we just made sure to update all relevant information, branding and
+logos. If you ever need to borrow our logos, colours or any other info
+for a presentation or something, check out the 
+&lt;a href=&#34;https://landscape.cncf.io/card-mode?category=continuous-integration-delivery&amp;amp;grouping=category&#34; target=&#34;_blank&#34;&gt;CNCF CI/CD
+Landscape&lt;/a&gt;,
+the 
+&lt;a href=&#34;https://branding.cncf.io/projects/flux/&#34; target=&#34;_blank&#34;&gt;Flux&lt;/a&gt; and
+
+&lt;a href=&#34;https://branding.cncf.io/projects/flagger/&#34; target=&#34;_blank&#34;&gt;Flagger&lt;/a&gt;
+branding or our entry on the list of 
+&lt;a href=&#34;https://www.cncf.io/projects/#incubating&#34; target=&#34;_blank&#34;&gt;CNCF
+projects&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;over-and-out&#34;&gt;Over and out&lt;/h2&gt;
+&lt;p&gt;If you like what you read and would like to get involved, here are a few
+good ways to do that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Join our 
+&lt;a href=&#34;/community/#meetings&#34;&gt;upcoming dev meetings&lt;/a&gt; on
+2021-06-03 15:00 UTC, or 2021-06-09, 12:00 UTC.&lt;/li&gt;
+&lt;li&gt;Talk to us in the #flux channel on 
+&lt;a href=&#34;https://slack.cncf.io/&#34; target=&#34;_blank&#34;&gt;CNCF
+Slack&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Join the 
+&lt;a href=&#34;https://github.com/fluxcd/flux2/discussions&#34; target=&#34;_blank&#34;&gt;planning
+discussions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;And if you are completely new to Flux v2, take a look at our
+
+&lt;a href=&#34;/docs/get-started/&#34;&gt;Get Started guide&lt;/a&gt; and give us feedback&lt;/li&gt;
+&lt;li&gt;Social media: Follow 
+&lt;a href=&#34;https://twitter.com/fluxcd&#34; target=&#34;_blank&#34;&gt;Flux on
+Twitter&lt;/a&gt;, join the
+discussion in the 
+&lt;a href=&#34;https://www.linkedin.com/groups/8985374/&#34; target=&#34;_blank&#34;&gt;Flux LinkedIn
+group&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We are looking forward to working with you.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

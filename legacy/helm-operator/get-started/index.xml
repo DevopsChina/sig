@@ -1,0 +1,715 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>道场 – Get started</title>
+    <link>/legacy/helm-operator/get-started/</link>
+    <description>Recent content in Get started on 道场</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="/legacy/helm-operator/get-started/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Legacy: Quickstart</title>
+      <link>/legacy/helm-operator/get-started/quickstart/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/get-started/quickstart/</guid>
+      <description>
+        
+        
+        &lt;p&gt;This guide walks you through to all steps required to quickly get
+started with the Helm Operator.&lt;/p&gt;
+&lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Kubernetes cluster &lt;strong&gt;&amp;gt;=1.13.0&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Up-to-date &lt;strong&gt;Helm 2 or 3&lt;/strong&gt; 
+&lt;a href=&#34;https://github.com/helm/helm/releases&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;helm&lt;/code&gt; binary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;kubectl&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;install-the-helm-operator&#34;&gt;Install the Helm Operator&lt;/h2&gt;
+&lt;p&gt;First, install the &lt;code&gt;HelmRelease&lt;/code&gt; Custom Resource Definition. By adding
+this CRD it will be possible to define &lt;code&gt;HelmRelease&lt;/code&gt; resources on the
+cluster:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl apply -f https://raw.githubusercontent.com/fluxcd/helm-operator/1.2.0/deploy/crds.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Create a new namespace:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl create ns flux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Using &lt;code&gt;helm&lt;/code&gt;, first add the Flux CD Helm repository:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;helm repo add fluxcd https://charts.fluxcd.io
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Next, install the Helm Operator using the available Helm chart:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;helm upgrade -i helm-operator fluxcd/helm-operator &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --namespace flux &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --set helm.versions&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;v3
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This installs the Helm Operator with default settings and support for
+Helm 3 enabled.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Hint&lt;/h4&gt;
+
+    See the 
+&lt;a href=&#34;/legacy/helm-operator/references/operator/&#34;&gt;operator reference&lt;/a&gt; and 
+&lt;a href=&#34;../references/chart.md#configuration&#34;&gt;chart
+documentation&lt;/a&gt;
+for detailed configuration options.
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;create-your-first-helmrelease&#34;&gt;Create your first &lt;code&gt;HelmRelease&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;To install a Helm chart using the Helm Operator, create a &lt;code&gt;HelmRelease&lt;/code&gt;
+resource on the cluster:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;cat &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;lt;&amp;lt;EOF | kubectl apply -f -
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;apiVersion: helm.fluxcd.io/v1
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;kind: HelmRelease
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;metadata:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  name: podinfo
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  namespace: default
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;spec:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  chart:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;    repository: https://stefanprodan.github.io/podinfo
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;    name: podinfo
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;    version: 3.2.0
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The applied resource will install the 
+&lt;a href=&#34;https://github.com/stefanprodan/podinfo&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;podinfo&lt;/code&gt;
+chart&lt;/a&gt; with a tiny Go web
+application from a Helm repository chart source. &lt;em&gt;Chart sources&lt;/em&gt; are
+references to places where the operator can find Helm charts. The
+release name the Helm Operator will use is composed out of the
+namespace and name of the &lt;code&gt;HelmRelease&lt;/code&gt; resource (but can be
+configured): &lt;code&gt;default-podinfo&lt;/code&gt;.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Hint&lt;/h4&gt;
+
+    Read more about different chart sources in the 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/chart-sources/&#34;&gt;chart
+sources&lt;/a&gt; section of the
+&lt;code&gt;HelmRelease&lt;/code&gt; guide.
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;confirm-the-chart-has-been-installed&#34;&gt;Confirm the chart has been installed&lt;/h2&gt;
+&lt;p&gt;When a Helm chart has been successfully released the Helm Operator will
+push a condition of type &lt;code&gt;Released&lt;/code&gt; with status &lt;code&gt;True&lt;/code&gt;. You can check
+this condition is set using &lt;code&gt;kubectl&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;$ kubectl wait --for=condition=released helmrelease/podinfo
+helmrelease.helm.fluxcd.io/podinfo condition met
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Or, by describing the &lt;code&gt;HelmRelease&lt;/code&gt; itself:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;$ kubectl describe helmrelease podinfo
+Name:         podinfo
+Namespace:    default
+Labels:       &amp;lt;none&amp;gt;
+Annotations:  kubectl.kubernetes.io/last-applied-configuration:
+                {&amp;quot;apiVersion&amp;quot;:&amp;quot;helm.fluxcd.io/v1&amp;quot;,&amp;quot;kind&amp;quot;:&amp;quot;HelmRelease&amp;quot;,&amp;quot;metadata&amp;quot;:{&amp;quot;annotations&amp;quot;:{},&amp;quot;name&amp;quot;:&amp;quot;podinfo&amp;quot;,&amp;quot;namespace&amp;quot;:&amp;quot;default&amp;quot;},&amp;quot;spec&amp;quot;:{&amp;quot;chart...
+API Version:  helm.fluxcd.io/v1
+Kind:         HelmRelease
+Metadata:
+  Creation Timestamp:  2020-01-01T12:00:00Z
+  Generation:          1
+  Resource Version:    9017
+  Self Link:           /apis/helm.fluxcd.io/v1/namespaces/default/helmreleases/podinfo
+  UID:                 e9c11dc8-5ba6-4ee7-9226-cb0f9cab04ff
+Spec:
+  Chart:
+    Name:        podinfo
+    Repository:  https://stefanprodan.github.io/podinfo
+    Version:     3.2.0
+Status:
+  Conditions:
+    Last Transition Time:  2020-01-01T12:00:00Z
+    Last Update Time:      2020-01-01T12:00:00Z
+    Message:               chart fetched: podinfo-3.2.0.tgz
+    Reason:                RepoChartInCache
+    Status:                True
+    Type:                  ChartFetched
+    Last Transition Time:  2020-01-01T12:00:01Z
+    Last Update Time:      2020-01-01T12:00:01Z
+    Message:               Helm release sync succeeded
+    Reason:                HelmSuccess
+    Status:                True
+    Type:                  Released
+  Observed Generation:     1
+  Release Name:            default-podinfo
+  Release Status:          deployed
+  Revision:                3.2.0
+Events:
+  Type    Reason       Age   From           Message
+  ----    ------       ----  ----           -------
+  Normal  ChartSynced  35s   helm-operator  Chart managed by HelmRelease processed
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Confirm the &lt;code&gt;default-podinfo&lt;/code&gt; pod has been deployed:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;$ kubectl get pods
+NAME                               READY   STATUS    RESTARTS   AGE
+default-podinfo-7f9759cc66-bslsl   1/1     Running   0          59s
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Tip&lt;/h4&gt;
+
+    &lt;p&gt;The available shorthand for &lt;code&gt;kubectl&lt;/code&gt; operations on &lt;code&gt;helmrelease&lt;/code&gt;
+resources is &lt;code&gt;hr&lt;/code&gt;, i.e:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;$ kubectl get hr
+NAME      RELEASE           STATUS     MESSAGE                       AGE
+podinfo   default-podinfo   deployed   Helm release sync succeeded   59s
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;make-a-modification&#34;&gt;Make a modification&lt;/h2&gt;
+&lt;p&gt;The Helm Operator ensures that the Helm release in the cluster matches
+the defined state in the &lt;code&gt;HelmRelease&lt;/code&gt; resource. This means that an
+upgrade will be performed when the resource is modified. To demonstrate
+this, we are going to increase the number of &lt;code&gt;podinfo&lt;/code&gt; replicas:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl edit helmrelease/podinfo
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;
+&lt;a href=&#34;https://helm.sh/docs/chart_best_practices/values/#helm&#34; target=&#34;_blank&#34;&gt;Helm values&lt;/a&gt;
+can be defined on the &lt;code&gt;HelmRelease&lt;/code&gt; resources under the  &lt;code&gt;spec.values&lt;/code&gt;
+key:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#0e84b5;font-weight:bold&#34;&gt;...&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;chart&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;podinfo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;repository&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;https://stefanprodan.github.io/podinfo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;version&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;3.2.0&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;values&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;replicaCount&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;2&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Save the modification and watch the new pod enroll:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;$ kubectl get pods -w
+NAME                               READY   STATUS              RESTARTS   AGE
+default-podinfo-7f9759cc66-lk45t   1/1     Running             0          59s
+default-podinfo-7f9759cc66-w7fj7   0/1     ContainerCreating   0          1s
+default-podinfo-7f9759cc66-w7fj7   0/1     Running             0          1s
+default-podinfo-7f9759cc66-w7fj7   1/1     Running             0          1s
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Hint&lt;/h4&gt;
+
+    See the 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/values/&#34;&gt;values&lt;/a&gt; and 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/release-configuration/&#34;&gt;release
+configuration&lt;/a&gt;
+sections in the &lt;code&gt;HelmRelease&lt;/code&gt; guide for more details.
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;reconciliation&#34;&gt;Reconciliation&lt;/h2&gt;
+&lt;p&gt;All &lt;code&gt;HelmRelease&lt;/code&gt; resources in the cluster watched by a Helm Operator
+instance are rescheduled to synchronize every 3 minutes (or configured
+&lt;code&gt;--charts-sync-interval&lt;/code&gt;); this is also known as the reconciliation
+loop.&lt;/p&gt;
+&lt;p&gt;During reconciliation the result of a dry-run upgrade made with the
+&lt;code&gt;HelmRelease&lt;/code&gt; resource is compared to the current deployed Helm
+release, and if they differ an upgrade is performed to ensure the defined
+and in-cluster state match again.&lt;/p&gt;
+&lt;p&gt;You can experience this with your own eyes by rolling back the
+modification we just made using &lt;code&gt;helm&lt;/code&gt;, the Helm Operator created
+the release with a name composed of the namespace and name of the
+&lt;code&gt;HelmRelease&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;$ helm rollback podinfo
+Rollback was a success! Happy Helming!
+$ kubectl get pods
+NAME                               READY   STATUS        RESTARTS   AGE
+default-podinfo-7f9759cc66-w7fj7   1/1     Terminating   0          1m1s
+default-podinfo-7f9759cc66-lk45t   1/1     Running       0          2m1s
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Watch the Helm Operator reverting the unauthorized modification (this
+can take a while, but no longer than 3 minutes):&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;$ kubectl get pods -w
+NAME                               READY   STATUS              RESTARTS   AGE
+default-podinfo-7f9759cc66-lk45t   1/1     Running             0          2m19s
+default-podinfo-7f9759cc66-kd5rk   0/1     Pending             0          0s
+default-podinfo-7f9759cc66-kd5rk   0/1     Pending             0          0s
+default-podinfo-7f9759cc66-kd5rk   0/1     ContainerCreating   0          0s
+default-podinfo-7f9759cc66-kd5rk   0/1     Running             0          1s
+default-podinfo-7f9759cc66-kd5rk   1/1     Running             0          7s
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Hint&lt;/h4&gt;
+
+    Read more about 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/reconciliation-and-upgrades/&#34;&gt;reconciliation and
+upgrades&lt;/a&gt; in
+the &lt;code&gt;HelmRelease&lt;/code&gt; guide.
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;uninstalling-the-chart&#34;&gt;Uninstalling the chart&lt;/h2&gt;
+&lt;p&gt;To uninstall the chart and clean up the release, simply run &lt;code&gt;kubectl delete&lt;/code&gt; for the resource:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl delete helmrelease podinfo
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;$ kubectl get pods -w
+NAME                               READY   STATUS        RESTARTS   AGE
+default-podinfo-7f9759cc66-fr4vb   1/1     Terminating   0          3m30s
+default-podinfo-7f9759cc66-kd5rk   1/1     Terminating   0          1m6s
+default-podinfo-7f9759cc66-kd5rk   0/1     Terminating   0          1m8s
+default-podinfo-7f9759cc66-fr4vb   0/1     Terminating   0          3m32s
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Delete the Helm Operator by removing the &lt;code&gt;fluxcd&lt;/code&gt; namespace:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl delete namespace flux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;next-steps&#34;&gt;Next steps&lt;/h2&gt;
+&lt;p&gt;Want to continue testing the Helm Operator or install it in a cluster
+environment? Take a look at the available get started guides for more
+sophisticated setup options:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href=&#34;/legacy/helm-operator/get-started/using-helm/&#34;&gt;Get started using Helm&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;/legacy/helm-operator/get-started/using-kustomize/&#34;&gt;Get started using Kustomize&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;/legacy/helm-operator/get-started/using-yamls/&#34;&gt;Get started using YAMLs&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Want to take a deeper dive in the available features and the
+&lt;code&gt;HelmRelease&lt;/code&gt; resource?
+&lt;strong&gt;Continue with the 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/introduction/&#34;&gt;&lt;code&gt;HelmRelease&lt;/code&gt; guide&lt;/a&gt;.&lt;/strong&gt;&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Get started using Helm</title>
+      <link>/legacy/helm-operator/get-started/using-helm/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/get-started/using-helm/</guid>
+      <description>
+        
+        
+        &lt;p&gt;This guide walks you through setting up the Helm Operator using the
+available 
+&lt;a href=&#34;https://github.com/fluxcd/helm-operator/tree/master/chart/helm-operator&#34; target=&#34;_blank&#34;&gt;Helm chart&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Kubernetes cluster &lt;strong&gt;&amp;gt;=1.13.0&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Up-to-date &lt;strong&gt;Helm 2 or 3&lt;/strong&gt; 
+&lt;a href=&#34;https://github.com/helm/helm/releases&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;helm&lt;/code&gt; binary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;(Optional)&lt;/em&gt;
+Tiller 
+&lt;a href=&#34;https://v2.helm.sh/docs/securing_installation/&#34; target=&#34;_blank&#34;&gt;(secure setup)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;install-the-helm-operator-chart&#34;&gt;Install the Helm Operator chart&lt;/h2&gt;
+&lt;p&gt;Install the &lt;code&gt;HelmRelease&lt;/code&gt; Custom Resource Definition. By adding this
+CRD it will be possible to define &lt;code&gt;HelmRelease&lt;/code&gt; resources on the
+cluster:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl apply -f https://raw.githubusercontent.com/fluxcd/helm-operator/1.2.0/deploy/crds.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Using &lt;code&gt;helm&lt;/code&gt;, add the Flux CD Helm repository:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;helm repo add fluxcd https://charts.fluxcd.io
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Install the Helm Operator using the available Helm chart:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;helm upgrade -i helm-operator fluxcd/helm-operator &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --set helm.versions&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;v3
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Confirm the Helm Operator deployed successfully:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;$ helm status helm-operator
+NAME: helm-operator
+LAST DEPLOYED: Wed Jan 01 12:00:00 2020
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;$ kubectl get pods
+NAME                             READY   STATUS    RESTARTS   AGE
+helm-operator-6985656995-dpmdl   1/1     Running   0          31s
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Note&lt;/h4&gt;
+
+    This installs the Helm Operator with only support for Helm 3 enabled,
+to also enable support for Helm 2 and connect to Tiller, read 
+&lt;a href=&#34;#with-tiller-helm-2&#34;&gt;with
+Tiller&lt;/a&gt; below.
+
+&lt;/div&gt;
+
+&lt;h3 id=&#34;with-tiller-helm-2&#34;&gt;With Tiller (Helm 2)&lt;/h3&gt;
+&lt;p&gt;Make sure 
+&lt;a href=&#34;https://v2.helm.sh/docs/securing_installation/&#34; target=&#34;_blank&#34;&gt;your Tiller installation is
+secure&lt;/a&gt;, and create a
+secret for the client certificates:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl create secret tls helm-client-certs &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --cert&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;cert.pem &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --key&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;key.pem
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Install (or upgrade) the Helm Operator with the 
+&lt;a href=&#34;/legacy/helm-operator/references/operator/#tiller-configuration&#34;&gt;Tiller
+configuration&lt;/a&gt;
+while also enabling Helm 2 support:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;helm upgrade -i helm-operator fluxcd/helm-operator &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --set &lt;span style=&#34;color:#bb60d5&#34;&gt;tillerNamespace&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;kube-system &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --set tls.enable&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#007020&#34;&gt;true&lt;/span&gt; &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --set helm.versions&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;v2\,v3&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Confirm the Helm Operator deployed successfully and connected to
+Tiller:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;$ kubectl get pods
+NAME                             READY   STATUS    RESTARTS   AGE
+helm-operator-7cc7c798cc-kn26w   1/1     Running   0          18s
+&lt;/code&gt;&lt;/pre&gt;&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;$ kubectl logs -f deploy/helm-operator
+...
+ts=2020-01-01T12:00:00.556712443Z caller=helm.go:71 component=helm version=v2 info=&amp;quot;connected to Tiller&amp;quot; version=&amp;quot;sem_ver:\&amp;quot;v2.16.3\&amp;quot; git_commit:\&amp;quot;1ee0254c86d4ed6887327dabed7aa7da29d7eb0d\&amp;quot; git_tree_state:\&amp;quot;clean\&amp;quot; &amp;quot; host=tiller-deploy.kube-system:44134 options=&amp;quot;{Host: Port: Namespace:kube-system TLSVerify:false TLSEnable:true TLSKey:/etc/fluxd/helm/tls.key TLSCert:/etc/fluxd/helm/tls.crt TLSCACert: TLSHostname:}&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Tip&lt;/h4&gt;
+
+    Targeting a specific Helm version in a &lt;code&gt;HelmRelease&lt;/code&gt; is possible by
+defining the &lt;code&gt;spec.helmVersion&lt;/code&gt;, e.g: &lt;code&gt;helmVersion: v3&lt;/code&gt; to target
+Helm 3. Read more about this in &amp;lsquo;
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/release-configuration/#targeting-a-helm-version&#34;&gt;targeting a Helm
+version&lt;/a&gt;&amp;rsquo;
+in the &lt;code&gt;HelmRelease&lt;/code&gt; guide.
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;next&#34;&gt;Next&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Learn all about the available configuration options in the 
+&lt;a href=&#34;../references/chart.md#configuration&#34;&gt;chart
+documentation&lt;/a&gt;
+and 
+&lt;a href=&#34;/legacy/helm-operator/references/operator/&#34;&gt;operator reference&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Continue learning about &lt;code&gt;HelmRelease&lt;/code&gt; resources 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/introduction/&#34;&gt;in the
+guide&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Get started using Kustomize</title>
+      <link>/legacy/helm-operator/get-started/using-kustomize/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/get-started/using-kustomize/</guid>
+      <description>
+        
+        
+        &lt;p&gt;This guide walks you through setting up the Helm Operator using
+
+&lt;a href=&#34;https://kustomize.io&#34; target=&#34;_blank&#34;&gt;Kustomize&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Kubernetes cluster &lt;strong&gt;&amp;gt;=1.13.0&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;kustomize&lt;/code&gt; &lt;strong&gt;&amp;gt;=3.2.0&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Some knowledge of Kustomize&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;(Optional)&lt;/em&gt;
+Tiller 
+&lt;a href=&#34;https://v2.helm.sh/docs/securing_installation/&#34; target=&#34;_blank&#34;&gt;(secure setup)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;prepare-the-manifests-for-installation&#34;&gt;Prepare the manifests for installation&lt;/h2&gt;
+&lt;p&gt;Create a directory called &lt;code&gt;helm-operator&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;mkdir helm-operator
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Create a &lt;code&gt;kustomization.yaml&lt;/code&gt; file and use the 
+&lt;a href=&#34;https://github.com/fluxcd/helm-operator/tree/1.2.0/deploy&#34; target=&#34;_blank&#34;&gt;Helm Operator
+deployment YAMLs&lt;/a&gt;
+as a base:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;cat &amp;gt; helm-operator/kustomization.yaml &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;lt;&amp;lt;EOF
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;bases:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;- github.com/fluxcd/helm-operator//deploy
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;patchesJSON6902:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;- target:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;    group: apps
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;    version: v1
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;    kind: Deployment
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;    name: helm-operator
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;    namespace: flux
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  patch: |-
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;    - op: replace
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;      path: /spec/template/spec/containers/0/args
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;      value:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;        - --enabled-helm-versions=v3
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;code&gt;patchesJSON6902&lt;/code&gt; target ensures only support for Helm 3 is
+enabled, to also enable support for Helm 2 and connect to Tiller,
+continue to read 
+&lt;a href=&#34;#helm-2&#34;&gt;Helm 2&lt;/a&gt; below.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Tip&lt;/h4&gt;
+
+    &lt;p&gt;If you want to install a specific Helm Operator release, add the
+version number to the base URL:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;bases&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;- github.com/fluxcd/helm-operator//deploy?ref=1.2.0&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;h3 id=&#34;helm-2&#34;&gt;Helm 2&lt;/h3&gt;
+&lt;p&gt;To also enable support for Helm 2 and configure the Tiller settings, we
+need to make slight adjustment to the &lt;code&gt;patchesJSON6902&lt;/code&gt; target.&lt;/p&gt;
+&lt;p&gt;First, make sure 
+&lt;a href=&#34;https://v2.helm.sh/docs/securing_installation/&#34; target=&#34;_blank&#34;&gt;your Tiller installation is
+secure&lt;/a&gt;, and add a
+&lt;code&gt;secretGenerator&lt;/code&gt; entry of type &lt;code&gt;kubernetes.io/tls&lt;/code&gt; for the client
+certificates:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# helm-operator/kustomization.yaml&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;namespace&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux  &lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# ensures secret is generated in the right namespace&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;bases&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;- github.com/fluxcd/helm-operator//deploy&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;secretGenerator&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;tiller-tls-cert&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;type&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;kubernetes.io/tls&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;files&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;- tls.crt&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;- tls.key&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;patchesJSON6902&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#0e84b5;font-weight:bold&#34;&gt;...&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Create a patch file for the Helm Operator to mount the &lt;code&gt;tiller-tls-cert&lt;/code&gt;
+secret:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;cat &amp;gt; helm-operator/patch-tiller-tls.yaml &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;lt;&amp;lt;EOF
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;apiVersion: apps/v1
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;kind: Deployment
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;metadata:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  name: helm-operator
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  namespace: flux
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;spec:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  template:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;    spec:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;      volumes:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;        - name: tiller-tls-cert
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;          secret:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;            secretName: tiller-tls-cert
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;            defaultMode: 0400
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;      containers:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;        - name: helm-operator
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;          volumeMounts:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;          - name: tiller-tls-cert
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;            mountPath: /etc/fluxd/helm
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;            readOnly: true
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Adapt your &lt;code&gt;kustomization.yaml&lt;/code&gt; to include the patch:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# helm-operator/kustomization.yaml&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#0e84b5;font-weight:bold&#34;&gt;...&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;patchesStrategicMerge&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;- patch-tiller-tls.yaml&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Add (or replace) &lt;code&gt;v2&lt;/code&gt; to &lt;code&gt;--enabled-helm-versions&lt;/code&gt; and configure the
+required 
+&lt;a href=&#34;/legacy/helm-operator/references/operator/#tiller-configuration&#34;&gt;Tiller option flags&lt;/a&gt;
+for your setup:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# helm-operator/kustomization.yaml&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#0e84b5;font-weight:bold&#34;&gt;...&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;patchesJSON6902&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;target&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;group&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;apps&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;version&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;v1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;Deployment&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;helm-operator&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;namespace&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;patch&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;|-&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;    - op: replace
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;      path: /spec/template/spec/containers/0/args
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;      value:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;        - --enabled-helm-versions=v2,v3     # enables Helm 2
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;        - --tiller-namespace=kube-system    # defines the Tiller namespace
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;        - --tiller-tls-enable=true          # enables TLS communication with Tiller&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#0e84b5;font-weight:bold&#34;&gt;...&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;install-the-helm-operator-using-kustomize&#34;&gt;Install the Helm Operator using Kustomize&lt;/h2&gt;
+&lt;p&gt;Deploy the Helm Operator to the cluster by applying the &lt;code&gt;helm-operator&lt;/code&gt;
+folder with the &lt;code&gt;kustomization.yaml&lt;/code&gt; file in it onto the cluster:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kustomize build helm-operator | kubectl apply -f -
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Confirm the Helm Operator deployed successfully to the default &lt;code&gt;flux&lt;/code&gt;
+namespace:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl -n flux rollout status deployment/helm-operator
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;customize-the-helm-operator-deployment&#34;&gt;Customize the Helm Operator deployment&lt;/h2&gt;
+&lt;h3 id=&#34;configure-a-namespace&#34;&gt;Configure a namespace&lt;/h3&gt;
+&lt;p&gt;By default the Helm Operator is installed in the &lt;code&gt;flux&lt;/code&gt; namespace when
+making use of the published deployment YAMLs as a base. It is possible
+to override this default namespace by creating a custom namespace
+definition and configuring a &lt;code&gt;namespace&lt;/code&gt; in your &lt;code&gt;kustomization.yaml&lt;/code&gt;
+file.&lt;/p&gt;
+&lt;p&gt;Create a custom namespace definition, this example uses &lt;code&gt;team-ns&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;cat &amp;gt; helm-operator/namespace.yaml &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;lt;&amp;lt;EOF
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;apiVersion: v1
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;kind: Namespace
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;metadata:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  name: team-ns
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Create a patch to remove the default namespace from the base:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;cat &amp;gt; helm-operator/patch-default-ns.yaml &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;lt;&amp;lt;EOF
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;apiVersion: v1
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;kind: Namespace
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;metadata:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  name: flux
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;\$patch: delete
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Adapt your &lt;code&gt;kustomization.yaml&lt;/code&gt; file to to include your own namespace
+resource and the patch file, and define the &lt;code&gt;namespace&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# helm-operator/kustomization.yaml&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;namespace&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;team-ns&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;resources&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;- namespace.yaml&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;bases&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;- github.com/fluxcd/helm-operator//deploy&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;patchesJSON6902&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;target&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;group&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;apps&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;version&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;v1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;Deployment&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;helm-operator&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;namespace&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;patch&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;|-&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;    - op: replace
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;      path: /spec/template/spec/containers/0/args
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;      value:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;        - --enabled-helm-versions=v3&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;patchesStrategicMerge&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;- patch-default-ns.yaml&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Apply the &lt;code&gt;helm-operator&lt;/code&gt; folder with the &lt;code&gt;kustomization.yaml&lt;/code&gt; file
+in it onto the cluster:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl apply -k helm-operator
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Confirm the Helm Operator deployed successfully to the &lt;code&gt;teamn-ns&lt;/code&gt;
+namespace:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl -n team-ns rollout status deployment/helm-operator
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;provide-helm-repository-credentials&#34;&gt;Provide Helm repository credentials&lt;/h3&gt;
+&lt;p&gt;To mount a custom &lt;code&gt;repositories.yaml&lt;/code&gt; file to e.g. provide credentials
+to a Helm chart repository 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/chart-sources/#authentication-and-certificates&#34;&gt;as described in the &lt;code&gt;HelmRelease&lt;/code&gt;
+guide&lt;/a&gt;,
+you can instruct Kustomize to create a secret from the
+&lt;code&gt;repositories.yaml&lt;/code&gt; file.&lt;/p&gt;
+&lt;p&gt;First, create the &lt;code&gt;repositores.yaml&lt;/code&gt; file with the credentials:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;cat &amp;gt; helm-operator/repositories.yaml &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;lt;&amp;lt;EOF
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;apiVersion: &amp;#34;&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;generated: &amp;#34;0001-01-01T00:00:00Z&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;repositories:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;- caFile: &amp;#34;&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  certFile: &amp;#34;&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  keyFile: &amp;#34;&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  name: private-repository
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  url: https://charts.example.com
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  password: john
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  username: s3cr3t!
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Create a patch file for the Helm Operator to mount the &lt;code&gt;flux-helm-repositories&lt;/code&gt;
+secret:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;cat &amp;gt; helm-operator/patch-repositories-mount.yaml &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;lt;&amp;lt;EOF
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;apiVersion: apps/v1
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;kind: Deployment
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;metadata:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  name: helm-operator
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  namespace: flux
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;spec:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  template:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;    spec:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;      volumes:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;        - name: repositories-yaml
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;          secret:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;            secretName: flux-helm-repositories
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;            defaultMode: 0400
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;      containers:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;        - name: helm-operator
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;          volumeMounts:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;            - name: repositories-yaml
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;              mountPath: /root/.helm/repository/repositories.yaml
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;              readOnly: true
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Adapt the &lt;code&gt;kustomization.yaml&lt;/code&gt; file to instruct it to generate the
+secret and apply the patch file:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# helm-operator/kustomization.yaml&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;namespace&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux        &lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# ensures secret is generated in the right namespace                            &lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;bases&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;- github.com/fluxcd/helm-operator//deploy&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;patchesJSON6902&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;target&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;group&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;apps&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;version&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;v1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;Deployment&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;helm-operator&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;namespace&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;patch&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;|-&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;    - op: replace
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;      path: /spec/template/spec/containers/0/args
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;      value:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-style:italic&#34;&gt;        - --enabled-helm-versions=v3&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;secretGenerator&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux-helm-repositories&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;files&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;- repositories.yaml&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;patchesStrategicMerge&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;- patch-repositories-mount.yaml&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Apply the &lt;code&gt;helm-operator&lt;/code&gt; folder with the &lt;code&gt;kustomization.yaml&lt;/code&gt; file
+in it onto the cluster:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kustomize build helm-operator | kubectl apply -f -
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;next&#34;&gt;Next&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Learn all about the available configuration options in the 
+&lt;a href=&#34;/legacy/helm-operator/references/operator/&#34;&gt;operator
+reference&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Continue learning about &lt;code&gt;HelmRelease&lt;/code&gt; resources 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/introduction/&#34;&gt;in the
+guide&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Get started using YAMLs</title>
+      <link>/legacy/helm-operator/get-started/using-yamls/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/get-started/using-yamls/</guid>
+      <description>
+        
+        
+        &lt;p&gt;This guide walks you through setting up the Helm Operator using
+
+&lt;a href=&#34;https://github.com/fluxcd/helm-operator/tree/1.2.0/deploy&#34; target=&#34;_blank&#34;&gt;deployment YAMLs&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Kubernetes cluster &lt;strong&gt;&amp;gt;=1.1.3.0&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;kubectl&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;(Optional)&lt;/em&gt;
+Tiller 
+&lt;a href=&#34;https://v2.helm.sh/docs/securing_installation/&#34; target=&#34;_blank&#34;&gt;(secure setup)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;install-the-helm-operator&#34;&gt;Install the Helm Operator&lt;/h2&gt;
+&lt;p&gt;First, install the &lt;code&gt;HelmRelease&lt;/code&gt; Custom Resource Definition. By adding this CRD
+it will be possible to define &lt;code&gt;HelmRelease&lt;/code&gt; resources on the cluster:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl apply -f https://raw.githubusercontent.com/fluxcd/helm-operator/1.2.0/deploy/crds.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Proceed to create the &lt;code&gt;flux&lt;/code&gt; namespace, this is the namespace the Helm Operator
+will be deployed to:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl create namespace flux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Apply the &lt;code&gt;ServiceAccount&lt;/code&gt;, &lt;code&gt;ClusterRole&lt;/code&gt; and &lt;code&gt;ClusterRoleBinding&lt;/code&gt; so that the
+Helm Operator can access cluster resources:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl apply -f https://raw.githubusercontent.com/fluxcd/helm-operator/1.2.0/deploy/rbac.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Apply the Helm Operator deployment itself:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl deploy -f https://raw.githubusercontent.com/fluxcd/helm-operator/1.2.0/deploy/deployment.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;helm-3&#34;&gt;Helm 3&lt;/h3&gt;
+&lt;p&gt;The default deployment of the Helm Operator comes with support for Helm 2 and 3
+enabled. To disable support for Helm 2 (and recover from the Tiller connection
+failure), patch the resource to set &lt;code&gt;--enabled-helm-versions=v3&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;kubectl deploy -f https://raw.githubusercontent.com/fluxcd/helm-operator/1.2.0/deploy/deployment.yaml \
+    --type=&#39;json&#39; \
+    -p=&#39;[{&amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/spec/template/spec/containers/0/args/-&amp;quot;, &amp;quot;value&amp;quot;:&amp;quot;--enabled-helm-versions=v3&amp;quot;}]&#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;helm-2&#34;&gt;Helm 2&lt;/h3&gt;
+&lt;p&gt;The default deployment of the Helm Operator does enable support for Helm 2 but
+does not take any custom configurations like Tiller TLS settings into account.
+If your Tiller is e.g. in a different namespace than &lt;code&gt;kube-system&lt;/code&gt; or
+
+&lt;a href=&#34;https://v2.helm.sh/docs/securing_installation/&#34; target=&#34;_blank&#34;&gt;securely setup&lt;/a&gt;, take a look
+at the available 
+&lt;a href=&#34;/legacy/helm-operator/references/operator/#tiller-configuration&#34;&gt;Tiller configuration flags&lt;/a&gt;
+and 
+&lt;a href=&#34;https://github.com/fluxcd/helm-operator/blob/1.2.0/deploy/deployment.yaml&#34; target=&#34;_blank&#34;&gt;commented out sections&lt;/a&gt;
+in the example deployment to further tweak your Helm Operator installation.&lt;/p&gt;
+&lt;h2 id=&#34;next&#34;&gt;Next&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Learn all about the available configuration options in the 
+&lt;a href=&#34;/legacy/helm-operator/references/operator/&#34;&gt;operator
+reference&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Continue learning about &lt;code&gt;HelmRelease&lt;/code&gt; resources 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/introduction/&#34;&gt;in the
+guide&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,252 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>道场 – How-to</title>
+    <link>/legacy/helm-operator/how-to/</link>
+    <description>Recent content in How-to on 道场</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="/legacy/helm-operator/how-to/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Legacy: Upgrade from beta (&gt;=0.5.0) to stable (&gt;=1.0.0)</title>
+      <link>/legacy/helm-operator/how-to/upgrade-to-ga/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/how-to/upgrade-to-ga/</guid>
+      <description>
+        
+        
+        &lt;p&gt;Due to the Flux CD project joining the CNCF Sandbox and the API
+becoming stable, the Helm Operator has undergone changes that
+necessitate some changes to your &lt;code&gt;HelmRelease&lt;/code&gt; resources.&lt;/p&gt;
+&lt;p&gt;The central difference is that the Helm Operator now works with
+resources of the kind &lt;code&gt;HelmRelease&lt;/code&gt; in the API version
+&lt;code&gt;helm.fluxcd.io/v1&lt;/code&gt;, the format of the resource is backwards
+compatible.&lt;/p&gt;
+&lt;p&gt;Here are some things to know:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The new operator will ignore the old custom resources (and the old
+operator will ignore the new resources).&lt;/li&gt;
+&lt;li&gt;Deleting a resource while the corresponding operator is running
+will result in the Helm release also being deleted&lt;/li&gt;
+&lt;li&gt;Deleting a &lt;code&gt;CustomResourceDefinition&lt;/code&gt; will also delete all
+custom resources of that kind.&lt;/li&gt;
+&lt;li&gt;If both operators are running and both new and old custom resources
+defining a release, the operators will fight over the release.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The safest way to upgrade is to avoid deletions and fights by stopping
+the old operator. Replacing it with the new one (e.g., by changing the
+deployment, or re-releasing the Flux chart with the new version) will
+have that effect.&lt;/p&gt;
+&lt;p&gt;Once the old operator is not running, it is safe to deploy the new
+operator, and start replacing the old resources with new
+resources. You can keep the old resources around during this process,
+since the new operator will ignore them.&lt;/p&gt;
+&lt;h2 id=&#34;updating-custom-resources&#34;&gt;Updating custom resources&lt;/h2&gt;
+
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Note&lt;/h4&gt;
+
+    &lt;p&gt;Once the new CRD is applied it is no longer possible to list your old
+and new &lt;code&gt;HelmRelease&lt;/code&gt; resources with just
+&lt;code&gt;kubectl get &amp;lt;hr|helmrelease&amp;gt;&lt;/code&gt; due to them sharing the same names. It
+is however still possible to list them by their full name:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# Old HelmRelease resources&lt;/span&gt;
+kubectl get helmreleases.flux.weave.works
+&lt;p&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# New HelmRelease resources&lt;/span&gt;
+kubectl get helmreleases.helm.fluxcd.io
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/p&gt;
+
+
+&lt;/div&gt;
+
+&lt;p&gt;The only difference between the old resource format and the new is
+the changed API version.&lt;/p&gt;
+&lt;p&gt;Changing an old resource to a new resource is thus as simple as
+changing the &lt;code&gt;apiVersion&lt;/code&gt; field to &lt;code&gt;helm.fluxcd.io/v1&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;As a full example, this is an old resource:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#0e84b5;font-weight:bold&#34;&gt;---&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;apiVersion&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux.weave.works/v1beta1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;HelmRelease&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;foobar&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;namespace&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;foo-ns&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;chart&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;git&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;git@example.com:user/repo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;path&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;charts/foobar&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;values&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;repository&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;foobar&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;tag&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;v1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The new custom resource would be:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#0e84b5;font-weight:bold&#34;&gt;---&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;apiVersion&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;helm.fluxcd.io/v1      &lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# &amp;lt;- change API version&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;HelmRelease&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;foobar&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;namespace&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;foo-ns&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;chart&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;git&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;git@example.com:user/repo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;path&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;charts/foobar&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;values&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;repository&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;foobar&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;tag&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;v1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;deleting-the-old-resources&#34;&gt;Deleting the old resources&lt;/h2&gt;
+&lt;p&gt;Once you have migrated all your &lt;code&gt;HelmRelease&lt;/code&gt; resources to the new API
+version and domain. You can remove all of the old resources by removing
+the old Custom Resource Definition.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl delete crd helmreleases.flux.weave.works
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Upgrade from alpha (&lt;=0.4.0) to beta</title>
+      <link>/legacy/helm-operator/how-to/upgrade-to-beta/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/how-to/upgrade-to-beta/</guid>
+      <description>
+        
+        
+        &lt;p&gt;The Helm Operator has undergone changes that necessitate some changes
+to custom resources, and the deployment of the operator itself.&lt;/p&gt;
+&lt;p&gt;The central difference is that the Helm Operator now works with
+resources of the kind &lt;code&gt;HelmRelease&lt;/code&gt; in the API version
+&lt;code&gt;flux.weave.works/v1beta1&lt;/code&gt;, which have a different format to the
+custom resources used by the old Helm Operator (&lt;code&gt;FluxHelmRelease&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;Here are some things to know:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The new operator will ignore the old custom resources (and the old
+operator will ignore the new resources).&lt;/li&gt;
+&lt;li&gt;Deleting a resource while the corresponding operator is running
+will result in the Helm release also being deleted&lt;/li&gt;
+&lt;li&gt;Deleting a &lt;code&gt;CustomResourceDefinition&lt;/code&gt; will also delete all
+custom resources of that kind.&lt;/li&gt;
+&lt;li&gt;If both operators are running and both new and old custom resources
+defining a release, the operators will fight over the release.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The safest way to upgrade is to avoid deletions and fights by stopping
+the old operator. Replacing it with the new one (e.g., by changing the
+deployment, or re-releasing the Flux chart with the new version) will
+have that effect.&lt;/p&gt;
+&lt;p&gt;Once the old operator is not running, it is safe to deploy the new
+operator, and start replacing the old resources with new
+resources. You can keep the old resources around during this process,
+since the new operator will ignore them.&lt;/p&gt;
+&lt;h2 id=&#34;upgrading-the-operator-deployment&#34;&gt;Upgrading the operator deployment&lt;/h2&gt;
+&lt;h3 id=&#34;using-the-flux-chart&#34;&gt;Using the Flux chart&lt;/h3&gt;
+&lt;p&gt;The chart (from v0.5.0, or from this git repo) provides the
+correct arguments to the operator; to upgrade, do&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;helm repo update
+
+helm upgrade flux --reuse-values &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--set image.tag&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;1.8.1 &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--set helmOperator.tag&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;0.5.1 &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--namespace&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;flux &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;fluxcd/flux --version 0.5.1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The chart will leave the old custom resource definition and custom
+resources in place. You will need to replace the individual resources,
+as described below.&lt;/p&gt;
+&lt;h3 id=&#34;using-manifests&#34;&gt;Using manifests&lt;/h3&gt;
+&lt;p&gt;You will need to adapt any existing manifest that you use to run the
+Helm Operator. The arguments to the operator executable have changed,
+since it no longer needs the git repo to be specified (and in some
+cases, just to tidy up):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the new operator does not use the &lt;code&gt;--git-url&lt;/code&gt;, &lt;code&gt;--git-charts-path&lt;/code&gt;,
+or &lt;code&gt;--git-branch&lt;/code&gt; arguments, since the git repo and so on are
+provided in each custom resource.&lt;/li&gt;
+&lt;li&gt;the &lt;code&gt;--queue-worker-count&lt;/code&gt; argument has been removed&lt;/li&gt;
+&lt;li&gt;the &lt;code&gt;--chart-sync-timeout&lt;/code&gt; argument has been removed&lt;/li&gt;
+&lt;li&gt;other arguments stay the same&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;It is entirely valid to run the operator with no arguments, which you
+may end up with after removing those mentioned above. It will work
+with the secrets mounted as for the old operator, to start off with,
+since it expects the SSH key for the git repo to be in the same place.&lt;/p&gt;
+&lt;p&gt;Once you want to use the new capabilities of the operator &amp;ndash; e.g.,
+releasing charts from Helm repos &amp;ndash; you will probably need to adapt
+the manifest further. The 
+&lt;a href=&#34;../references/helmrelease-custom-resource.md&#34;&gt;&lt;code&gt;HelmRelease&lt;/code&gt; Custom Resource&lt;/a&gt;
+and 
+&lt;a href=&#34;/legacy/helm-operator/references/operator/&#34;&gt;operator&lt;/a&gt; references explain all
+the details.&lt;/p&gt;
+&lt;h2 id=&#34;updating-custom-resources&#34;&gt;Updating custom resources&lt;/h2&gt;
+&lt;p&gt;The main differences between the old resource format and the new are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the API version and kind have changed&lt;/li&gt;
+&lt;li&gt;you can now specify a chart to release either as a path in a git
+repo, or a named, versioned chart from a Helm repo&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Here is how to change an old resource to a new resource:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;change the &lt;code&gt;apiVersion&lt;/code&gt; field to &lt;code&gt;flux.weave.works/v1beta1&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;change the &lt;code&gt;kind&lt;/code&gt; field to &lt;code&gt;HelmRelease&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;you can remove the label &lt;code&gt;chart:&lt;/code&gt; from the labels, if it&amp;rsquo;s still
+there, just to tidy up (it doesn&amp;rsquo;t matter if it&amp;rsquo;s there or not)&lt;/li&gt;
+&lt;li&gt;replace the field &lt;code&gt;chartGitPath&lt;/code&gt;, with the structure:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;chart&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;git&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&amp;lt;URL to git repo&amp;gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;ref&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&amp;lt;optional branch name&amp;gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;path&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&amp;lt;path from top directory of git repo to chart directory&amp;gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;the &lt;code&gt;values&lt;/code&gt;, &lt;code&gt;releaseName&lt;/code&gt;, and &lt;code&gt;valueFileSecrets&lt;/code&gt; can stay as
+they are.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Note that you now give the git repo URL and branch and full path in
+each custom resource, rather than supplying arguments to the Helm
+operator. (As you&amp;rsquo;ve been using the old operator, you&amp;rsquo;ll only have one
+git repo for all charts &amp;ndash; but now you can use different repos for
+charts!)&lt;/p&gt;
+&lt;p&gt;As a full example, this is an old resource:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#0e84b5;font-weight:bold&#34;&gt;---&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;apiVersion&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;helm.integrations.flux.weave.works/v1alpha2&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;FluxHelmRelease&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;foobar&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;namespace&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;foo-ns&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;chartGitPath&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;foobar&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;values&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;repository&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;foobar&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;tag&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;v1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Say the arguments given to the old Helm Operator were&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;args&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;- --git-url=git@example.com:user/repo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;- --git-charts-path=charts&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;- --git-branch=master&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Then the new custom resource would be:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#0e84b5;font-weight:bold&#34;&gt;---&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;apiVersion&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux.weave.works/v1beta1&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# &amp;lt;- change API version&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;HelmRelease                   &lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# &amp;lt;- change kind&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;foobar&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;namespace&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;foo-ns&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;chart&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;git&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;git@example.com:user/repo&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# &amp;lt;- --git-url from operator args&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;path&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;charts/foobar           &lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# &amp;lt;- join --git-chart-path and chartGitPath&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;values&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;repository&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;foobar&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;tag&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;v1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+      </description>
+    </item>
+    
+  </channel>
+</rss>

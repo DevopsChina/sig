@@ -1,0 +1,583 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>道场 – Tutorials</title>
+    <link>/legacy/flux/tutorials/</link>
+    <description>Recent content in Tutorials on 道场</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="/legacy/flux/tutorials/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Legacy: Get started with Flux</title>
+      <link>/legacy/flux/tutorials/get-started/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/tutorials/get-started/</guid>
+      <description>
+        
+        
+        &lt;p&gt;This short guide shows a self-contained example of Flux and just
+takes a couple of minutes to get set up. By the end you will
+have Flux running in your cluster and it will be deploying any
+code changes for you.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    If you would like to install Flux using Helm, refer to the 
+&lt;a href=&#34;/legacy/flux/tutorials/get-started-helm/&#34;&gt;Helm
+section&lt;/a&gt;.
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
+&lt;p&gt;You will need to have Kubernetes set up. For a quick local test,
+you can use &lt;code&gt;minikube&lt;/code&gt;, &lt;code&gt;kubeadm&lt;/code&gt; or &lt;code&gt;kind&lt;/code&gt;. Any other Kubernetes setup
+will work as well though.&lt;/p&gt;
+&lt;p&gt;If working on e.g. GKE with RBAC enabled, you will need to add a &lt;code&gt;ClusterRoleBinding&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl create clusterrolebinding &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;cluster-admin-&lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;$(&lt;/span&gt;whoami&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--clusterrole&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;cluster-admin &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--user&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;$(&lt;/span&gt;gcloud config get-value core/account&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;set-up-flux&#34;&gt;Set up Flux&lt;/h2&gt;
+&lt;p&gt;In our example we are going to use
+
+&lt;a href=&#34;https://github.com/fluxcd/flux-get-started&#34; target=&#34;_blank&#34;&gt;flux-get-started&lt;/a&gt;. If you
+want to use that too, be sure to create a fork of it on GitHub.&lt;/p&gt;
+&lt;p&gt;First, please 
+&lt;a href=&#34;/legacy/flux/references/fluxctl/&#34;&gt;install &lt;code&gt;fluxctl&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Create the &lt;code&gt;flux&lt;/code&gt; namespace:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl create ns flux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Then, install Flux in your cluster (replace &lt;code&gt;YOURUSER&lt;/code&gt; with your GitHub username):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span style=&#34;color:#007020&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;GHUSER&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;YOURUSER&amp;#34;&lt;/span&gt;
+fluxctl install &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--git-user&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#70a0d0;font-style:italic&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;GHUSER&lt;/span&gt;&lt;span style=&#34;color:#70a0d0;font-style:italic&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--git-email&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#70a0d0;font-style:italic&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;GHUSER&lt;/span&gt;&lt;span style=&#34;color:#70a0d0;font-style:italic&#34;&gt;}&lt;/span&gt;@users.noreply.github.com &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--git-url&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;git@github.com:&lt;span style=&#34;color:#70a0d0;font-style:italic&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;GHUSER&lt;/span&gt;&lt;span style=&#34;color:#70a0d0;font-style:italic&#34;&gt;}&lt;/span&gt;/flux-get-started &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--git-path&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;namespaces,workloads &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--namespace&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;flux | kubectl apply -f -
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;--git-path=namespaces,workloads&lt;/code&gt;, is meant to exclude Helm
+manifests. Again, if you want to get started with Helm, please refer to the
+
+&lt;a href=&#34;/legacy/flux/tutorials/get-started-helm/&#34;&gt;Helm section&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Wait for Flux to start:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl -n flux rollout status deployment/flux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;giving-write-access&#34;&gt;Giving write access&lt;/h2&gt;
+&lt;p&gt;At startup Flux generates a SSH key and logs the public key. Find
+the SSH public key by installing 
+&lt;a href=&#34;/legacy/flux/references/fluxctl/&#34;&gt;&lt;code&gt;fluxctl&lt;/code&gt;&lt;/a&gt; and
+running:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl identity --k8s-fwd-ns flux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In order to sync your cluster state with git you need to copy the
+public key and create a deploy key with write access on your GitHub
+repository.&lt;/p&gt;
+&lt;p&gt;Open GitHub, navigate to your fork, go to &lt;strong&gt;Setting &amp;gt; Deploy keys&lt;/strong&gt;,
+click on &lt;strong&gt;Add deploy key&lt;/strong&gt;, give it a &lt;code&gt;Title&lt;/code&gt;, check &lt;strong&gt;Allow write
+access&lt;/strong&gt;, paste the Flux public key and click &lt;strong&gt;Add key&lt;/strong&gt;. See the
+
+&lt;a href=&#34;https://developer.github.com/v3/guides/managing-deploy-keys/#deploy-keys&#34; target=&#34;_blank&#34;&gt;GitHub docs&lt;/a&gt;
+for more info on how to manage deploy keys.&lt;/p&gt;
+&lt;p&gt;(Or replace &lt;code&gt;YOURUSER&lt;/code&gt; with your GitHub ID in this url:
+&lt;code&gt;https://github.com/YOURUSER/flux-get-started/settings/keys/new&lt;/code&gt; and
+paste the key there.)&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    The SSH key must be configured to have R/W access to the
+repository. More specifically, the SSH key must be able to create
+and update tags. E.g. in Gitlab, that means it requires &lt;code&gt;Maintainer&lt;/code&gt;
+permissions. The &lt;code&gt;Developer&lt;/code&gt; permission can create tags, but not
+update them.
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;committing-a-small-change&#34;&gt;Committing a small change&lt;/h2&gt;
+&lt;p&gt;In this example we are using a simple example of a webservice and
+change its configuration to use a different message.&lt;/p&gt;
+&lt;p&gt;Replace &lt;code&gt;YOURUSER&lt;/code&gt; in
+&lt;code&gt;https://github.com/YOURUSER/flux-get-started/blob/master/workloads/podinfo-dep.yaml&lt;/code&gt;
+with your GitHub ID), open the URL in your browser, edit the file,
+add &lt;code&gt;--ui-message=&#39;Welcome to Flux&#39;&lt;/code&gt; to the container command and commit the file.&lt;/p&gt;
+&lt;p&gt;By default, Flux git pull frequency is set to 5 minutes.
+You can tell Flux to sync the changes immediately with:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl sync --k8s-fwd-ns flux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;confirm-the-change-landed&#34;&gt;Confirm the change landed&lt;/h2&gt;
+&lt;p&gt;To access our webservice and check out its welcome message, simply
+run:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl -n demo port-forward deployment/podinfo 9898:9898 &amp;amp;
+curl localhost:9898
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Notice the updated &lt;code&gt;message&lt;/code&gt; value in the JSON reply.&lt;/p&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;As you can see, the actual steps to set up Flux, get our app
+deployed, give Flux access to it and see modifications land are
+very straight-forward and are a quite natural work-flow.&lt;/p&gt;
+&lt;p&gt;As a next step, you might want to dive deeper into 
+&lt;a href=&#34;/legacy/flux/references/fluxctl/&#34;&gt;how to
+control Flux&lt;/a&gt;, or go through our
+hands-on tutorial about driving Flux, e.g.
+
+&lt;a href=&#34;/legacy/flux/tutorials/driving-flux/&#34;&gt;automations, annotations and locks&lt;/a&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Get started with Flux using Helm</title>
+      <link>/legacy/flux/tutorials/get-started-helm/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/tutorials/get-started-helm/</guid>
+      <description>
+        
+        
+        &lt;p&gt;If you are using Helm already, this guide is for you. By the end
+you will have Helm installing Flux in the cluster and deploying
+any code changes for you.&lt;/p&gt;
+&lt;p&gt;If you are looking for more generic notes for how to install Flux
+using Helm, we collected them 
+&lt;a href=&#34;https://github.com/fluxcd/flux/blob/master/chart/flux/README.md#&#34; target=&#34;_blank&#34;&gt;in the chart&amp;rsquo;s
+README&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
+&lt;p&gt;You will need to have Kubernetes set up. To get up and running fast,
+you might want to use &lt;code&gt;minikube&lt;/code&gt; or &lt;code&gt;kubeadm&lt;/code&gt;. Any other Kubernetes
+setup will work as well though.&lt;/p&gt;
+&lt;p&gt;Download Helm v3:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;On MacOS:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;brew install helm
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;On Linux: Download the 
+&lt;a href=&#34;https://github.com/kubernetes/helm/releases/latest&#34; target=&#34;_blank&#34;&gt;latest release&lt;/a&gt;,
+unpack the tarball and put the binary in your &lt;code&gt;$PATH&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If you are using Helm v2 you have to create a service account and a cluster role binding for Tiller:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl -n kube-system create sa tiller
+
+kubectl create clusterrolebinding tiller-cluster-rule &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --clusterrole&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;cluster-admin &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --serviceaccount&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;kube-system:tiller
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Deploy Tiller in &lt;code&gt;kube-system&lt;/code&gt; namespace (Helm v2 only):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;helm init --skip-refresh --upgrade --service-account tiller --history-max &lt;span style=&#34;color:#40a070&#34;&gt;10&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    This is a quick guide and by no means a production ready
+Tiller setup, please look into 
+&lt;a href=&#34;https://helm.sh/docs/using_helm/#securing-your-helm-installation&#34; target=&#34;_blank&#34;&gt;&amp;lsquo;Securing your Helm installation&amp;rsquo;&lt;/a&gt;
+and be aware of the &lt;code&gt;--history-max&lt;/code&gt; flag before promoting to
+production.
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;install-flux&#34;&gt;Install Flux&lt;/h2&gt;
+&lt;p&gt;Add the Flux repository:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;helm repo add fluxcd https://charts.fluxcd.io
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Apply the Helm Release CRD:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl apply -f https://raw.githubusercontent.com/fluxcd/helm-operator/master/deploy/crds.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In this next step you install Flux using &lt;code&gt;helm&lt;/code&gt;. Simply&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Fork 
+&lt;a href=&#34;https://github.com/fluxcd/flux-get-started&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;fluxcd/flux-get-started&lt;/code&gt;&lt;/a&gt; on GitHub and replace the &lt;code&gt;fluxcd&lt;/code&gt; with your GitHub username in 
+&lt;a href=&#34;https://github.com/fluxcd/flux-get-started/blob/master/releases/ghost.yaml#L13&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Create the flux namespace:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl create namespace flux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Install Flux and the Helm Operator by specifying your fork URL:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Just make sure you replace &lt;code&gt;YOURUSER&lt;/code&gt; with your GitHub username
+in the command below:&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Using a public git server from &lt;code&gt;bitbucket.com&lt;/code&gt;, &lt;code&gt;github.com&lt;/code&gt;, &lt;code&gt;gitlab.com&lt;/code&gt;, &lt;code&gt;dev.azure.com&lt;/code&gt;, or &lt;code&gt;vs-ssh.visualstudio.com&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;helm upgrade -i flux fluxcd/flux &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;   --set git.url&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;git@github.com:YOURUSER/flux-get-started &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;   --namespace flux
+
+ helm upgrade -i helm-operator fluxcd/helm-operator &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;   --set git.ssh.secretName&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;flux-git-deploy &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;   --namespace flux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    By default the helm-operator chart will install with support for both Helm v2 (which requires Tiller) and v3.  You can target specific versions by setting the &lt;code&gt;helm.versions&lt;/code&gt; value, e.g. &lt;code&gt;--set helm.versions=v3&lt;/code&gt;.
+
+&lt;/div&gt;
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Using a private git server:&lt;/p&gt;
+&lt;p&gt;When deploying from a private repo, the known_hosts of the git server needs
+to be configured into a kubernetes configmap so that &lt;code&gt;StrictHostKeyChecking&lt;/code&gt; is respected.
+See the 
+&lt;a href=&#34;https://github.com/fluxcd/flux/blob/master/chart/flux/README.md#to-install-flux-with-the-helm-operator-and-a-private-git-repository&#34; target=&#34;_blank&#34;&gt;README of the chart&lt;/a&gt;
+for further installation instructions in this case.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Allow some time for all containers to get up and running. If you&amp;rsquo;re
+impatient, run the following command and see the pod creation
+process.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;watch kubectl -n flux get pods
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You will notice that &lt;code&gt;flux&lt;/code&gt; and &lt;code&gt;flux-helm-operator&lt;/code&gt; will start
+turning up in the &lt;code&gt;flux&lt;/code&gt; namespace.&lt;/p&gt;
+&lt;h2 id=&#34;giving-write-access&#34;&gt;Giving write access&lt;/h2&gt;
+&lt;p&gt;For the real benefits of GitOps, Flux will need access to your
+git repository to update configuration if necessary. To facilitate
+that you will need to add a deploy key to your fork of the
+repository.&lt;/p&gt;
+&lt;p&gt;This is pretty straight-forward as Flux generates a SSH key and
+logs the public key at startup. Find the SSH public key by
+installing 
+&lt;a href=&#34;/legacy/flux/references/fluxctl/&#34;&gt;&lt;code&gt;fluxctl&lt;/code&gt;&lt;/a&gt; and running:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl identity --k8s-fwd-ns flux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In order to sync your cluster state with git you need to copy the
+public key and create a deploy key with write access on your GitHub
+repository.&lt;/p&gt;
+&lt;p&gt;Open GitHub, navigate to your fork, go to &lt;strong&gt;Setting &amp;gt; Deploy keys&lt;/strong&gt;,
+click on &lt;strong&gt;Add deploy key&lt;/strong&gt;, give it a &lt;code&gt;Title&lt;/code&gt;, check &lt;strong&gt;Allow write
+access&lt;/strong&gt;, paste the Flux public key and click &lt;strong&gt;Add key&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;(Or replace &lt;code&gt;YOURUSER&lt;/code&gt; with your GitHub ID in this url:
+&lt;code&gt;https://github.com/YOURUSER/flux-get-started/settings/keys/new&lt;/code&gt; and
+paste the key there.)&lt;/p&gt;
+&lt;p&gt;Once Flux has confirmed access to the repository, it will start
+deploying the workloads of &lt;code&gt;flux-get-started&lt;/code&gt;. After a while you
+will be able to see the Helm releases deployed by Flux (which are
+deployed into the &lt;code&gt;demo&lt;/code&gt; namespace) listed like so:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;helm list --namespace demo
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;committing-a-small-change&#34;&gt;Committing a small change&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;flux-get-started&lt;/code&gt; is a simple example in which three services
+(mongodb, redis and ghost) are deployed. Here we will simply update the
+version of mongodb to a newer version to see if Flux will pick this
+up and update our cluster.&lt;/p&gt;
+&lt;p&gt;The easiest way is to update your fork of &lt;code&gt;flux-get-started&lt;/code&gt; and
+change the &lt;code&gt;image&lt;/code&gt; argument.&lt;/p&gt;
+&lt;p&gt;Replace &lt;code&gt;YOURUSER&lt;/code&gt; in &lt;code&gt;https://github.com/YOURUSER/flux-get-started/edit/master/releases/mongodb.yaml&lt;/code&gt;
+with your GitHub ID, open the URL in your browser, edit the file,
+change the &lt;code&gt;tag:&lt;/code&gt; line to the following:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;values&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;repository&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;bitnami/mongodb&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;tag&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;4.0.14&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Commit the change to your &lt;code&gt;master&lt;/code&gt; branch. It will now get
+automatically deployed to your cluster.&lt;/p&gt;
+&lt;p&gt;You can check out the Flux logs with:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl -n flux logs deployment/flux -f
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The default sync frequency for Flux using the Helm chart is
+five minutes. This can be tweaked easily. By observing the logs
+you can see when the change landed in the cluster.&lt;/p&gt;
+&lt;p&gt;Confirm the change landed by checking the &lt;code&gt;demo&lt;/code&gt; namespace that
+Flux is deploying to:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl describe -n demo deployment/mongodb | grep Image
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;As you can see, the actual steps to set up Flux, get our app
+deployed, give Flux access to it and see modifications land are
+very straight-forward and are a quite natural workflow.&lt;/p&gt;
+&lt;h2 id=&#34;a-more-advanced-setup&#34;&gt;A more advanced setup&lt;/h2&gt;
+&lt;p&gt;For a more advanced Helm setup, take a look at the
+
+&lt;a href=&#34;https://github.com/fluxcd/helm-operator-get-started&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;fluxcd/helm-operator-get-started&lt;/code&gt; repository&lt;/a&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: How to bootstrap Flux using Kustomize</title>
+      <link>/legacy/flux/tutorials/get-started-kustomize/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/tutorials/get-started-kustomize/</guid>
+      <description>
+        
+        
+        &lt;p&gt;This guide shows you how to use Kustomize to bootstrap Flux on a Kubernetes cluster.&lt;/p&gt;
+&lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
+&lt;p&gt;You will need to have Kubernetes set up. For a quick local test,
+you can use &lt;code&gt;minikube&lt;/code&gt; or &lt;code&gt;kubeadm&lt;/code&gt;. Any other Kubernetes setup
+will work as well though.&lt;/p&gt;
+&lt;h3 id=&#34;a-note-on-gke-with-rbac-enabled&#34;&gt;A note on GKE with RBAC enabled&lt;/h3&gt;
+&lt;p&gt;If working on e.g. GKE with RBAC enabled, you will need to add a cluster role binding:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl create clusterrolebinding &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;cluster-admin-&lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;$(&lt;/span&gt;whoami&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --clusterrole&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;cluster-admin &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --user&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;$(&lt;/span&gt;gcloud config get-value core/account&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;prepare-flux-installation&#34;&gt;Prepare Flux installation&lt;/h2&gt;
+&lt;p&gt;First you&amp;rsquo;ll need a git repository to store your cluster desired state.
+In our example we are going to use 
+&lt;a href=&#34;https://github.com/fluxcd/flux-get-started&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;fluxcd/flux-get-started&lt;/code&gt;&lt;/a&gt;.
+If you want to use that too, be sure to create a fork of it on GitHub.&lt;/p&gt;
+&lt;p&gt;Create a directory, and add a &lt;code&gt;kustomization.yaml&lt;/code&gt; file that uses the
+Flux deploy YAMLs as a base:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;cat &amp;gt; fluxcd/kustomization.yaml &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;lt;&amp;lt;EOF
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;namespace: flux
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;bases:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  - github.com/fluxcd/flux//deploy
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;patchesStrategicMerge:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  - patch.yaml
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    If you want to install a specific Flux release,
+add the version number to the base URL:
+&lt;code&gt;github.com/fluxcd/flux//deploy?ref=v1.14.1&lt;/code&gt;
+
+&lt;/div&gt;
+
+&lt;p&gt;Create a patch file for Flux deployment and set the &lt;code&gt;--git-url&lt;/code&gt;
+parameter to point to the config repository
+(replace &lt;code&gt;YOURUSER&lt;/code&gt; with your GitHub username):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span style=&#34;color:#007020&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;GHUSER&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;YOURUSER&amp;#34;&lt;/span&gt;
+cat &amp;gt; fluxcd/patch.yaml &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;lt;&amp;lt;EOF
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;apiVersion: apps/v1
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;kind: Deployment
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;metadata:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  name: flux
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  namespace: flux
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;spec:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  template:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;    spec:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;      containers:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;        - name: flux
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;          args:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;            - --manifest-generation=true
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;            - --memcached-hostname=memcached.flux
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;            - --memcached-service=
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;            - --ssh-keygen-dir=/var/fluxd/keygen
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;            - --git-branch=master
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;            - --git-path=namespaces,workloads
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;            - --git-user=${GHUSER}
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;            - --git-email=${GHUSER}@users.noreply.github.com
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;            - --git-url=git@github.com:${GHUSER}/flux-get-started
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;We set &lt;code&gt;--git-path=namespaces,workloads&lt;/code&gt; to exclude Helm manifests.
+If you want to get started with Helm, please refer to the
+
+&lt;a href=&#34;/legacy/flux/tutorials/get-started-helm/&#34;&gt;&amp;ldquo;Get started with Flux using Helm&amp;rdquo;&lt;/a&gt; tutorial.&lt;/p&gt;
+&lt;h3 id=&#34;overwriting-the-default-namespace&#34;&gt;Overwriting the default namespace&lt;/h3&gt;
+&lt;p&gt;Overwriting the default (&lt;code&gt;flux&lt;/code&gt;) namespace is possible by defining
+your own namespace and accordingly setting the &lt;code&gt;namespace:&lt;/code&gt; key in
+the &lt;code&gt;kustomization.yaml&lt;/code&gt; file.&lt;/p&gt;
+&lt;p&gt;Create your own namespace definition:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;cat &amp;gt; fluxcd/namespace.yaml &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;lt;&amp;lt;EOF
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;apiVersion: v1
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;kind: Namespace
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;metadata:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  name: &amp;lt;namespace&amp;gt;
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Adapt your &lt;code&gt;fluxcd/kustomization.yaml&lt;/code&gt; to include your own namespace
+resource and change the namespace:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;namespace&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&amp;lt;namespace&amp;gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;resources&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;- namespace.yaml&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;bases&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;- github.com/fluxcd/flux//deploy&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;patchesStrategicMerge&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;- patch.yaml&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;install-flux-with-kustomize&#34;&gt;Install Flux with Kustomize&lt;/h2&gt;
+&lt;p&gt;In the next step, deploy Flux to the cluster (you&amp;rsquo;ll need kubectl &lt;strong&gt;1.14&lt;/strong&gt; or newer):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl apply -k fluxcd
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Wait for Flux to start:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl -n flux rollout status deployment/flux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;setup-github-write-access&#34;&gt;Setup GitHub write access&lt;/h2&gt;
+&lt;p&gt;At startup Flux generates a SSH key and logs the public key. Find
+the SSH public key by installing 
+&lt;a href=&#34;/legacy/flux/references/fluxctl/&#34;&gt;fluxctl&lt;/a&gt; and
+running:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl identity --k8s-fwd-ns flux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In order to sync your cluster state with git you need to copy the
+public key and create a deploy key with write access on your GitHub
+repository.&lt;/p&gt;
+&lt;p&gt;Open GitHub, navigate to your fork, go to &lt;strong&gt;Setting &amp;gt; Deploy keys&lt;/strong&gt;,
+click on &lt;strong&gt;Add deploy key&lt;/strong&gt;, give it a &lt;code&gt;Title&lt;/code&gt;, check &lt;strong&gt;Allow write
+access&lt;/strong&gt;, paste the Flux public key and click &lt;strong&gt;Add key&lt;/strong&gt;. See the
+
+&lt;a href=&#34;https://developer.github.com/v3/guides/managing-deploy-keys/#deploy-keys&#34; target=&#34;_blank&#34;&gt;GitHub docs&lt;/a&gt;
+for more info on how to manage deploy keys.&lt;/p&gt;
+&lt;h2 id=&#34;committing-a-small-change&#34;&gt;Committing a small change&lt;/h2&gt;
+&lt;p&gt;In this example we&amp;rsquo;ll be making a configuration change to a web application
+and display a different message in the UI.&lt;/p&gt;
+&lt;p&gt;Replace &lt;code&gt;YOURUSER&lt;/code&gt; in
+&lt;code&gt;https://github.com/YOURUSER/flux-get-started/blob/master/workloads/podinfo-dep.yaml&lt;/code&gt;
+with your GitHub ID), open the URL in your browser, edit the file,
+change the &lt;code&gt;PODINFO_UI_MESSAGE&lt;/code&gt; env var to &lt;code&gt;Welcome to Flux&lt;/code&gt; and commit the file.&lt;/p&gt;
+&lt;p&gt;By default, Flux git pull frequency is set to 5 minutes.
+You can tell Flux to sync the changes immediately with:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl sync --k8s-fwd-ns flux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;confirm-the-change-landed&#34;&gt;Confirm the change landed&lt;/h2&gt;
+&lt;p&gt;To access our webservice and check out its welcome message, simply
+run:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl -n demo port-forward deployment/podinfo 9898:9898 &amp;amp;
+curl localhost:9898
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Notice the updated &lt;code&gt;message&lt;/code&gt; value in the JSON reply.&lt;/p&gt;
+&lt;h2 id=&#34;next-steps&#34;&gt;Next steps&lt;/h2&gt;
+&lt;p&gt;Try out 
+&lt;a href=&#34;https://github.com/weaveworks/flux-kustomize-example&#34; target=&#34;_blank&#34;&gt;flux-kustomize-example&lt;/a&gt;
+for using Flux with Kustomize to manage
+a staging and production clusters while minimizing duplicated declarations.&lt;/p&gt;
+&lt;p&gt;Try out 
+&lt;a href=&#34;https://github.com/fluxcd/multi-tenancy&#34; target=&#34;_blank&#34;&gt;fluxcd/multi-tenancy&lt;/a&gt;
+for using Flux with Kustomize to manage a multi-tenant cluster.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Automations, locks and annotations</title>
+      <link>/legacy/flux/tutorials/driving-flux/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/tutorials/driving-flux/</guid>
+      <description>
+        
+        
+        &lt;p&gt;In this tutorial we want to get a better feel for what we can do with
+Flux. We won&amp;rsquo;t spend too much time with getting it up and running, so let&amp;rsquo;s
+get that out of the way first.&lt;/p&gt;
+&lt;p&gt;In our example we are going to use the &lt;code&gt;flux-get-started&lt;/code&gt; example deployment.
+So as your first step, please head to 
+&lt;a href=&#34;https://github.com/fluxcd/flux-get-started&#34; target=&#34;_blank&#34;&gt;our example
+deployment&lt;/a&gt; and click on the
+&amp;ldquo;Fork&amp;rdquo; button.&lt;/p&gt;
+&lt;h2 id=&#34;setup&#34;&gt;Setup&lt;/h2&gt;
+&lt;p&gt;Install 
+&lt;a href=&#34;/legacy/flux/references/fluxctl/&#34;&gt;fluxctl&lt;/a&gt; and run (replace &lt;code&gt;YOURUSER&lt;/code&gt; with your GitHub username):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span style=&#34;color:#007020&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;GHUSER&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;YOURUSER&amp;#34;&lt;/span&gt;
+fluxctl install &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--git-user&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#70a0d0;font-style:italic&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;GHUSER&lt;/span&gt;&lt;span style=&#34;color:#70a0d0;font-style:italic&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--git-email&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#70a0d0;font-style:italic&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;GHUSER&lt;/span&gt;&lt;span style=&#34;color:#70a0d0;font-style:italic&#34;&gt;}&lt;/span&gt;@users.noreply.github.com &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--git-url&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;git@github.com:&lt;span style=&#34;color:#70a0d0;font-style:italic&#34;&gt;${&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;GHUSER&lt;/span&gt;&lt;span style=&#34;color:#70a0d0;font-style:italic&#34;&gt;}&lt;/span&gt;/flux-get-started &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--git-path&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;namespaces,workloads &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;--namespace&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;flux | kubectl apply -f -
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;connecting-to-your-git-config&#34;&gt;Connecting to your git config&lt;/h3&gt;
+&lt;p&gt;The first step is done. Flux is now and up running (you can confirm by
+running &lt;code&gt;kubectl get pods --all-namespaces&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;In the second step we will use &lt;code&gt;fluxctl&lt;/code&gt; to talk to Flux in the cluster and
+interact with the deployments. (It enables you to drive all of Flux, so have a look at the output of
+&lt;code&gt;fluxctl -h&lt;/code&gt; to get a better idea.)&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    Another option (without installing &lt;code&gt;fluxctl&lt;/code&gt; is to take a look
+at the resulting annotation changes and make the changes in Git. This is
+GitOps after all. :-)
+
+&lt;/div&gt;
+
+&lt;p&gt;Tell fluxctl in which namespace is Flux installed:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span style=&#34;color:#007020&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;FLUX_FORWARD_NAMESPACE&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;flux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To enable Flux to sync your config, you need to add the deployment key
+to your fork.&lt;/p&gt;
+&lt;p&gt;Get your Flux deployment key by running:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl identity
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Copy/paste the key and add it to
+&lt;code&gt;https://github.com/YOUR-USER-ID/flux-get-started/settings/keys/new&lt;/code&gt; and
+enable write access for it.&lt;/p&gt;
+&lt;p&gt;Wait for sync to happen or run:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl sync
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;driving-flux&#34;&gt;Driving Flux&lt;/h2&gt;
+&lt;p&gt;After syncing, Flux will find out which workloads there are, which
+images are available and what needs doing. To find out which workloads are
+managed by Flux, run:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl list-workloads -a 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Notice that &lt;code&gt;podinfo&lt;/code&gt; is on &lt;code&gt;3.1.0&lt;/code&gt; and in state &lt;code&gt;automated&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;To check which images are available for podinfo run:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl list-images -w demo:deployment/podinfo
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now let&amp;rsquo;s change the policy for &lt;code&gt;podinfo&lt;/code&gt; to target &lt;code&gt;3.2&lt;/code&gt; releases:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl policy -w demo:deployment/podinfo --tag&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;podinfod=3.2.*&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;On the command-line you should see a message just like this one:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;WORKLOAD                 STATUS   UPDATES
+demo:deployment/podinfo  success
+Commit pushed:  4755a3b
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If you now go back to &lt;code&gt;https://github.com/YOUR-USER-ID/flux-get-started&lt;/code&gt; in
+your browser, you will notice that Flux has made a commit on your
+behalf. The policy change is now in Git, which is great for transparency and
+for defining expected state.&lt;/p&gt;
+&lt;p&gt;It should look a little something like this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-diff&#34; data-lang=&#34;diff&#34;&gt;&lt;span style=&#34;color:#a00000&#34;&gt;--- a/workloads/podinfo-dep.yaml
+&lt;/span&gt;&lt;span style=&#34;color:#a00000&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#00a000&#34;&gt;+++ b/workloads/podinfo-dep.yaml
+&lt;/span&gt;&lt;span style=&#34;color:#00a000&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#800080;font-weight:bold&#34;&gt;@@ -8,8 +8,8 @@ metadata:
+&lt;/span&gt;&lt;span style=&#34;color:#800080;font-weight:bold&#34;&gt;&lt;/span&gt;     app: podinfo
+   annotations:
+     fluxcd.io/automated: &amp;#34;true&amp;#34;
+&lt;span style=&#34;color:#a00000&#34;&gt;-    fluxcd.io/tag.podinfod: semver:~3.1
+&lt;/span&gt;&lt;span style=&#34;color:#a00000&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#00a000&#34;&gt;+    fluxcd.io/tag.podinfod: glob:3.2.*
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If you have a closer look at the last change which was committed, you&amp;rsquo;ll see
+that the image filtering pattern has been changed. (Our docs explain how to
+use &lt;code&gt;semver&lt;/code&gt;, &lt;code&gt;glob&lt;/code&gt;, &lt;code&gt;regex&lt;/code&gt; filtering.)&lt;/p&gt;
+&lt;p&gt;Again, wait for the sync to happen or run&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl sync
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To check which image is current, run:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl list-images -w demo:deployment/podinfo
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In our case this is &lt;code&gt;3.2.2&lt;/code&gt; (it could be a later image too). Let&amp;rsquo;s say an
+engineer found that &lt;code&gt;3.2.2&lt;/code&gt; was faulty and we have to go back to &lt;code&gt;3.2.1&lt;/code&gt;.
+That&amp;rsquo;s easy.&lt;/p&gt;
+&lt;p&gt;Lock deployment with a message describing why:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl lock -w demo:deployment/podinfo -m &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;3.2.2 does not work for us&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The resulting diff should look like this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-diff&#34; data-lang=&#34;diff&#34;&gt;&lt;span style=&#34;color:#a00000&#34;&gt;--- a/workloads/podinfo-dep.yaml
+&lt;/span&gt;&lt;span style=&#34;color:#a00000&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#00a000&#34;&gt;+++ b/workloads/podinfo-dep.yaml
+&lt;/span&gt;&lt;span style=&#34;color:#00a000&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#800080;font-weight:bold&#34;&gt;@@ -10,6 +10,7 @@ metadata:
+&lt;/span&gt;&lt;span style=&#34;color:#800080;font-weight:bold&#34;&gt;&lt;/span&gt;     app: podinfo
+   annotations:
+     fluxcd.io/automated: &amp;#34;true&amp;#34;
+     fluxcd.io/tag.podinfod: glob:3.2.*
+&lt;span style=&#34;color:#00a000&#34;&gt;+    fluxcd.io/locked: &amp;#39;true&amp;#39;
+&lt;/span&gt;&lt;span style=&#34;color:#00a000&#34;&gt;&lt;/span&gt; spec:
+   strategy:
+     rollingUpdate:
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Rollback to &lt;code&gt;3.2.1&lt;/code&gt;. Flag &lt;code&gt;--force&lt;/code&gt; is needed because the workload is locked:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl release --force --workload demo:deployment/podinfo -i stefanprodan/podinfo:3.2.1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The response should be:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;Submitting release ...
+CONTROLLER               STATUS   UPDATES
+demo:deployment/podinfo  success  podinfod: stefanprodan/podinfo:3.2.2 -&amp;gt; 3.2.1
+Commit pushed:  426d723
+Commit applied: 426d723
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;and the diff for this is going to look like this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-diff&#34; data-lang=&#34;diff&#34;&gt;&lt;span style=&#34;color:#a00000&#34;&gt;--- a/workloads/podinfo-dep.yaml
+&lt;/span&gt;&lt;span style=&#34;color:#a00000&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#00a000&#34;&gt;+++ b/workloads/podinfo-dep.yaml
+&lt;/span&gt;&lt;span style=&#34;color:#00a000&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#800080;font-weight:bold&#34;&gt;@@ -33,7 +33,7 @@ spec:
+&lt;/span&gt;&lt;span style=&#34;color:#800080;font-weight:bold&#34;&gt;&lt;/span&gt;         - &amp;#34;1&amp;#34;
+       containers:
+       - name: podinfod
+&lt;span style=&#34;color:#a00000&#34;&gt;-        image: stefanprodan/podinfo:3.2.2
+&lt;/span&gt;&lt;span style=&#34;color:#a00000&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#00a000&#34;&gt;+        image: stefanprodan/podinfo:3.2.1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And that&amp;rsquo;s it. At the end of this tutorial, you have automated, locked and
+annotated deployments with Flux.&lt;/p&gt;
+&lt;p&gt;Another tip, if you should get stuck anywhere: check what Flux is doing. You
+can do that by simply running:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl logs -n flux deploy/flux -f
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If you should have any questions, find us on Slack in the 
+&lt;a href=&#34;https://cncf.slack.com/messages/flux/&#34; target=&#34;_blank&#34;&gt;#flux
+channel&lt;/a&gt;, get
+an invite to it 
+&lt;a href=&#34;https://slack.cncf.io&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

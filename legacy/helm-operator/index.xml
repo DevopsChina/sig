@@ -1,0 +1,262 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>道场 – Helm Operator</title>
+    <link>/legacy/helm-operator/</link>
+    <description>Recent content in Helm Operator on 道场</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="/legacy/helm-operator/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Legacy: Get started</title>
+      <link>/legacy/helm-operator/get-started/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/get-started/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: References</title>
+      <link>/legacy/helm-operator/references/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/references/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: HelmRelease guides</title>
+      <link>/legacy/helm-operator/helmrelease-guide/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/helmrelease-guide/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: How-to</title>
+      <link>/legacy/helm-operator/how-to/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/how-to/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Frequently asked questions</title>
+      <link>/legacy/helm-operator/faq/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/faq/</guid>
+      <description>
+        
+        
+        &lt;h3 id=&#34;a-helmrelease-is-stuck-in-a-failed-release-state-how-do-i-force-it-through&#34;&gt;A &lt;code&gt;HelmRelease&lt;/code&gt; is stuck in a &lt;code&gt;failed&lt;/code&gt; release state. How do I force it through?&lt;/h3&gt;
+&lt;p&gt;You need to manually perform a &lt;code&gt;helm rollback&lt;/code&gt; or &lt;code&gt;helm upgrade&lt;/code&gt; to get it in
+a healthy &lt;code&gt;deployed&lt;/code&gt; state again before the Helm Operator will continue.
+Read more about this in 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/reconciliation-and-upgrades/#upgrade-failures&#34;&gt;the &lt;code&gt;HelmRelease&lt;/code&gt;
+guide&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;a-helmrelease-reports-a-deployed-release-status-but-also-an-error-what-is-going-on&#34;&gt;A &lt;code&gt;HelmRelease&lt;/code&gt; reports a &lt;code&gt;deployed&lt;/code&gt; release status but also an error. What is going on?&lt;/h3&gt;
+&lt;p&gt;The release status recorded in the &lt;code&gt;status&lt;/code&gt; sub-resource of the &lt;code&gt;HelmRelease&lt;/code&gt;
+is the status as given by Helm for the release. It is polled from Helm on a
+interval (see
+
+&lt;a href=&#34;/legacy/helm-operator/references/operator/#reconciliation-configuration&#34;&gt;&lt;code&gt;--status-update-interval&lt;/code&gt;&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;The message is the error reported during the latest release failure. When this
+failure was for example due to a validation error, the upgrade has not been
+completed, and the status of the release will thus still be &lt;code&gt;deployed&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;i-want-to-automate-chart-releases-from-helm-chart-repositories-is-this-possible&#34;&gt;I want to automate chart releases from Helm chart repositories. Is this possible?&lt;/h3&gt;
+&lt;p&gt;This is possible by wrapping the chart from the Helm chart repository in
+an umbrella chart sourced from a Git source, 
+&lt;a href=&#34;/legacy/helm-operator/helmrelease-guide/automation/#helm-repository-chart-updates&#34;&gt;read more about this
+here&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;it-takes-a-long-time-before-the-operator-processes-an-update-to-a-resource-how-can-i-speed-up-the-processing-of-releases&#34;&gt;It takes a long time before the operator processes an update to a resource. How can I speed up the processing of releases?&lt;/h3&gt;
+&lt;p&gt;The operator watches for changes of Custom Resources of kind &lt;code&gt;HelmRelease&lt;/code&gt;. It
+receives Kubernetes Events and queues these to be processed. All resources will
+also be re-queued every 
+&lt;a href=&#34;/legacy/helm-operator/references/operator/#reconciliation-configuration&#34;&gt;&lt;code&gt;--charts-sync-interval&lt;/code&gt;
+(default &lt;code&gt;3m&lt;/code&gt;)&lt;/a&gt; for a
+dry-run to detect and revert manual changes made to a release.&lt;/p&gt;
+&lt;p&gt;Depending on how many resources the operator is watching and the complexity of
+the charts (umbrella charts for example generally take a longer time to
+process), the default number of workers may not be sufficient to instantly
+process a release the moment it enters the queue as the queue works on a
+
+&lt;a href=&#34;https://en.wikipedia.org/wiki/FIFO_%28computing_and_electronics%29&#34; target=&#34;_blank&#34;&gt;FIFO&lt;/a&gt; basis,
+and other releases may have to be processed first.&lt;/p&gt;
+&lt;p&gt;The solution is to increase the number of workers processing the releases using
+the &lt;code&gt;--workers&lt;/code&gt; flag (default &lt;code&gt;2&lt;/code&gt;), i.e. by steps of &lt;code&gt;2&lt;/code&gt; until the releases are
+processed within a time frame that feels right to you.&lt;/p&gt;
+&lt;p&gt;If this does not give the desired effect, or if the number of workers required
+is unacceptably high, there are two other tweaks possible:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;increasing the &lt;code&gt;--charts-sync-interval&lt;/code&gt;; this causes the queue to be less
+heavy occupied at the cost of detecting mutations less rapidly&lt;/li&gt;
+&lt;li&gt;using multiple Helm Operator instances, i.e. by having one operator per
+namespace; namespace scoping is possible by configuring the
+&lt;code&gt;--allow-namespace&lt;/code&gt; flag&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;the-helm-operator-is-taking-up-too-many-resources-how-can-i-limit-the-resource-usage&#34;&gt;The Helm Operator is taking up too many resources. How can I limit the resource usage?&lt;/h3&gt;
+&lt;p&gt;When you are running the Helm Operator on an edge, home lab, or other resource
+constrained cluster it may take up too many resources for your liking.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;In case of a high number of &lt;code&gt;HelmRelease&lt;/code&gt; resources, think about a namespace
+restricted multi-tenant setup as an option to spread the load and have finer
+grain control over configuration.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Increase the 
+&lt;a href=&#34;/legacy/helm-operator/references/operator/&#34;&gt;various polling intervals&lt;/a&gt; based on
+what your environment really needs:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;- `--status-update-interval`: The interval at which Helm is polled for
+  the current state of the release, generally safe to increase.
+- `--charts-sync-interval`: The interval at which `HelmRelease` resources
+  are re-queued for reconciliation. Increasing this interval will result
+  in mutations to a chart release being detected slower.
+- `--git-poll-interval`: The interval at which Git repositories are
+  polled for changes for charts from Git sources.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;i-have-manually-deleted-a-helm-release-using-helm-why-is-the-operator-not-able-to-restore-it&#34;&gt;I have manually deleted a Helm release using &lt;code&gt;helm&lt;/code&gt;. Why is the operator not able to restore it?&lt;/h3&gt;
+&lt;p&gt;When you delete a Helm release with &lt;code&gt;helm delete &amp;lt;name&amp;gt;&lt;/code&gt; using Helm 2, the
+release name can not be re-used as the history of the old release is still
+stored in the Helm storage under the same name. You need to use the
+&lt;code&gt;helm delete --purge&lt;/code&gt; option, only then the release history will be removed
+from the Helm storage and the Helm Operator will then be able to reinstall the
+release.&lt;/p&gt;
+&lt;h3 id=&#34;i-am-using-ssl-between-helm-and-tiller-how-can-i-configure-the-operator-to-use-the-certificate&#34;&gt;I am using SSL between Helm and Tiller. How can I configure the operator to use the certificate?&lt;/h3&gt;
+&lt;p&gt;When installing the Helm Operator, you can supply the CA and client-side
+certificate using the &lt;code&gt;tls&lt;/code&gt; options on the chart. More details about this
+on:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href=&#34;/legacy/helm-operator/get-started/using-helm/#with-tiller-helm-2&#34;&gt;Get started using Helm&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;/legacy/helm-operator/get-started/using-kustomize/#prepare-the-manifests-for-installation&#34;&gt;Get started using Kustomize&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;/legacy/helm-operator/get-started/using-yamls/#helm-2&#34;&gt;Get started using YAMLs&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;i-am-using-flux-and-have-deleted-a-helmrelease-file-from-git-why-is-the-helm-release-still-running-on-my-cluster&#34;&gt;I am using Flux and have deleted a &lt;code&gt;HelmRelease&lt;/code&gt; file from Git. Why is the Helm release still running on my cluster?&lt;/h3&gt;
+&lt;p&gt;Flux does not delete resources by default; you can enable Flux garbage
+collection feature by passing the command-line flag
+&lt;code&gt;--sync-garbage-collection&lt;/code&gt; to &lt;code&gt;fluxd&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;With Flux garbage collection enabled, the Helm Operator will receive the delete
+event and will purge the Helm release.&lt;/p&gt;
+&lt;h3 id=&#34;are-there-prerelease-builds-i-can-run&#34;&gt;Are there prerelease builds I can run?&lt;/h3&gt;
+&lt;p&gt;There are builds from CI for each merge to master branch. See
+
+&lt;a href=&#34;https://hub.docker.com/r/fluxcd/helm-operator-prerelease/tags&#34; target=&#34;_blank&#34;&gt;fluxcd/helm-operator-prerelease&lt;/a&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Troubleshooting</title>
+      <link>/legacy/helm-operator/troubleshooting/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/troubleshooting/</guid>
+      <description>
+        
+        
+        &lt;p&gt;Also see the 
+&lt;a href=&#34;https://github.com/fluxcd/helm-operator/labels/question&#34; target=&#34;_blank&#34;&gt;issues labeled with
+&lt;code&gt;question&lt;/code&gt;&lt;/a&gt;, which often
+explain workarounds.&lt;/p&gt;
+&lt;h2 id=&#34;failed-to-load-chart-from-path-tmpflux-working012345678chartpath-for-release-x-stat-tmpflux-working012345678chartpath-no-such-file-or-directory&#34;&gt;&lt;code&gt;failed to load chart from path [/tmp/flux-working012345678/chart/path] for release [x]: stat /tmp/flux-working012345678/chart/path: no such file or directory&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;.chart.path&lt;/code&gt; of your Git sourced chart in the &lt;code&gt;HelmRelease&lt;/code&gt; is likely
+incorrect. It is expected to be a path to the chart folder relative to the
+root directory of the Git repository.&lt;/p&gt;
+&lt;h2 id=&#34;error-creating-helm-client-failed-to-append-certificates-from-file-etcfluxdhelm-cacacrt&#34;&gt;&lt;code&gt;Error creating helm client: failed to append certificates from file: /etc/fluxd/helm-ca/ca.crt&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;Your CA certificate content is not set correctly, check if your ConfigMap contains the correct values. Example:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ kubectl get configmaps flux-helm-tls-ca-config -o yaml
+apiVersion: v1
+data:
+  ca.crt: |
+    -----BEGIN CERTIFICATE-----
+    ....
+    -----END CERTIFICATE-----
+kind: ConfigMap
+metadata:
+  creationTimestamp: 2018-07-04T15:27:25Z
+  name: flux-helm-tls-ca-config
+  namespace: helm-system
+  resourceVersion: &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;1267257&amp;#34;&lt;/span&gt;
+  selfLink: /api/v1/namespaces/helm-system/configmaps/flux-helm-tls-ca-config
+  uid: c106f866-7f9e-11e8-904a-025000000001
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Contributing</title>
+      <link>/legacy/helm-operator/contributing/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/contributing/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: </title>
+      <link>/legacy/helm-operator/tutorials/get-started-kustomize/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/tutorials/get-started-kustomize/</guid>
+      <description>
+        
+        
+        &lt;p&gt;The contents of this document have been moved to 
+&lt;a href=&#34;/legacy/helm-operator/get-started/using-kustomize/&#34;&gt;&lt;code&gt;get-started&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: </title>
+      <link>/legacy/helm-operator/tutorials/get-started/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/tutorials/get-started/</guid>
+      <description>
+        
+        
+        &lt;p&gt;The contents of this document have been moved to 
+&lt;a href=&#34;/legacy/helm-operator/get-started/quickstart/&#34;&gt;&lt;code&gt;get-started&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

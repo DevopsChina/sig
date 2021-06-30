@@ -1,0 +1,190 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>道场 – 敏捷道场</title>
+    <link>/docs/agile/</link>
+    <description>Recent content in 敏捷道场 on 道场</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="/docs/agile/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: Source Controller</title>
+      <link>/docs/agile/source/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/agile/source/</guid>
+      <description>
+        
+        
+        &lt;p&gt;The main role of the source management component is to provide a common interface for artifacts acquisition.
+The source API defines a set of Kubernetes objects that cluster admins and various automated operators can
+interact with to offload the Git and Helm repositories operations to a dedicated controller.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/source-controller.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Features:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Validate source definitions&lt;/li&gt;
+&lt;li&gt;Authenticate to sources (SSH, user/password, API token)&lt;/li&gt;
+&lt;li&gt;Validate source authenticity (PGP)&lt;/li&gt;
+&lt;li&gt;Detect source changes based on update policies (semver)&lt;/li&gt;
+&lt;li&gt;Fetch resources on-demand and on-a-schedule&lt;/li&gt;
+&lt;li&gt;Package the fetched resources into a well-known format (tar.gz, yaml)&lt;/li&gt;
+&lt;li&gt;Make the artifacts addressable by their source identifier (sha, version, ts)&lt;/li&gt;
+&lt;li&gt;Make the artifacts available in-cluster to interested 3rd parties&lt;/li&gt;
+&lt;li&gt;Notify interested 3rd parties of source changes and availability (status conditions, events, hooks)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Links:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Source code 
+&lt;a href=&#34;https://github.com/fluxcd/source-controller&#34; target=&#34;_blank&#34;&gt;fluxcd/source-controller&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Specification 
+&lt;a href=&#34;https://github.com/fluxcd/source-controller/tree/main/docs/spec&#34; target=&#34;_blank&#34;&gt;docs&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Kustomize Controller</title>
+      <link>/docs/agile/kustomize/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/agile/kustomize/</guid>
+      <description>
+        
+        
+        &lt;p&gt;The kustomize-controller is a Kubernetes operator,
+specialized in running continuous delivery pipelines for infrastructure and
+workloads defined with Kubernetes manifests and assembled with Kustomize.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/kustomize-controller.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Features:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Reconciles the cluster state from multiple sources (provided by source-controller)&lt;/li&gt;
+&lt;li&gt;Generates manifests with Kustomize (from plain Kubernetes yamls or Kustomize overlays)&lt;/li&gt;
+&lt;li&gt;Validates manifests against Kubernetes API&lt;/li&gt;
+&lt;li&gt;Impersonates service accounts (multi-tenancy RBAC)&lt;/li&gt;
+&lt;li&gt;Health assessment of the deployed workloads&lt;/li&gt;
+&lt;li&gt;Runs pipelines in a specific order (depends-on relationship)&lt;/li&gt;
+&lt;li&gt;Prunes objects removed from source (garbage collection)&lt;/li&gt;
+&lt;li&gt;Reports cluster state changes (alerting provided by notification-controller)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Links:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Source code 
+&lt;a href=&#34;https://github.com/fluxcd/kustomize-controller&#34; target=&#34;_blank&#34;&gt;fluxcd/kustomize-controller&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Specification 
+&lt;a href=&#34;https://github.com/fluxcd/kustomize-controller/tree/main/docs/spec&#34; target=&#34;_blank&#34;&gt;docs&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Helm Controller</title>
+      <link>/docs/agile/helm/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/agile/helm/</guid>
+      <description>
+        
+        
+        &lt;p&gt;The Helm Controller is a Kubernetes operator, allowing one to declaratively manage Helm chart
+releases with Kubernetes manifests.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/helm-controller.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;The desired state of a Helm release is described through a Kubernetes Custom Resource named &lt;code&gt;HelmRelease&lt;/code&gt;.
+Based on the creation, mutation or removal of a &lt;code&gt;HelmRelease&lt;/code&gt; resource in the cluster,
+Helm actions are performed by the controller.&lt;/p&gt;
+&lt;p&gt;Features:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Watches for &lt;code&gt;HelmRelease&lt;/code&gt; objects and generates &lt;code&gt;HelmChart&lt;/code&gt; objects&lt;/li&gt;
+&lt;li&gt;Supports &lt;code&gt;HelmChart&lt;/code&gt; artifacts produced from &lt;code&gt;HelmRepository&lt;/code&gt; and &lt;code&gt;GitRepository&lt;/code&gt; sources&lt;/li&gt;
+&lt;li&gt;Fetches artifacts produced by 
+&lt;a href=&#34;/docs/agile/source/&#34;&gt;source-controller&lt;/a&gt; from &lt;code&gt;HelmChart&lt;/code&gt; objects&lt;/li&gt;
+&lt;li&gt;Watches &lt;code&gt;HelmChart&lt;/code&gt; objects for revision changes (including semver ranges for charts from &lt;code&gt;HelmRepository&lt;/code&gt; sources)&lt;/li&gt;
+&lt;li&gt;Performs automated Helm actions, including Helm tests, rollbacks and uninstalls&lt;/li&gt;
+&lt;li&gt;Offers extensive configuration options for automated remediation (rollback, uninstall, retry) on failed Helm install, upgrade or test actions&lt;/li&gt;
+&lt;li&gt;Runs Helm install/upgrade in a specific order, taking into account the depends-on relationship defined in a set of &lt;code&gt;HelmRelease&lt;/code&gt; objects&lt;/li&gt;
+&lt;li&gt;Prunes Helm releases removed from cluster (garbage collection)&lt;/li&gt;
+&lt;li&gt;Reports Helm releases statuses (alerting provided by 
+&lt;a href=&#34;/docs/agile/notification/&#34;&gt;notification-controller&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Built-in Kustomize compatible Helm post renderer, providing support for strategic merge, JSON 6902 and images patches&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Links:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Source code 
+&lt;a href=&#34;https://github.com/fluxcd/helm-controller&#34; target=&#34;_blank&#34;&gt;fluxcd/helm-controller&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Specification 
+&lt;a href=&#34;https://github.com/fluxcd/helm-controller/tree/main/docs/spec&#34; target=&#34;_blank&#34;&gt;docs&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Notification Controller</title>
+      <link>/docs/agile/notification/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/agile/notification/</guid>
+      <description>
+        
+        
+        &lt;p&gt;The Notification Controller is a Kubernetes operator, specialized in handling inbound and outbound events.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/notification-controller.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;The controller handles events coming from external systems (GitHub, GitLab, Bitbucket, Harbor, Jenkins, etc)
+and notifies the GitOps toolkit controllers about source changes.&lt;/p&gt;
+&lt;p&gt;The controller handles events emitted by the GitOps toolkit controllers (source, kustomize, helm)
+and dispatches them to external systems (Slack, Microsoft Teams, Discord, Rocker)
+based on event severity and involved objects.&lt;/p&gt;
+&lt;p&gt;Links:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Source code 
+&lt;a href=&#34;https://github.com/fluxcd/notification-controller&#34; target=&#34;_blank&#34;&gt;fluxcd/notification-controller&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Specification 
+&lt;a href=&#34;https://github.com/fluxcd/notification-controller/tree/main/docs/spec&#34; target=&#34;_blank&#34;&gt;docs&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Image reflector and automation controllers</title>
+      <link>/docs/agile/image/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/agile/image/</guid>
+      <description>
+        
+        
+        &lt;p&gt;The image-reflector-controller and image-automation-controller work together to update a Git
+repository when new container images are available.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The image-reflector-controller scans image repositories and reflects the image metadata in
+Kubernetes resources.&lt;/li&gt;
+&lt;li&gt;The image-automation-controller updates YAML files based on the latest images scanned, and commits
+the changes to a given Git repository.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;/img/image-update-automation.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Links:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Reflector source code 
+&lt;a href=&#34;https://github.com/fluxcd/image-reflector-controller&#34; target=&#34;_blank&#34;&gt;fluxcd/image-reflector-controller&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Reflector 
+&lt;a href=&#34;https://github.com/fluxcd/image-reflector-controller/tree/main/docs/spec&#34; target=&#34;_blank&#34;&gt;specification docs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Automation source code 
+&lt;a href=&#34;https://github.com/fluxcd/image-automation-controller&#34; target=&#34;_blank&#34;&gt;fluxcd/image-automation-controller&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Automation 
+&lt;a href=&#34;https://github.com/fluxcd/image-automation-controller/tree/main/docs/spec&#34; target=&#34;_blank&#34;&gt;specification docs&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

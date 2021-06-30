@@ -1,0 +1,38 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>道场 – Contributing</title>
+    <link>/docs/contributing/</link>
+    <description>Recent content in Contributing on 道场</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="/docs/contributing/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: Documentation</title>
+      <link>/docs/contributing/docs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/contributing/docs/</guid>
+      <description>
+        
+        
+        &lt;p&gt;Flux welcomes improvements from all contributors, new and experienced!&lt;/p&gt;
+&lt;p&gt;The flux website uses 
+&lt;a href=&#34;https://gohugo.io/&#34; target=&#34;_blank&#34;&gt;Hugo&lt;/a&gt; with the 
+&lt;a href=&#34;https://www.docsy.dev/&#34; target=&#34;_blank&#34;&gt;Docsy theme&lt;/a&gt;.
+Documentation is written in Markdown.&lt;/p&gt;
+&lt;p&gt;To get a good sense of the general mechanics of the repository and what your options are of running the site locally, please visit &lt;a href=&#34;https://github.com/fluxcd/website/#readme&#34;&gt;https://github.com/fluxcd/website/#readme&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In this section we will focus on common use-cases of folks who contribute to docs.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

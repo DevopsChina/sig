@@ -1,0 +1,680 @@
+<!doctype html>
+<html lang="zh-cn" class="no-js">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.84.3" /><META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+<link rel="shortcut icon" href="/favicon.png" >
+<link rel="apple-touch-icon" href="/favicon.png" sizes="180x180">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="16x16">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="36x36">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="48x48">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="72x72">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="96x96">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="144x144">
+<link rel="icon" type="image/png" href="/favicon.png" sizes="192x192">
+
+<title>June 2021 update | 道场</title>
+<meta name="description" content="Open and extensible continuous delivery solution for Kubernetes."><meta property="og:title" content="June 2021 update" />
+<meta property="og:description" content="Flux 0.14 and Flagger 1.11 with lots of new features, KubeCon talks galore, Flux at CNCF Store, lots of Flux adoption. Flux governance 6 month review." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/blog/2021/05/june-2021-update/" /><meta property="og:image" content="/img/2021-05-cncf-store.png" /><meta property="og:image" content="/img/2021-05-flux-adopters.png" /><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2021-05-31T08:30:00&#43;00:00" />
+<meta property="article:modified_time" content="2021-05-31T08:30:00&#43;00:00" />
+
+<meta itemprop="name" content="June 2021 update">
+<meta itemprop="description" content="Flux 0.14 and Flagger 1.11 with lots of new features, KubeCon talks galore, Flux at CNCF Store, lots of Flux adoption. Flux governance 6 month review."><meta itemprop="datePublished" content="2021-05-31T08:30:00&#43;00:00" />
+<meta itemprop="dateModified" content="2021-05-31T08:30:00&#43;00:00" />
+<meta itemprop="wordCount" content="1135"><meta itemprop="image" content="/img/2021-05-cncf-store.png"><meta itemprop="image" content="/img/2021-05-flux-adopters.png">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="/img/2021-05-cncf-store.png"/>
+
+<meta name="twitter:title" content="June 2021 update"/>
+<meta name="twitter:description" content="Flux 0.14 and Flagger 1.11 with lots of new features, KubeCon talks galore, Flux at CNCF Store, lots of Flux adoption. Flux governance 6 month review."/>
+
+
+
+
+<link rel="preload" href="/scss/main.min.4a9db146ac33069ee85be0885ccf5f1ce3a4387f774ad3c60af13d7316e8cedc.css" as="style">
+<link href="/scss/main.min.4a9db146ac33069ee85be0885ccf5f1ce3a4387f774ad3c60af13d7316e8cedc.css" rel="stylesheet" integrity="">
+
+
+<script
+  src="https://code.jquery.com/jquery-3.5.1.min.js"
+  integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+  crossorigin="anonymous"></script>
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css" />
+
+
+
+
+
+  </head>
+  <body class="td-page td-blog">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
+        <a class="navbar-brand" href="/">
+		<span class="navbar-logo"><svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><title>flux-icon</title><desc>Created with Sketch.</desc><g id="flux-icon" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="Group" transform="translate(11.000000, 2.000000)"><path d="M.803134615 15.7791346c-1.049423077-.682500000000001-1.049423077-2.2188461.0-2.9007692L20.1819808.279519231c.573461499999997-.3726923079 1.3125-.3726923079 1.8859615.0L41.4473654 12.8783654c1.0494231.681923100000001 1.0494231 2.2182692.0 2.9007692L22.0679423 28.3779808C21.4944808 28.7506731 20.7554423 28.7506731 20.1819808 28.3779808L.803134615 15.7791346z" id="Fill-1" fill="#326ce5"/><path d="M24.1851346 18.0023077h1.3442308C26.3145577 18.0023077 26.8055192 17.1525 26.4126346 16.4728846L22.0084038 8.84423077C21.6160962 8.16461538 20.63475 8.16461538 20.2418654 8.84423077L15.8376346 16.4728846C15.4453269 17.1525 15.9357115 18.0023077 16.7209038 18.0023077h1.3448077c.563077.0 1.0194231.456923100000001 1.0194231 1.02v8.7075L19.9874423 28.3165385C20.6791731 28.7665385 21.5710962 28.7665385 22.2628269 28.3165385L23.1651346 27.7298077v-8.7075c0-.563076899999999.456346200000002-1.02 1.02-1.02" id="Fill-3" fill="#c1d2f7"/><path d="M27.8390769 34.8375577l-4.6742307-3.0386539v1.44C24.6902308 33.8919808 26.2588846 34.4008269 27.8390769 34.8375577" id="Fill-5" fill="#326ce5"/><path d="M23.1650769 35.8280192v2.0215385C24.7095 38.3209038 26.2723846 38.7080192 27.8191154 39.0893654c5.0515384 1.2455769 9.8226923 2.4213461 13.6592308 6.2584615C41.6733462 45.54225 41.8562308 45.7407115 42.0373846 45.93975 42.4308462 45.1880192 42.2335385 44.1957115 41.4466154 43.6845577l-7.5905769-4.9355769c-1.8426923-.608077000000002-3.72-1.073077-5.5753847-1.53C26.5308462 36.7874423 24.8196923 36.3570577 23.1650769 35.8280192" id="Fill-7" fill="#326ce5"/><path d="M19.08525 34.1699423C18.4304423 33.8318654 17.7854423 33.4689808 17.1629423 33.0489808l-1.7359615 1.1284615c1.1705769.8607692 2.3965384 1.5588462 3.6582692 2.1438462V34.1699423z" id="Fill-9" fill="#326ce5"/><path d="M24.8941731 40.6051154C24.3137885 40.4620385 23.7374423 40.3195385 23.1651346 40.1735769V42.1605C23.5885962 42.2666538 24.0114808 42.3722308 24.4326346 42.4760769c5.0515385 1.245 9.8226923 2.4207693 13.6598077 6.2578846C38.0987885 48.7408846 38.1045577 48.7472308 38.1114808 48.7541538L39.75225 47.6868462C39.6524423 47.5824231 39.5584038 47.4751154 39.4545577 47.3718462c-4.2161539-4.2167308-9.4753846-5.513077-14.5603846-6.7667308" id="Fill-11" fill="#326ce5"/><path d="M19.08525 38.9907115C16.8900577 38.2389808 14.8096731 37.2714808 12.9115962 35.8124423l-1.6996154 1.1053846c2.4167307 1.9932693 5.1075 3.2025 7.8732692 4.0990385V38.9907115z" id="Fill-13" fill="#326ce5"/><path d="M19.08525 43.3809808C15.3069808 42.3909808 11.7537115 41.18175 8.71794231 38.5388654L7.04717308 39.6252115c3.56538462 3.285 7.80692312 4.658077 12.03807692 5.745577V43.3809808z" id="Fill-15" fill="#326ce5"/><path d="M23.1650769 46.3935c3.9525 1.02057689999999 7.6690385 2.2407692 10.8173077 5.0446154l1.6615385-1.08c-3.6784616-3.4580769-8.0925-4.8386539-12.4788462-5.9532692V46.3935z" id="Fill-17" fill="#326ce5"/><path d="M4.57875 41.2299231 2.92990385 42.3018462C2.98759615 42.3612692 3.04009615 42.423 3.09951923 42.4818462 7.31625 46.6985769 12.5743269 47.9949231 17.6599038 49.2485769c4.4042308 1.0851923 8.5944231 2.1201923 12.1390385 4.9096154L31.4893269 53.0591538C27.4958654 49.6968462 22.7385577 48.5158846 18.1214423 47.3781923 13.1206731 46.1453077 8.39567308 44.9758846 4.57875 41.2299231" id="Fill-19" fill="#326ce5"/><path d="M1.07555769 44.5060962C.883442308 44.3139808.702865385 44.1184038.524019231 43.9216731-.227711538 44.6745577-.139442308 45.9726346.80325 46.5853269l5.70634615 3.7101923c2.52576923 1.0453846 5.16692305 1.6990385 7.76423075 2.3394231 4.0546154.999230799999999 7.9280769 1.9575 11.2840385 4.2807692l1.7255769-1.1226923C23.4676731 52.9245577 19.0403654 51.8255192 14.7347885 50.7639808c-5.05096158-1.245-9.82211542-2.4207693-13.65923081-6.2578846" id="Fill-21" fill="#326ce5"/><path d="M19.6441154 58.8342692C20.0243077 59.0188846 20.3998846 59.2133077 20.7691154 59.4221538 21.2093077 59.5150385 21.6771923 59.4383077 22.0683462 59.1838846L23.0260385 58.5613846C19.9493077 56.5035 16.5287308 55.461 13.1196923 54.5927308l6.5244231 4.2415384z" id="Fill-23" fill="#326ce5"/></g></g></svg></span><span class="text-uppercase font-weight-bold">道场</span>
+	</a>
+		<ul class="navbar-nav mt-2 mt-lg-0">
+			
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="/docs" ><span>修习</span></a>
+				
+			</li>
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				<a class="nav-link active" href="/blog/" ><span class="active">动态</span></a>
+				
+			</li>
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="https://github.com/devopschina/sig/" target="_blank" ><i class='fab fa-github'></i> <span>Github</span></a>
+				
+			</li>
+			
+			
+			
+			<li class="nav-item nav-search-item">
+<input type="search" class="form-control td-search-input" placeholder="&#xf002; " aria-label="" autocomplete="off">
+
+</li>
+		</ul>
+</nav>
+
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-xl-nowrap">
+          <aside class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            
+
+
+
+
+  
+
+
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+  
+  <div id="content-mobile">
+  <form class="td-sidebar__search d-flex align-items-center">
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  </div>
+  <div id="content-desktop"></div>
+  
+  <nav class="collapse td-sidebar-nav foldable-nav" id="td-section-nav">
+    
+    
+    
+    
+    
+    <ul class="td-sidebar-nav__section pr-md-3 ul-0">
+      
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-blog-li">
+    
+      <a href="/blog/" class="align-left pl-0 td-sidebar-link td-sidebar-link__section tree-root" id="m-blog"><span class="">动态</span></a>
+    
+    
+      
+      <ul class="ul-1">
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-blog202106flux-bug-scrub-announce-li">
+    
+      <input type="checkbox" id="m-blog202106flux-bug-scrub-announce-check"/>
+      <label for="m-blog202106flux-bug-scrub-announce-check"><a href="/blog/2021/06/flux-bug-scrub-announce/" class="align-left pl-0  td-sidebar-link td-sidebar-link__page" id="m-blog202106flux-bug-scrub-announce"><span class="">Flux Bug Scrub Announce</span></a></label>
+    
+    
+  </li>
+
+          
+        
+          
+            
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-blog202105june-2021-update-li">
+    
+      <input type="checkbox" id="m-blog202105june-2021-update-check" checked/>
+      <label for="m-blog202105june-2021-update-check"><a href="/blog/2021/05/june-2021-update/" class="align-left pl-0  active td-sidebar-link td-sidebar-link__page" id="m-blog202105june-2021-update"><span class="td-sidebar-nav-active-item">June 2021 update</span></a></label>
+    
+    
+  </li>
+
+          
+        
+      </ul>
+    
+  </li>
+
+    </ul>
+  </nav>
+</div>
+
+
+
+
+          </aside>
+          <aside class="d-none d-xl-block col-xl-2 td-sidebar-toc d-print-none">
+            
+  
+  
+  
+  
+  
+  
+  
+  <div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
+  
+    
+    
+      
+    
+    
+    
+    
+    
+    
+    
+
+    
+    <a href="https://github.com/fluxcd/website/edit/main/content/zh-cn/blog/2021-05-31-june-update.md" target="_blank"><i class="fa fa-edit fa-fw"></i> </a>
+    <a href="https://github.com/fluxcd/website/new/main/content/zh-cn/blog/2021-05-31-june-update.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> </a>
+    
+    <a href="https://github.com/fluxcd/website/issues/new?title=June%202021%20update" target="_blank"><i class="fab fa-github fa-fw"></i> </a>
+    
+      
+      <a href="https://github.com/fluxcd/flux2/issues/new" target="_blank"><i class="fas fa-tasks fa-fw"></i> </a>
+    
+
+  
+  
+  </div>
+
+
+            
+
+
+<div class="td-toc"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#newest-flux-release">Newest Flux release</a></li>
+    <li><a href="#flagger-111-is-here">Flagger 1.11 is here</a></li>
+    <li><a href="#kubecon-round-up">KubeCon round-up</a></li>
+    <li><a href="#the-cncf-flux-store-is-up">The CNCF Flux Store is up</a></li>
+    <li><a href="#our-community-is-growing">Our community is growing</a></li>
+    <li><a href="#upcoming-events">Upcoming events</a></li>
+    <li><a href="#in-other-news">In other news</a>
+      <ul>
+        <li><a href="#reviewing-flux-governance">Reviewing Flux Governance</a></li>
+        <li><a href="#representing-flux-and-flagger-at-cncf">Representing Flux and Flagger at CNCF</a></li>
+      </ul>
+    </li>
+    <li><a href="#over-and-out">Over and out</a></li>
+  </ul>
+</nav></div>
+
+
+
+            
+
+	
+		
+
+
+
+  
+  
+
+	
+		
+
+
+
+  
+  
+
+	
+
+          </aside>
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5 pr-md-4" role="main">
+            <a class="btn btn-lg -bg-orange td-rss-button d-none d-lg-block" href="/blog/index.xml" target="_blank">
+              RSS <i class="fa fa-rss ml-2 "></i>
+            </a>
+            
+<div class="td-content">
+	<h1>June 2021 update</h1>
+	<div class="lead">Flux 0.14 and Flagger 1.11 with lots of new features, KubeCon talks galore, Flux at CNCF Store, lots of Flux adoption. Flux governance 6 month review.</div>
+	<div class="td-byline mb-4">
+		 <b>dholbach</b> |
+		<time datetime="2021-05-31" class="text-muted">2021-05-31</time>
+	</div>
+	<header class="article-meta">
+		
+		
+			
+				
+
+
+			
+				
+
+
+			
+		
+		
+	</header>
+	<p>As the Flux family of projects and its communities are growing, we
+strive to inform you each month about what has already landed, new
+possibilities which are available for integration and where you can get
+involved. Read last month&rsquo;s update 
+<a href="/blog/2021/04/may-2021-update">here</a>.</p>
+<p>Let&rsquo;s recap what happened in May - there has been so much happening!</p>
+<h2 id="newest-flux-release">Newest Flux release</h2>
+<p>With the 0.14 release of Flux we added a number of big features to Flux.</p>
+<p>The highlights are:</p>
+<ul>
+<li>We replaced the Flux monitoring stack with Prometheus Operator and
+kube-prometheus-stack.</li>
+<li>Support for a wider range of SSH key formats (CLI)</li>
+<li>Send Flux events to Azure Event Hub (notification-controller)</li>
+<li>Support for a wider range of OpenPGP key formats (source-controller)</li>
+<li>Reduce the memory usage when cloning repositories with large files
+(source-controller)</li>
+<li>Support for including the content of app repos into the main config
+one (better alternative to git submodules and kustomize remote
+bases) (source-controller)</li>
+</ul>
+<p>Docs:</p>
+<ul>
+<li>📔 
+<a href="/docs/components/source/gitrepositories/#including-gitrepository">GitRepository include
+documentation</a></li>
+<li>🎁 Checkout the new 
+<a href="/docs/guides/repository-structure/">guide on ways of structuring your
+repositories</a></li>
+</ul>
+<p>If you are entirely new to Flux, check out our 
+<a href="/docs/get-started/">get started
+guide</a>. If you are on
+an older version of Flux, check out our 
+<a href="/docs/migration/">migration
+documentation</a>.</p>
+<h2 id="flagger-111-is-here">Flagger 1.11 is here</h2>
+<p>Over in the Flagger project, since our last blog the versions 1.9, 1.10 and
+1.11 were released and they bring a number of nice new features and
+improvements.</p>
+<p>1.9.0 came with improvements to the Gloo Edge integration:</p>
+<ul>
+<li>Starting with this version, Flagger no longer requires Gloo
+discovery to be enabled. Flagger generated the Gloo upstream
+objects on its own and optionally it can use an existing upstream
+(specified with .spec.upstreamRef) as a template.</li>
+<li>Also: Adjusted Nginx ingress canary headers on init and promotion</li>
+</ul>
+<p>1.10.0 comes with support for Graphite metric templates, additionally:</p>
+<ul>
+<li>ConfigTracker: Scan envFrom in init-containers</li>
+<li>e2e: Update Istio to v1.10 and Contour to v1.15</li>
+</ul>
+<p>⚠️ Flagger 1.11.0 comes with a breaking change: the minimum supported
+version of Kubernetes is v1.19.0.</p>
+<p>This release comes with support for Kubernetes Ingress <code>networking.k8s.io/v1</code>.
+The Ingress from <code>networking.k8s.io/v1beta1</code> is no longer supported, affected
+integrations: NGINX and Skipper ingress controllers.</p>
+<h2 id="kubecon-round-up">KubeCon round-up</h2>
+<p>KubeCon 2021 Europe happened in early May and the Flux team was happy to
+represent. If you entirely missed the event, here are a couple of links
+we&rsquo;d like to share:</p>
+<ul>
+<li>05 May 2021 - 
+<a href="https://youtu.be/kuzZpKHLoVM" target="_blank">Keynote: CNCF Project Update: Flux - Stefan
+Prodan</a> at KubeCon 2021
+Europe</li>
+<li>05 May 2021 - 
+<a href="https://youtu.be/hCTgCRlU-M0" target="_blank">Helm Users! What Flux Can Do For
+You - Scott Rigby &amp; Kingdon Barrett</a> at KubeCon 2021 Europe</li>
+<li>06 May 2021 - 
+<a href="https://youtu.be/F7B_TBcIyl8" target="_blank">Flux: Multi-tenancy Deep Dive - Philip
+Laine</a> at KubeCon 2021
+Europe</li>
+<li>04 - 07 May 2021 - 
+<a href="https://bit.ly/Flux_KubeConEU2021" target="_blank">Flux Pavilion at KubeCon EU! Talks and demos
+every 30 minutes! Say
+hello!</a></li>
+</ul>
+<p>These are recordings of talks which were given by Flux maintainers.</p>
+<p>We were also present at the Flux booth at the CNCF Project Pavillion.
+This was new for us and we really enjoyed being part of this. A number
+of Flux maintainers and community members were at the virtual booth to
+meet and greet, answer questions and do impromptu lightning talks - we
+watched some of the keynotes together and shared feedback.</p>
+<p>We had a fantastic time, laughed a lot and were pleased to learn more
+about how everyone uses Flux in production and how folks can start
+getting more involved in our community. Thanks everyone for supporting
+us at KubeCon!</p>
+<h2 id="the-cncf-flux-store-is-up">The CNCF Flux Store is up</h2>
+<p><img src="/img/2021-05-cncf-store.png" alt="Flux at CNCF Store"></p>
+<p>As one of the perks of reaching Incubation status within the CNCF, there
+is now a Flux section in the CNCF Store. If you are looking for a new
+hoodie, new socks, a birthday present or anything else, please sure to
+check out <a href="https://store.cncf.io/collections/flux">https://store.cncf.io/collections/flux</a>.</p>
+<p>If you have fully re-clothed yourself in Flux things, be sure to share a
+pic on 
+<a href="https://cloud-native.slack.com/archives/CLAJ40HV3" target="_blank">our Slack
+channel</a>!</p>
+<p><em>(Learn more about the store and where its proceeds go
+
+<a href="https://store.cncf.io/pages/about-us" target="_blank">here</a>.)</em></p>
+<h2 id="our-community-is-growing">Our community is growing</h2>
+<p><img src="/img/2021-05-flux-adopters.png" alt="Flux Adopters"></p>
+<p>We finally built a nicer home to show off who all is part of our
+community: <a href="https://fluxcd.io/adopters">https://fluxcd.io/adopters</a>.</p>
+<p>From start-ups to Fortune 500 companies many have accompanied us for a
+couple of years already, quite a few migrated to the latest of Flux and
+quite a few use Flagger.</p>
+<p>If you use any of the Flux projects in your organisation, please
+consider adding yourself as well: instructions can be found
+
+<a href="https://github.com/fluxcd/website/tree/main/adopters#readme" target="_blank">here</a>.</p>
+<p>Thanks a lot everyone who already added themselves - your support means
+a lot to us! 💖</p>
+<h2 id="upcoming-events">Upcoming events</h2>
+<p>It&rsquo;s important to us to keep you up to date with new features and
+developments in Flux and provide simple ways to see our work in action
+and chat with our engineers.</p>
+<p>We are very happy to be part of a big event that will definitely be
+worth your time: an entire two-day conference about the newest
+developments in the GitOps world with Keynotes from Justin Cormack (CTO,
+Docker), Katie Gamanji (Ecosystem Advocate, CNCF), and Lei &ldquo;Harry&rdquo; Zhang
+(Staff Engineer at Alibaba Cloud).</p>
+<blockquote>
+<p><strong>09-10 Jun 2021</strong> - 
+<a href="https://www.gitopsdays.com" target="_blank">GitOps Days 2021</a></p>
+</blockquote>
+<p>Sign up for it today, share it with your friends far and wide. It&rsquo;s a
+free event!</p>
+<p><em>Apart from that, there&rsquo;s also <a href="https://fluxcd.io/community/#talks">https://fluxcd.io/community/#talks</a>
+for more links to recordings of past talks.</em></p>
+<h2 id="in-other-news">In other news</h2>
+<h3 id="reviewing-flux-governance">Reviewing Flux Governance</h3>
+<p>More than half a year ago we established our 
+<a href="https://fluxcd.io/governance/" target="_blank">Flux Governance
+document</a>. The idea behind
+it was to formalise our values around community, the roles and
+responsibilities and processes; many of which had been transparent and
+with our full integrity, but still quite ad-hoc up until that point.</p>
+<p>For us it&rsquo;s time to review this together with our
+
+<a href="https://fluxcd.io/community/" target="_blank">Community</a> and
+
+<a href="https://fluxcd.io/docs/contributing/" target="_blank">Contributors docs</a>.
+So we are turning to you for feedback: 
+<a href="https://github.com/fluxcd/flux2/discussions/1457" target="_blank">please let us know what you
+think</a>.
+What was your experience up until now? Do you feel things are clear
+enough?</p>
+<p>We are striving for a great contributor experience, so your feedback on
+all of the above is going to make a difference.</p>
+<h3 id="representing-flux-and-flagger-at-cncf">Representing Flux and Flagger at CNCF</h3>
+<p>The CNCF does a great job of informing the world of its member projects
+and we just made sure to update all relevant information, branding and
+logos. If you ever need to borrow our logos, colours or any other info
+for a presentation or something, check out the 
+<a href="https://landscape.cncf.io/card-mode?category=continuous-integration-delivery&amp;grouping=category" target="_blank">CNCF CI/CD
+Landscape</a>,
+the 
+<a href="https://branding.cncf.io/projects/flux/" target="_blank">Flux</a> and
+
+<a href="https://branding.cncf.io/projects/flagger/" target="_blank">Flagger</a>
+branding or our entry on the list of 
+<a href="https://www.cncf.io/projects/#incubating" target="_blank">CNCF
+projects</a>.</p>
+<h2 id="over-and-out">Over and out</h2>
+<p>If you like what you read and would like to get involved, here are a few
+good ways to do that:</p>
+<ul>
+<li>Join our 
+<a href="/community/#meetings">upcoming dev meetings</a> on
+2021-06-03 15:00 UTC, or 2021-06-09, 12:00 UTC.</li>
+<li>Talk to us in the #flux channel on 
+<a href="https://slack.cncf.io/" target="_blank">CNCF
+Slack</a></li>
+<li>Join the 
+<a href="https://github.com/fluxcd/flux2/discussions" target="_blank">planning
+discussions</a></li>
+<li>And if you are completely new to Flux v2, take a look at our
+
+<a href="/docs/get-started/">Get Started guide</a> and give us feedback</li>
+<li>Social media: Follow 
+<a href="https://twitter.com/fluxcd" target="_blank">Flux on
+Twitter</a>, join the
+discussion in the 
+<a href="https://www.linkedin.com/groups/8985374/" target="_blank">Flux LinkedIn
+group</a>.</li>
+</ul>
+<p>We are looking forward to working with you.</p>
+
+	
+
+	<ul class="list-unstyled d-flex justify-content-between align-items-center mb-0 pt-5">
+  <li>
+    <a  class="btn btn-primary  disabled"><span class="mr-1">←</span> </a>
+  </li>
+    <a href="/blog/2021/06/flux-bug-scrub-announce/"aria-label=" - Flux Bug Scrub Announce" class="btn btn-primary "> <span class="ml-1">→</span></a>
+  </li>
+</ul>
+
+</div>
+
+
+          </main>
+        </div>
+      </div>
+      
+<footer class="bg-dark py-5 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+        
+        
+<ul class="list-inline mb-0">
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Twitter" aria-label="Twitter">
+    <a class="text-white" target="_blank" rel="noopener" href="https://twitter.com/fluxcd" aria-label="Twitter">
+      <i class="fab fa-twitter"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="LinkedIn" aria-label="LinkedIn">
+    <a class="text-white" target="_blank" rel="noopener" href="https://linkedin.com/groups/8985374" aria-label="LinkedIn">
+      <i class="fab fa-linkedin"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="RSS Feed" aria-label="RSS Feed">
+    <a class="text-white" target="_blank" rel="noopener" href="/blog/index.xml" aria-label="RSS Feed">
+      <i class="fa fa-rss"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Support" aria-label="Support">
+    <a class="text-white" target="_blank" rel="noopener" href="/support" aria-label="Support">
+      <i class="fas fa-comments"></i>
+    </a>
+  </li>
+  
+</ul>
+
+        
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+        
+        
+<ul class="list-inline mb-0">
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Flux project on GitHub" aria-label="Flux project on GitHub">
+    <a class="text-white" target="_blank" rel="noopener" href="https://github.com/fluxcd" aria-label="Flux project on GitHub">
+      <i class="fab fa-github"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Slack" aria-label="Slack">
+    <a class="text-white" target="_blank" rel="noopener" href="https://cloud-native.slack.com/messages/flux" aria-label="Slack">
+      <i class="fab fa-slack"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Developer mailing list" aria-label="Developer mailing list">
+    <a class="text-white" target="_blank" rel="noopener" href="https://lists.cncf.io/g/cncf-flux-dev" aria-label="Developer mailing list">
+      <i class="fa fa-envelope"></i>
+    </a>
+  </li>
+  
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="Flux YouTube channel" aria-label="Flux YouTube channel">
+    <a class="text-white" target="_blank" rel="noopener" href="https://www.youtube.com/channel/UCoZxt-YMhGHb20ZkvcCc5KA" aria-label="Flux YouTube channel">
+      <i class="fab fa-youtube"></i>
+    </a>
+  </li>
+  
+</ul>
+
+        
+        
+      </div>
+      <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
+        <small class="text-white">&copy; 2021 The Flux authors </small>
+        
+	
+		
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+<script src="/js/main.min.5c74b870c6953931a705f390a49c7e4c0a842ec5c83b24354758dd674343ed0d.js" integrity="sha256-XHS4cMaVOTGnBfOQpJx&#43;TAqELsXIOyQ1R1jdZ0ND7Q0=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<script type="text/javascript"> docsearch({
+apiKey: '45f9f14d53600b0a2cafa46a26ee10f4',
+indexName: 'fluxcd',
+inputSelector: '.td-search-input',
+
+algoliaOptions: { 'facetFilters': ["tags:current"] },
+
+debug: false 
+});
+</script>
+
+
+
+  </body>
+</html>

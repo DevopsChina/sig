@@ -1,0 +1,527 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>道场 – Documentation</title>
+    <link>/docs/contributing/docs/</link>
+    <description>Recent content in Documentation on 道场</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="/docs/contributing/docs/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: Where to find the docs and how to contribute</title>
+      <link>/docs/contributing/docs/some-background/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/contributing/docs/some-background/</guid>
+      <description>
+        
+        
+        &lt;h2 id=&#34;how-to-modify-this-website&#34;&gt;How to modify this website&lt;/h2&gt;
+&lt;p&gt;The main landing page of this website can be modified in &lt;code&gt;config.toml&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Almost all of the content lives in the &lt;code&gt;content/en/docs&lt;/code&gt; directory. Here are some special cases.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;./content/en/blog&lt;/code&gt; contains all blog posts - make sure you update the front-matter for posts to show up correctly.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;./external-sources/&lt;/code&gt; defines how files from other repositories are pulled in. We currently do this for Markdown files from the &lt;code&gt;/fluxcd/community&lt;/code&gt; and &lt;code&gt;/fluxcd/.github&lt;/code&gt; repositories. (&lt;code&gt;make gen-content&lt;/code&gt; pulls these in.)&lt;/li&gt;
+&lt;li&gt;Flux CLI docs (&lt;code&gt;cmd&lt;/code&gt;) and &lt;code&gt;components&lt;/code&gt; docs: under &lt;code&gt;./content/en/docs&lt;/code&gt; but pulled in through in &lt;code&gt;make gen-content&lt;/code&gt; as well.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/static/_redirects&lt;/code&gt; defines redirects on &lt;a href=&#34;https://fluxcd.io&#34;&gt;https://fluxcd.io&lt;/a&gt;. Check out &lt;a href=&#34;https://docs.netlify.com/routing/redirects/&#34;&gt;https://docs.netlify.com/routing/redirects/&lt;/a&gt; for the syntax definition and how to test if things work.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;running-the-site-locally&#34;&gt;Running the site locally&lt;/h2&gt;
+&lt;p&gt;In order to run the Flux site locally, you need to install:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://www.npmjs.com/get-npm&#34; target=&#34;_blank&#34;&gt;Node.js&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;The 
+&lt;a href=&#34;https://gohugo.io&#34; target=&#34;_blank&#34;&gt;Hugo&lt;/a&gt; static site generator. Make sure to 
+&lt;a href=&#34;https://gohugo.io/getting-started/installing/&#34; target=&#34;_blank&#34;&gt;install&lt;/a&gt; the &amp;ldquo;extended&amp;rdquo; variant of Hugo with support for the 
+&lt;a href=&#34;https://gohugo.io/hugo-pipes/introduction/&#34; target=&#34;_blank&#34;&gt;Hugo Pipes&lt;/a&gt; feature and to check the 
+&lt;a href=&#34;./netlify.toml&#34;&gt;&lt;code&gt;netlify.toml&lt;/code&gt;&lt;/a&gt; configuration file for which version of Hugo you should install.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Once those tools are installed, fetch the assets necessary to run the site:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-cli&#34; data-lang=&#34;cli&#34;&gt;npm install
+make theme
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Then run the site in &amp;ldquo;server&amp;rdquo; mode:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-cli&#34; data-lang=&#34;cli&#34;&gt;make serve
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Navigate to &lt;a href=&#34;http://localhost:1313&#34;&gt;http://localhost:1313&lt;/a&gt; to see the site running in your browser. As you make updates to the site, the browser will immediately update to reflect those changes.&lt;/p&gt;
+&lt;h2 id=&#34;publishing-the-site&#34;&gt;Publishing the site&lt;/h2&gt;
+&lt;p&gt;The Flux website is published automatically by 
+&lt;a href=&#34;https://netlify.com&#34; target=&#34;_blank&#34;&gt;Netlify&lt;/a&gt; when changes are pushed to the &lt;code&gt;main&lt;/code&gt; branch. The site does not need to be published manually.&lt;/p&gt;
+&lt;h3 id=&#34;preview-builds&#34;&gt;Preview builds&lt;/h3&gt;
+&lt;p&gt;When you submit a pull request to this repository, Netlify builds a &amp;ldquo;deploy preview&amp;rdquo; of your changes. You can see that preview by clicking on the &lt;strong&gt;deploy/netlify&lt;/strong&gt; link in the pull request window.&lt;/p&gt;
+&lt;h3 id=&#34;local-development-docker&#34;&gt;Local Development (docker)&lt;/h3&gt;
+&lt;p&gt;Run &lt;code&gt;make docker-preview&lt;/code&gt; and wait until the following output appears:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-cli&#34; data-lang=&#34;cli&#34;&gt;Environment: &amp;quot;development&amp;quot;
+Serving pages from memory
+Web Server is available at //localhost:1313/ (bind address 0.0.0.0)
+Press Ctrl+C to stop
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Visit 
+&lt;a href=&#34;http://localhost:1313&#34; target=&#34;_blank&#34;&gt;http://localhost:1313&lt;/a&gt;, where any changes will be visible from inside of the running container. Markdown files updated in &lt;code&gt;content/&lt;/code&gt; should trigger a browser refresh as they are saved.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;docker-preview&lt;/code&gt; target builds the theme, which takes a while and doesn&amp;rsquo;t need to be repeated unless you are making changes to the theme. On subsequent runs, running &lt;code&gt;make docker-serve&lt;/code&gt; instead will skip building the theme.&lt;/p&gt;
+&lt;p&gt;This depends on the Docker image &lt;code&gt;fluxcd/website:hugo-support&lt;/code&gt; which should be kept updated when the website&amp;rsquo;s build-time dependencies have changed; this image contains everything needed to run the docs locally.&lt;/p&gt;
+&lt;p&gt;If this doesn&amp;rsquo;t work, the image may be stale. The instructions to update it are below.&lt;/p&gt;
+&lt;h3 id=&#34;remote-development-kubernetes--okteto-cli&#34;&gt;Remote Development (kubernetes / okteto CLI)&lt;/h3&gt;
+&lt;p&gt;This works the same as local development above, but with the Okteto CLI you do not need to run a Linux machine or virtual machine on your local development environment.&lt;/p&gt;
+&lt;p&gt;First, make sure you are permitted to deploy pods on any local or remote Kubernetes cluster. Download the 
+&lt;a href=&#34;https://okteto.com/docs/getting-started/installation/index.html&#34; target=&#34;_blank&#34;&gt;Okteto CLI&lt;/a&gt; for Windows, Mac, or Linux.&lt;/p&gt;
+&lt;p&gt;Okteto CLI is a light-weight client-side tool that replaces Docker with a remote cluster. You can run &lt;code&gt;hugo server&lt;/code&gt; remotely in this way; any changes to the local clone are synchronized to the cluster. The experience is basically the same as local development, (except that you won&amp;rsquo;t need to install Docker.)&lt;/p&gt;
+&lt;p&gt;Instead of &lt;code&gt;make docker-serve&lt;/code&gt;, type &lt;code&gt;okteto up&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;You can change the behavior in &lt;code&gt;okteto.yml&lt;/code&gt; according to the 
+&lt;a href=&#34;https://okteto.com/docs/reference/manifest/index.html&#34; target=&#34;_blank&#34;&gt;Okteto Manifest Reference&lt;/a&gt;, for example adding a persistent volume can speed up the synchronization of the working directory files to the remote pod on repeated runs.&lt;/p&gt;
+&lt;h3 id=&#34;updating-the-developmentpreview-container-image&#34;&gt;Updating the Development/preview container image&lt;/h3&gt;
+&lt;p&gt;(For maintainers) Using a machine with &lt;code&gt;docker&lt;/code&gt; and logged in with an account that has permission to push to &lt;code&gt;docker.io/fluxcd/website&lt;/code&gt; repo, run &lt;code&gt;make docker-push&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The dependencies of &lt;code&gt;docker-push&lt;/code&gt; are explained below. If the above worked then you are done, and should not need to read any further. Rebuilding &lt;code&gt;hugo&lt;/code&gt; takes a long time and should be avoided when the version hasn&amp;rsquo;t changed or it isn&amp;rsquo;t needed; run &lt;code&gt;make docker-push-support&lt;/code&gt; instead to skip building &lt;code&gt;hugo&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Update the &lt;code&gt;docker-support&lt;/code&gt; image tag whenever build-time (or &amp;ldquo;serve&amp;rdquo;-time) dependencies have changed.&lt;/p&gt;
+&lt;h4 id=&#34;how-is-the-development-container-made&#34;&gt;How is the Development container made?&lt;/h4&gt;
+&lt;p&gt;These targets as explained below are run in the appropriate order as dependencies of &lt;code&gt;make docker-push&lt;/code&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;input disabled=&#34;&#34; type=&#34;checkbox&#34;&gt; &lt;code&gt;TODO&lt;/code&gt;: add a system/integration test for &lt;code&gt;website&lt;/code&gt; that verifies any changes have not broken &lt;code&gt;make docker-serve&lt;/code&gt;, for example by adding new dependencies without mentioning them in the &lt;code&gt;docker-support/Dockerfile&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;flux-specific-dependencies&#34;&gt;Flux-specific Dependencies&lt;/h5&gt;
+&lt;p&gt;The FluxCD.io website has some build-time dependencies including Python3, PyYAML, &lt;code&gt;rsync&lt;/code&gt;, &lt;code&gt;grep&lt;/code&gt;, &lt;code&gt;nodejs&lt;/code&gt;, &lt;code&gt;npm&lt;/code&gt;, &lt;code&gt;curl&lt;/code&gt;, &lt;code&gt;jq&lt;/code&gt;, (and potentially others that may be added in the future.) Flux-specific dependencies are prepared in an image that gets tagged as &lt;code&gt;docker.io/fluxcd/website:hugo-support&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;This image is built from the &lt;code&gt;Dockerfile&lt;/code&gt; in &lt;code&gt;docker-support/&lt;/code&gt;; run &lt;code&gt;make docker-build-support&lt;/code&gt; to rebuild it locally, (or run as &lt;code&gt;make docker-push-support&lt;/code&gt; to build and also push.)&lt;/p&gt;
+&lt;h5 id=&#34;gohugoiohugo&#34;&gt;&lt;code&gt;gohugoio/hugo&lt;/code&gt;&lt;/h5&gt;
+&lt;p&gt;FluxCD also depends on a specific version of Hugo, which unfortunately does not provide docker images for each version. So we build it from source, with the &lt;code&gt;HUGO_BUILD_TAGS=extended&lt;/code&gt; build arg enabled.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;make docker-push-hugo&lt;/code&gt; to build and also push this image target.&lt;/p&gt;
+&lt;p&gt;This will run &lt;code&gt;make hugo&lt;/code&gt; to get a shallow clone of the &lt;code&gt;gohugoio/hugo&lt;/code&gt; repository at the right &lt;code&gt;HUGO_VERSION&lt;/code&gt; and &lt;code&gt;make docker-build-hugo&lt;/code&gt; to build a hugo container base image. (This target compiles &lt;code&gt;golibsass&lt;/code&gt; which is very large, and may take a while.)&lt;/p&gt;
+&lt;p&gt;These are all the dependencies of &lt;code&gt;make docker-push&lt;/code&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Proposing changes</title>
+      <link>/docs/contributing/docs/proposing-changes/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/contributing/docs/proposing-changes/</guid>
+      <description>
+        
+        
+        &lt;h2 id=&#34;getting-started&#34;&gt;Getting started&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Familiarize yourself with the 
+&lt;a href=&#34;https://github.com/fluxcd/website&#34; target=&#34;_blank&#34;&gt;documentation repository&lt;/a&gt; and the website&amp;rsquo;s static site generator (Hugo).&lt;/li&gt;
+&lt;li&gt;Understand the process for opening a pull request and reviewing changes&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;opening-a-pull-request&#34;&gt;Opening a pull request&lt;/h2&gt;
+&lt;p&gt;To contribute new pages or improve existing pages, open a pull request (PR).&lt;/p&gt;
+&lt;p&gt;If your change is small, or you&amp;rsquo;re unfamiliar with git, read 
+&lt;a href=&#34;#Changes-using-GitHub&#34;&gt;Changes using GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;changes-using-github&#34;&gt;Changes using GitHub&lt;/h3&gt;
+&lt;p&gt;If you&amp;rsquo;re less experienced with git workflows, here&amp;rsquo;s an easier method of opening a pull request.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-warning&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Maintainer Warning&lt;/h4&gt;
+
+    If you are a maintainer of the repo, the edit page button will not let you work off a fork, as you have write permission.
+
+&lt;/div&gt;
+
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;On the page you want to modify, select the pencil icon at the top right.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Make your changes in the GitHub markdown editor.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Below the editor, fill in the &lt;strong&gt;Propose file change&lt;/strong&gt; form.&lt;/p&gt;
+&lt;p&gt;In the first field, give your commit message a title.
+In the second field&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;provide a description
+
+
+&lt;div class=&#34;alert alert-warning&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Warning&lt;/h4&gt;
+
+    Do not use any 
+&lt;a href=&#34;https://help.github.com/en/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword&#34; target=&#34;_blank&#34;&gt;GitHub Keywords&lt;/a&gt;
+in your commit message. You can add those to the pull request description later.
+
+&lt;/div&gt;
+&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;add commit signoff&lt;/p&gt;
+&lt;p&gt;Add a new line after the description
+Copy the below snippet and fill in with your details&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-markdown&#34; data-lang=&#34;markdown&#34;&gt;Signed-off-by: Your Name &amp;lt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;youremail&lt;/span&gt;&lt;span style=&#34;&#34;&gt;@&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;emailprovider&lt;/span&gt;&lt;span style=&#34;&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;com&lt;/span&gt;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Prefilling Signoff Information&lt;/h4&gt;
+
+    You can use the 
+&lt;a href=&#34;https://github.com/scottrigby/dco-gh-ui&#34; target=&#34;_blank&#34;&gt;dco-gh-ui&lt;/a&gt; browser extension to prefill signoff information in your commit message.
+Find out how to install and use the extension 
+&lt;a href=&#34;https://github.com/scottrigby/dco-gh-ui&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.
+
+&lt;/div&gt;
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Select &lt;strong&gt;Propose file change&lt;/strong&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Select &lt;strong&gt;Create pull request&lt;/strong&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The &lt;strong&gt;Open a pull request&lt;/strong&gt; screen appears. Fill in the form:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The &lt;strong&gt;Subject&lt;/strong&gt; field of the pull request defaults to the commit summary.
+You can change it if needed.&lt;/li&gt;
+&lt;li&gt;The &lt;strong&gt;Body&lt;/strong&gt; contains your extended commit message, if you have one,
+and some template text. Add the
+details the template text asks for, then delete the extra template text.&lt;/li&gt;
+&lt;li&gt;Leave the &lt;strong&gt;Allow edits from maintainers&lt;/strong&gt; checkbox selected.&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;div class=&#34;alert alert-info&#34; role=&#34;alert&#34;&gt;
+
+
+    PR descriptions are a great way to help reviewers understand your change. For more information, see 
+&lt;a href=&#34;#open-a-pr&#34;&gt;Opening a PR&lt;/a&gt;.
+
+&lt;/div&gt;
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Select &lt;strong&gt;Create pull request&lt;/strong&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;addressing-feedback-in-github&#34;&gt;Addressing feedback in GitHub&lt;/h3&gt;
+&lt;p&gt;Before merging a pull request, community members review and approve it.&lt;/p&gt;
+&lt;p&gt;If a reviewer asks you to make changes:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Go to the &lt;strong&gt;Files changed&lt;/strong&gt; tab.&lt;/li&gt;
+&lt;li&gt;Select the pencil (edit) icon on any files changed by the pull request.&lt;/li&gt;
+&lt;li&gt;Make the changes requested.&lt;/li&gt;
+&lt;li&gt;Commit the changes.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;work-from-a-local-fork&#34;&gt;Work from a local fork&lt;/h3&gt;
+&lt;p&gt;If you&amp;rsquo;re more experienced with git, or if your changes are larger than a few lines, work from a local fork.&lt;/p&gt;
+&lt;h4 id=&#34;fork-the-fluxcdwebsite-repository&#34;&gt;Fork the fluxcd/website repository&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Navigate to the 
+&lt;a href=&#34;https://github.com/fluxcd/website/&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;fluxcd/website&lt;/code&gt;&lt;/a&gt; repository.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Select &lt;strong&gt;Fork&lt;/strong&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Navigate to the new &lt;code&gt;website&lt;/code&gt; directory. Set the &lt;code&gt;fluxcd/website&lt;/code&gt; repository as the &lt;code&gt;upstream&lt;/code&gt; remote:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#007020&#34;&gt;cd&lt;/span&gt; website
+
+git remote add upstream https://github.com/fluxcd/website.git
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Confirm your &lt;code&gt;origin&lt;/code&gt; and &lt;code&gt;upstream&lt;/code&gt; repositories:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;git remote -v
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Output is similar to:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;origin    git@github.com:&amp;lt;github_username&amp;gt;/website.git &lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;fetch&lt;span style=&#34;color:#666&#34;&gt;)&lt;/span&gt;
+origin    git@github.com:&amp;lt;github_username&amp;gt;/website.git &lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;push&lt;span style=&#34;color:#666&#34;&gt;)&lt;/span&gt;
+upstream  https://github.com/fluxcd/website.git &lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;fetch&lt;span style=&#34;color:#666&#34;&gt;)&lt;/span&gt;
+upstream  https://github.com/fluxcd/website.git &lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;push&lt;span style=&#34;color:#666&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Fetch commits from your fork&amp;rsquo;s &lt;code&gt;origin/main&lt;/code&gt; and &lt;code&gt;fluxcd/website&lt;/code&gt;&amp;rsquo;s &lt;code&gt;upstream/main&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;git fetch origin
+git fetch upstream
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This makes sure your local repository is up to date before you start making changes.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Create a new branch based on &lt;code&gt;upstream/main&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;git checkout -b &amp;lt;my_new_branch&amp;gt; upstream/main
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Make your changes using a text editor.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;At any time, use the &lt;code&gt;git status&lt;/code&gt; command to see what files you&amp;rsquo;ve changed.&lt;/p&gt;
+&lt;h4 id=&#34;commit-your-changes&#34;&gt;Commit your changes&lt;/h4&gt;
+&lt;p&gt;When you are ready to submit a pull request, commit your changes.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;In your local repository, check which files you need to commit:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;git status
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Output is similar to:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;On branch &amp;lt;my_new_branch&amp;gt;
+Your branch is up to date with &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;origin/&amp;lt;my_new_branch&amp;gt;&amp;#39;&lt;/span&gt;.
+
+Changes not staged &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;for&lt;/span&gt; commit:
+&lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;use &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;git add &amp;lt;file&amp;gt;...&amp;#34;&lt;/span&gt; to update what will be committed&lt;span style=&#34;color:#666&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;use &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;git checkout -- &amp;lt;file&amp;gt;...&amp;#34;&lt;/span&gt; to discard changes in working directory&lt;span style=&#34;color:#666&#34;&gt;)&lt;/span&gt;
+
+modified:   content/en/docs/contribute/new-content/run-locally.md
+
+no changes added to commit &lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;use &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;git add&amp;#34;&lt;/span&gt; and/or &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;git commit -a&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Add the files listed under &lt;strong&gt;Changes not staged for commit&lt;/strong&gt; to the commit:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;git add &amp;lt;your_file_name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Repeat this for each file.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;After adding all the files, create a commit:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;git commit -sm &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;Your commit message&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    Do not use any &lt;a href=&#34;https://help.github.com/en/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword&#34;&gt;GitHub Keywords&lt;/a&gt; in your commit message. You can add those to the pull request
+description later.
+
+&lt;/div&gt;
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Push your local branch and its new commit to your remote fork:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;git push origin &amp;lt;my_new_branch&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;open-a-pull-request-from-your-fork-to-fluxcdwebsite&#34;&gt;Open a pull request from your fork to fluxcd/website&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;In a web browser, go to the 
+&lt;a href=&#34;https://github.com/fluxcd/website/&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;fluxcd/website&lt;/code&gt;&lt;/a&gt; repository.&lt;/li&gt;
+&lt;li&gt;Navigate to pull requests and select New pull request&lt;/li&gt;
+&lt;li&gt;Select compare across forks&lt;/li&gt;
+&lt;li&gt;From the &lt;strong&gt;head repository&lt;/strong&gt; drop-down menu, select your fork.&lt;/li&gt;
+&lt;li&gt;From the &lt;strong&gt;compare&lt;/strong&gt; drop-down menu, select your branch.&lt;/li&gt;
+&lt;li&gt;Select &lt;strong&gt;Create Pull Request&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Add a description for your pull request:
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Title&lt;/strong&gt; (50 characters or less): Summarize the intent of the change.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Description&lt;/strong&gt;: Describe the change in more detail.
+&lt;ul&gt;
+&lt;li&gt;If there is a related GitHub issue, include &lt;code&gt;Fixes #12345&lt;/code&gt; or &lt;code&gt;Closes #12345&lt;/code&gt; in the description. GitHub&amp;rsquo;s automation closes the mentioned issue after merging the PR if used. If there are other related PRs, link those as well.&lt;/li&gt;
+&lt;li&gt;If you want advice on something specific, include any questions you&amp;rsquo;d like reviewers to think about in your description.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Select the &lt;strong&gt;Create pull request&lt;/strong&gt; button.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Congratulations! Your pull request is available in 
+&lt;a href=&#34;https://github.com/fluxcd/website/pulls&#34; target=&#34;_blank&#34;&gt;Pull requests&lt;/a&gt;.&lt;/p&gt;
+&lt;h4 id=&#34;addressing-feedback-locally&#34;&gt;Addressing feedback locally&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;After making your changes, amend your previous commit:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;git commit -as --amend
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;-as&lt;/code&gt;: commits all changes and adds your signoff&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--amend&lt;/code&gt;: amends the previous commit, rather than creating a new one&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Update your commit message if needed.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Use &lt;code&gt;git push origin &amp;lt;my_new_branch&amp;gt;&lt;/code&gt; to push your changes and re-run the Netlify tests.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;changes-from-reviewers&#34;&gt;Changes from reviewers&lt;/h4&gt;
+&lt;p&gt;Sometimes reviewers commit to your pull request. Before making any other changes, fetch those commits.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Fetch commits from your remote fork and rebase your working branch:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;git fetch origin
+git rebase origin/&amp;lt;your-branch-name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;After rebasing, force-push new changes to your fork:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;git push --force-with-lease origin &amp;lt;your-branch-name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;adding-dco-on-commits-retroactively&#34;&gt;Adding DCO on commits retroactively&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Open an interactive rebase session&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;git rebase --signoff HEAD~&amp;lt;number of commits in your pr&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Verify you have signed the commits&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;git log
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Force push&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;git push -f origin branchname
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;merge-conflicts-and-rebasing&#34;&gt;Merge conflicts and rebasing&lt;/h4&gt;
+
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    For more information, see &lt;a href=&#34;https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging#_basic_merge_conflicts&#34;&gt;Git Branching - Basic Branching and Merging&lt;/a&gt;, &lt;a href=&#34;https://git-scm.com/book/en/v2/Git-Tools-Advanced-Merging&#34;&gt;Advanced Merging&lt;/a&gt;, or ask in the &lt;code&gt;#sig-docs&lt;/code&gt; Slack channel for help.
+
+&lt;/div&gt;
+
+&lt;p&gt;If another contributor commits changes to the same file in another PR, it can create a merge conflict. You must resolve all merge conflicts in your PR.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Update your fork and rebase your local branch:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;git fetch origin
+git rebase origin/&amp;lt;your-branch-name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Then force-push the changes to your fork:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;git push --force-with-lease origin &amp;lt;your-branch-name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Fetch changes from &lt;code&gt;fluxcd/website&lt;/code&gt;&amp;rsquo;s &lt;code&gt;upstream/main&lt;/code&gt; and rebase your branch:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;git fetch upstream
+git rebase upstream/main
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Inspect the results of the rebase:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;git status
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This results in a number of files marked as conflicted.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Open each conflicted file and look for the conflict markers: &lt;code&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/code&gt;, &lt;code&gt;&amp;lt;&amp;lt;&amp;lt;&lt;/code&gt;, and &lt;code&gt;===&lt;/code&gt;. Resolve the conflict and delete the conflict marker.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    For more information, see &lt;a href=&#34;https://git-scm.com/docs/git-merge#_how_conflicts_are_presented&#34;&gt;How conflicts are presented&lt;/a&gt;.
+
+&lt;/div&gt;
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Add the files to the changeset:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;git add &amp;lt;filename&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Continue the rebase:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;git rebase --continue
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Repeat steps 2 to 5 as needed.&lt;/p&gt;
+&lt;p&gt;After applying all commits, the &lt;code&gt;git status&lt;/code&gt; command shows that the rebase is complete.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Force-push the branch to your fork:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;git push --force-with-lease origin &amp;lt;your-branch-name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The pull request no longer shows any conflicts.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Docs from the ground up</title>
+      <link>/docs/contributing/docs/writing-docs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/docs/contributing/docs/writing-docs/</guid>
+      <description>
+        
+        
+        &lt;h2 id=&#34;getting-started&#34;&gt;Getting Started&lt;/h2&gt;
+&lt;p&gt;If you already know &lt;strong&gt;Markdown&lt;/strong&gt;, this is going to be straight-forward. For our docs we use markdown, and we get some additions through the 
+&lt;a href=&#34;https://gohugo.io&#34; target=&#34;_blank&#34;&gt;Hugo&lt;/a&gt; static website generator and the 
+&lt;a href=&#34;https://docsy.dev&#34; target=&#34;_blank&#34;&gt;Docsy&lt;/a&gt; theme, which we are going to line out here.&lt;/p&gt;
+&lt;p&gt;If you are unfamiliar with Markdown, please see &lt;a href=&#34;https://guides.github.com/features/mastering-markdown/&#34;&gt;https://guides.github.com/features/mastering-markdown/&lt;/a&gt; (it&amp;rsquo;s a good cheat-sheet) or &lt;a href=&#34;https://www.markdownguide.org/&#34;&gt;https://www.markdownguide.org/&lt;/a&gt; if you are looking for something more substantial.&lt;/p&gt;
+&lt;h2 id=&#34;starting-at-the-top&#34;&gt;Starting at the top&lt;/h2&gt;
+&lt;p&gt;Hugo allows you to specify metadata concerning an article at the top of the Markdown file, in a section called &lt;strong&gt;Front Matter&lt;/strong&gt;. The Hugo website has a 
+&lt;a href=&#34;https://gohugo.io/content-management/front-matter/&#34; target=&#34;_blank&#34;&gt;great article about it&lt;/a&gt; which explains all the relevant options.&lt;/p&gt;
+&lt;p&gt;For now, let&amp;rsquo;s take a look at a quick example which should explain the most relevant entries in Front Matter:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-markdown&#34; data-lang=&#34;markdown&#34;&gt;---
+title: Using Flux on OpenShift
+linkTitle: OpenShift
+description: &amp;#34;How to bootstrap Flux on OpenShift.&amp;#34;
+weight: 20
+---
+
+&lt;span style=&#34;color:#800080;font-weight:bold&#34;&gt;## OpenShift Setup
+&lt;/span&gt;&lt;span style=&#34;color:#800080;font-weight:bold&#34;&gt;&lt;/span&gt;
+Steps described in this document have been tested on OpenShift 4.6 only. 
+
+[...]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The top section between two lines of &lt;code&gt;---&lt;/code&gt; is the Front Matter section. Here we define a couple of entries which tell Hugo how to handle article:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;title&lt;/code&gt; is the equivalent of the &lt;code&gt;&amp;lt;h1&amp;gt;&lt;/code&gt; in a HTML document or &lt;code&gt;# &amp;lt;title&amp;gt;&lt;/code&gt; in a Markdown article&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;linkTitle&lt;/code&gt; is the title to be used in the menu or navbar (usually you might want to pick something shorter and easier to spot)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;description&lt;/code&gt; is shown in a list of documents - maybe the directory you are looking at has a &lt;code&gt;_index.md&lt;/code&gt; document - this is where you would see the list of articles (and the short descriptions). Note you can write multi-line descriptions like so:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-markdown&#34; data-lang=&#34;markdown&#34;&gt;description: &amp;gt;
+  more text here
+  here is even more description
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;weight&lt;/code&gt; indicates where in the list of documents this is shown. It basically imposes an order on the articles in this directory.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+
+&lt;div class=&#34;alert alert-warning&#34; role=&#34;alert&#34;&gt;
+&lt;h4 class=&#34;alert-heading&#34;&gt;Mixing Front Matter and top-level headings&lt;/h4&gt;
+
+    Please note: Everything below the Front Matter entry is just the regular Markdown article as you would normally write it. Please note that headings start with &lt;code&gt;## &amp;lt;..&amp;gt;&lt;/code&gt;, as the title is defined in the Front Matter. Mixing Front Matter and &lt;code&gt;# &amp;lt;..&amp;gt;&lt;/code&gt; headings will trip up Hugo and it might error out or not show the article.
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;linking-to-other-docs&#34;&gt;Linking to other docs&lt;/h2&gt;
+&lt;p&gt;You can easily link to other places using either&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Absolute URLs, for linking off to external sites like &lt;code&gt;https://github.com&lt;/code&gt; or &lt;code&gt;https://k8s.io&lt;/code&gt; - you can use any of the Markdown notations for this, so
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;https://k8s.io&amp;gt;&lt;/code&gt; or&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;[Kubernetes](https://k8s.io)&lt;/code&gt; will work.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Link to markdown files in other you can link to the &lt;code&gt;.md&lt;/code&gt; file, or the resulting path. So if you are editing e.g. &lt;code&gt;article1.md&lt;/code&gt; in &lt;code&gt;content/en/docs/section-a&lt;/code&gt; and want to link to &lt;code&gt;article2.md&lt;/code&gt; in the same directory you can use the following:
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;[link](article2.md)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;[link](../article2/)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;[link](/docs/section-a/article2/)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;getting-the-readers-attention&#34;&gt;Getting the readers attention&lt;/h2&gt;
+&lt;p&gt;Sometimes you will need to get the reader&amp;rsquo;s attention and clearly point out an edge case, or the current state of things. A good way to do this is using Docsy&amp;rsquo;s &lt;code&gt;alert&lt;/code&gt; shortcode. Here is a simple example:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go-html-template&#34; data-lang=&#34;go-html-template&#34;&gt;&lt;span style=&#34;color:#007020&#34;&gt;{{&lt;/span&gt;&lt;span style=&#34;&#34;&gt;%&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;alert&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;title&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;Warning&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;color&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;warning&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;&#34;&gt;%&lt;/span&gt;&lt;span style=&#34;color:#007020&#34;&gt;}}&lt;/span&gt;
+This is a warning.
+&lt;span style=&#34;color:#007020&#34;&gt;{{&lt;/span&gt;&lt;span style=&#34;&#34;&gt;%&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;&#34;&gt;/&lt;/span&gt;alert&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;&#34;&gt;%&lt;/span&gt;&lt;span style=&#34;color:#007020&#34;&gt;}}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;code&gt;title&lt;/code&gt; and &lt;code&gt;color&lt;/code&gt; keywords are optional.&lt;/p&gt;
+&lt;p&gt;Please refer to 
+&lt;a href=&#34;https://www.docsy.dev/docs/adding-content/shortcodes/#alert&#34; target=&#34;_blank&#34;&gt;Docsy&amp;rsquo;s documentation&lt;/a&gt; of the feature.&lt;/p&gt;
+&lt;h2 id=&#34;media-illustrations-and-more&#34;&gt;Media, illustrations and more&lt;/h2&gt;
+&lt;p&gt;If you want to illustrate the documentation and make things easier to read, there are lots of shortcodes either inherited through Hugo or through Docsy. Here is a list of our current favourites:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://www.docsy.dev/docs/adding-content/shortcodes/#pageinfo&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;pageinfo&lt;/code&gt;&lt;/a&gt; for quick &amp;ldquo;banner type&amp;rdquo; info boxes&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://www.docsy.dev/docs/adding-content/shortcodes/#tabbed-panes&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;tabpane&lt;/code&gt;&lt;/a&gt; for pieces of text that go in different tabs&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://www.docsy.dev/docs/adding-content/shortcodes/#card-panes&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;cardpane&lt;/code&gt; and &lt;code&gt;card&lt;/code&gt;&lt;/a&gt; for adding cards and card panes&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://gohugo.io/content-management/shortcodes/&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;gist&lt;/code&gt;, &lt;code&gt;youtube&lt;/code&gt;, &lt;code&gt;tweet&lt;/code&gt; and more&lt;/a&gt;: lots of shortcodes we get from Hugo itself.&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

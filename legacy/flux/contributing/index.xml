@@ -1,0 +1,320 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>道场 – Contributing</title>
+    <link>/legacy/flux/contributing/</link>
+    <description>Recent content in Contributing on 道场</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="/legacy/flux/contributing/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Legacy: Get started developing</title>
+      <link>/legacy/flux/contributing/get-started-developing/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/contributing/get-started-developing/</guid>
+      <description>
+        
+        
+        &lt;p&gt;This guide shows a workflow for making a small (actually, tiny) change
+to Flux, building and testing that change locally.&lt;/p&gt;
+&lt;h2 id=&#34;tldr&#34;&gt;TL;DR&lt;/h2&gt;
+&lt;p&gt;From a very high level, there are at least 3 ways you can develop on
+Flux once you have your environment set up:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;The &amp;ldquo;minimalist&amp;rdquo; approach (only requires and &lt;code&gt;kubectl&lt;/code&gt;):&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;make&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;copy the specific image tag (e.g. &lt;code&gt;docker.io/fluxcd/flux:master-a86167e4&lt;/code&gt;)
+for what you just built and paste it into &lt;code&gt;/deploy/flux-deployment.yaml&lt;/code&gt;
+as the image you&amp;rsquo;re targeting to deploy&lt;/li&gt;
+&lt;li&gt;deploy the resources in &lt;code&gt;/develop/*.yaml&lt;/code&gt; manually with
+&lt;code&gt;kubectl apply&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;make a change to the code&lt;/li&gt;
+&lt;li&gt;see your code changes have been deployed&lt;/li&gt;
+&lt;li&gt;repeat&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Use &lt;code&gt;freshpod&lt;/code&gt; to deploy changes to the &lt;code&gt;/deploy&lt;/code&gt; directory resources:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;make&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;make a change to the code&lt;/li&gt;
+&lt;li&gt;see your changes have been deployed&lt;/li&gt;
+&lt;li&gt;repeat&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Remote cluster development approach:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;ensure local &lt;code&gt;kubectl&lt;/code&gt; access to a remote Kubernetes cluster&lt;/li&gt;
+&lt;li&gt;have an available local memcached instance&lt;/li&gt;
+&lt;li&gt;make a change to the code&lt;/li&gt;
+&lt;li&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;go run cmd/fluxd/main.go &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --memcached-hostname localhost  &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --memcached-port &lt;span style=&#34;color:#40a070&#34;&gt;11211&lt;/span&gt; &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --memcached-service &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --git-url git@github.com:fluxcd/flux-get-started &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;    --k8s-in-cluster&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#007020&#34;&gt;false&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This guide covers approaches 1 and 2 using &lt;code&gt;minikube&lt;/code&gt;. &lt;code&gt;freshpod&lt;/code&gt; is
+superseded by &lt;code&gt;Skaffold&lt;/code&gt; and is generally the future.  That said,
+&lt;code&gt;freshpod&lt;/code&gt; is very simple to use and reason about (and is still well
+supported by &lt;code&gt;minikube&lt;/code&gt;) which is why it&amp;rsquo;s used in this guide.&lt;/p&gt;
+&lt;h2 id=&#34;run-fluxcdflux-getting-started&#34;&gt;Run &lt;code&gt;fluxcd/flux-getting-started&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;We&amp;rsquo;re going to make some changes soon enough, but just to get a good
+baseline please follow the 
+&lt;a href=&#34;/legacy/flux/tutorials/get-started/&#34;&gt;&amp;ldquo;Get started with Flux&amp;rdquo;&lt;/a&gt;
+tutorial and run the &lt;code&gt;fluxcd/flux-getting-started&lt;/code&gt; repo through its
+normal paces.&lt;/p&gt;
+&lt;p&gt;Now that we know everything is working with &lt;code&gt;flux-getting-started&lt;/code&gt;,
+we&amp;rsquo;re going to try and do nearly the same thing as &lt;code&gt;flux-getting-started&lt;/code&gt;,
+except instead of using official releases of flux, we&amp;rsquo;re going to build
+and run what we have locally.&lt;/p&gt;
+&lt;h2 id=&#34;prepare-your-environment&#34;&gt;Prepare your environment&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Install the prerequisites. This guide is written from running Linux,
+but the same instructions will generally apply to OSX. Although
+everything you need has been known to work independently in Windows
+from time to time, results may vary.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://kubernetes.io/docs/tasks/tools/install-minikube/&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;minikube&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://kubernetes.io/docs/tasks/tools/install-kubectl/&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;kubectl&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://docs.docker.com/install/&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;docker&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://golang.org/doc/install&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;go&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Configure your environment so you can run tests. Run:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;make &lt;span style=&#34;color:#007020&#34;&gt;test&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;We want to make sure we&amp;rsquo;re starting fresh. Tell &lt;code&gt;minikube&lt;/code&gt; to clear
+any previously running clusters:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;minikube delete
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The 
+&lt;a href=&#34;https://minikube.sigs.k8s.io/docs/commands/addons/&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;minikube&lt;/code&gt; addon&lt;/a&gt;
+called 
+&lt;a href=&#34;https://github.com/GoogleCloudPlatform/freshpod&#34; target=&#34;_blank&#34;&gt;freshpod&lt;/a&gt;
+that will be very useful to us later. You&amp;rsquo;ll see. It&amp;rsquo;s gonna be cool.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;minikube addons &lt;span style=&#34;color:#007020&#34;&gt;enable&lt;/span&gt; freshpod
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;This part is really important. You&amp;rsquo;re going to set some environment
+variables which will intercept any images pulled by docker. Run
+&lt;code&gt;minikube docker-env&lt;/code&gt; to see what we&amp;rsquo;re talking about. You&amp;rsquo;ll get an
+output that shows you what the script is doing. Thankfully, it&amp;rsquo;s not
+terribly complicated - it just sets some environment variables which
+will allow &lt;code&gt;minikube&lt;/code&gt; to man-in-the-middle the requests Kubernetes
+makes to pull images. It will look something like this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span style=&#34;color:#007020&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;DOCKER_TLS_VERIFY&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#007020&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;DOCKER_HOST&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;tcp://192.168.99.128:2376&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#007020&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;DOCKER_CERT_PATH&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;/home/fluxrulez/.minikube/certs&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#007020&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;DOCKER_API_VERSION&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;1.35&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# Run this command to configure your shell:&lt;/span&gt;
+&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# eval $(minikube docker-env)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;So, as the script suggests, run the following command:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span style=&#34;color:#007020&#34;&gt;eval&lt;/span&gt; &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;$(&lt;/span&gt;minikube docker-env&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now, be warned. These are local variables. This means that if you
+run this &lt;code&gt;eval&lt;/code&gt; in one terminal and then switch to another for later
+when we build the Flux project, you&amp;rsquo;re gonna hit some issues.
+For one, you&amp;rsquo;ll know it isn&amp;rsquo;t working because Kubernetes will tell
+you that it can&amp;rsquo;t pull the image when you run &lt;code&gt;kubectl get pods&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;NAME                        READY   STATUS         RESTARTS   AGE
+flux-7f6bd57699-shx9v       0/1     ErrImagePull   &lt;span style=&#34;color:#40a070&#34;&gt;0&lt;/span&gt;          35s
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;prepare-the-repository&#34;&gt;Prepare the repository&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Fork the 
+&lt;a href=&#34;https://github.com/fluxcd/flux&#34; target=&#34;_blank&#34;&gt;repo on GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Clone &lt;code&gt;git@github.com:&amp;lt;YOUR-GITHUB-USERNAME&amp;gt;/flux.git&lt;/code&gt; replacing
+&lt;code&gt;&amp;lt;YOUR-GITHUB-USERNAME&amp;gt;&lt;/code&gt; with your GitHub username.&lt;/p&gt;
+&lt;p&gt;In the same terminal you ran &lt;code&gt;eval $(minikube docker-env)&lt;/code&gt;, run
+&lt;code&gt;GO111MODULE=on go mod download&lt;/code&gt; followed by &lt;code&gt;make&lt;/code&gt; from the root
+directory of the Flux repo.  You&amp;rsquo;ll see docker&amp;rsquo;s usual output as it
+builds the image layers.  Once it&amp;rsquo;s done, you should see something
+like this in the middle of the output:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;Successfully built 606610e0f4ef
+Successfully tagged docker.io/fluxcd/flux:latest
+Successfully tagged docker.io/fluxcd/flux:master-a86167e4
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This confirms that a new docker image was tagged for your image.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Open up 
+&lt;a href=&#34;https://github.com/fluxcd/flux/blob/master/deploy/flux-deployment.yaml&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;deploy/flux-deployment.yaml&lt;/code&gt;&lt;/a&gt;
+and update the image at &lt;code&gt;spec.template.spec.containers[0].image&lt;/code&gt; to
+be simply &lt;code&gt;docker.io/fluxcd/flux&lt;/code&gt;. While we&amp;rsquo;re here, also change
+the &lt;code&gt;--git-url&lt;/code&gt; to point towards your fork. It will look something
+like this in the YAML:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;template&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;containers&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;docker.io/fluxcd/flux&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;imagePullPolicy&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;IfNotPresent&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;args&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;          &lt;/span&gt;- --git-url=git@github.com:&amp;lt;YOUR-GITHUB-USERNAME&amp;gt;/flux-getting-started&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;          &lt;/span&gt;- --git-branch=master&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;We&amp;rsquo;re ready to apply your newly-customized deployment! Since &lt;code&gt;kubectl&lt;/code&gt;
+will apply all the Kubernetes manifests it finds (recursively) in a
+folder, we simply need to pass the directory to &lt;code&gt;kubectl apply&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl apply --filename ./deploy
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You should see an output similar to:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;serviceaccount/flux created
+clusterrole.rbac.authorization.k8s.io/flux created
+clusterrolebinding.rbac.authorization.k8s.io/flux created
+deployment.apps/flux created
+secret/flux-git-deploy created
+deployment.apps/memcached created
+service/memcached created
+secret/flux-git-deploy configured
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Congrats you just deployed your local Flux to your default namespace.
+Check that everything is running:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get pods --selector&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;flux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You should get an output that looks like:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;NAME                   READY   STATUS    RESTARTS   AGE
+flux-6f7fd5bbc-hpq85   1/1     Running   &lt;span style=&#34;color:#40a070&#34;&gt;0&lt;/span&gt;          38s
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If (instead) you see that Ready is showing &lt;code&gt;0/1&lt;/code&gt; and/or the status is
+&lt;code&gt;ErrImagePull&lt;/code&gt; double back on the instructions and make sure you did
+everything correctly and in order.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Pull the logs for your &amp;ldquo;fresh off of master&amp;rdquo; copy of Flux that you
+just deployed locally to &lt;code&gt;minikube&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl logs --selector&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;flux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You should see an output that looks something like this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;ts&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;2019-02-28T18:58:45.091531939Z &lt;span style=&#34;color:#bb60d5&#34;&gt;caller&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;warming.go:268 &lt;span style=&#34;color:#bb60d5&#34;&gt;component&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;warmer &lt;span style=&#34;color:#bb60d5&#34;&gt;info&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;refreshing image&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;image&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;docker.io/fluxcd/flux &lt;span style=&#34;color:#bb60d5&#34;&gt;tag_count&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;60&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;to_update&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;60&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;of_which_refresh&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;of_which_missing&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;60&lt;/span&gt;
+&lt;span style=&#34;color:#bb60d5&#34;&gt;ts&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;2019-02-28T18:58:46.233723421Z &lt;span style=&#34;color:#bb60d5&#34;&gt;caller&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;warming.go:364 &lt;span style=&#34;color:#bb60d5&#34;&gt;component&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;warmer &lt;span style=&#34;color:#bb60d5&#34;&gt;updated&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;docker.io/fluxcd/flux    &lt;span style=&#34;color:#bb60d5&#34;&gt;successful&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;60&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;attempted&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;60&lt;/span&gt;
+&lt;span style=&#34;color:#bb60d5&#34;&gt;ts&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;2019-02-28T18:58:46.234086642Z &lt;span style=&#34;color:#bb60d5&#34;&gt;caller&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;images.go:17 &lt;span style=&#34;color:#bb60d5&#34;&gt;component&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;sync-loop &lt;span style=&#34;color:#bb60d5&#34;&gt;msg&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;polling images&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#bb60d5&#34;&gt;ts&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;2019-02-28T18:58:46.234125646Z &lt;span style=&#34;color:#bb60d5&#34;&gt;caller&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;images.go:27 &lt;span style=&#34;color:#bb60d5&#34;&gt;component&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;sync-loop &lt;span style=&#34;color:#bb60d5&#34;&gt;msg&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;no automated services&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#bb60d5&#34;&gt;ts&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;2019-02-28T18:58:46.749598558Z &lt;span style=&#34;color:#bb60d5&#34;&gt;caller&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;warming.go:268 &lt;span style=&#34;color:#bb60d5&#34;&gt;component&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;warmer &lt;span style=&#34;color:#bb60d5&#34;&gt;info&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;refreshing image&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;image&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;memcached    &lt;span style=&#34;color:#bb60d5&#34;&gt;tag_count&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;66&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;to_update&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;66&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;of_which_refresh&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;of_which_missing&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;66&lt;/span&gt;
+&lt;span style=&#34;color:#bb60d5&#34;&gt;ts&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;2019-02-28T18:58:51.017452675Z &lt;span style=&#34;color:#bb60d5&#34;&gt;caller&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;warming.go:364 &lt;span style=&#34;color:#bb60d5&#34;&gt;component&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;warmer &lt;span style=&#34;color:#bb60d5&#34;&gt;updated&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;memcached &lt;span style=&#34;color:#bb60d5&#34;&gt;successful&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;66&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;attempted&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;66&lt;/span&gt;
+&lt;span style=&#34;color:#bb60d5&#34;&gt;ts&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;2019-02-28T18:58:51.020061586Z &lt;span style=&#34;color:#bb60d5&#34;&gt;caller&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;images.go:17 &lt;span style=&#34;color:#bb60d5&#34;&gt;component&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;sync-loop &lt;span style=&#34;color:#bb60d5&#34;&gt;msg&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;polling images&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#bb60d5&#34;&gt;ts&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;2019-02-28T18:58:51.020113243Z &lt;span style=&#34;color:#bb60d5&#34;&gt;caller&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;images.go:27 &lt;span style=&#34;color:#bb60d5&#34;&gt;component&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;sync-loop &lt;span style=&#34;color:#bb60d5&#34;&gt;msg&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;no automated services&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;make-some-changes&#34;&gt;Make some changes&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Now for the part you&amp;rsquo;ve been waiting for! We&amp;rsquo;re going to make a
+cosmetic change to our local copy of Flux. Navigate to
+
+&lt;a href=&#34;https://github.com/fluxcd/flux/blob/master/pkg/git/operations.go&#34; target=&#34;_blank&#34;&gt;git/operations.go&lt;/a&gt;.
+In it, you will find a private function to this package that goes
+by the name &lt;code&gt;execGitCmd&lt;/code&gt;. Paste the following as the (new) first
+line of the function:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;fmt.&lt;span style=&#34;color:#06287e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;executing git command ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ&amp;#34;&lt;/span&gt;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Run &lt;code&gt;make&lt;/code&gt; again. Once this finishes you can check on your running
+pods with:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get pods --selector&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;flux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Keep your eye on the &lt;code&gt;AGE&lt;/code&gt; column. It should be just a few seconds
+old if you check out the &lt;code&gt;AGE&lt;/code&gt; column:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;NAME                   READY   STATUS    RESTARTS   AGE
+flux-6f7fd5bbc-6j9d5   1/1     Running   &lt;span style=&#34;color:#40a070&#34;&gt;0&lt;/span&gt;          10s
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This pod was deployed even though we didn&amp;rsquo;t run any &lt;code&gt;kubectl&lt;/code&gt;
+commands or interact with Kubernetes directly because of the
+&lt;code&gt;freshpod&lt;/code&gt; &lt;code&gt;minikube&lt;/code&gt; addon that we enabled earlier. Freshpod saw
+that a new Docker image was tagged for &lt;code&gt;docker.io/fluxcd/flux:latest&lt;/code&gt;
+and it went ahead and redeployed that pod for us.&lt;/p&gt;
+&lt;p&gt;Consider that simply applying the &lt;code&gt;flux-deployment.yaml&lt;/code&gt; file again
+wouldn&amp;rsquo;t do anything since the actual image we&amp;rsquo;re targeting (which
+is actually &lt;code&gt;docker.io/fluxcd/flux&lt;/code&gt; with no &lt;code&gt;:latest&lt;/code&gt; tag, but it&amp;rsquo;s
+the same difference) hasn&amp;rsquo;t changed.  The Kubernetes api server will
+get that JSON request from &lt;code&gt;kubectl&lt;/code&gt; and go: &amp;ldquo;right&amp;hellip; so nothing has
+changed in the file so I have nothing to do&amp;hellip; IGNORE!&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;There is another way to do this, of course. Remember that before when
+we ran &lt;code&gt;make&lt;/code&gt; that we did &lt;em&gt;also&lt;/em&gt; get an image tagged with the &lt;code&gt;:&amp;lt;branch&amp;gt;-&amp;lt;commit hash&amp;gt;&lt;/code&gt;
+syntax (in our specific example above it was &lt;code&gt;:master-a86167e4&lt;/code&gt;).
+We could, in theory, grab that tag every time we &lt;code&gt;make&lt;/code&gt;, and then
+paste it into &lt;code&gt;spec.template.spec.containers[0].image&lt;/code&gt; of our
+deployment. That&amp;rsquo;s tedious and error prone. Instead, &lt;code&gt;freshpod&lt;/code&gt; cuts
+this step out for us and accomplishes the same end goal.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Check the logs again (with &lt;code&gt;kubectl logs --selector=name=flux&lt;/code&gt;) to
+find that your obnoxious chain of &lt;code&gt;Z&lt;/code&gt;s is present.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;congratulations&#34;&gt;Congratulations!&lt;/h2&gt;
+&lt;p&gt;You have now modified Flux and deployed that change locally. From here
+on out, you simply need to run &lt;code&gt;make&lt;/code&gt; after you save your changes and
+wait a few seconds for your new pod to be deployed to &lt;code&gt;minikube&lt;/code&gt;.
+Keep in mind, that (as in the situation where you run &lt;code&gt;make&lt;/code&gt; without
+saving any changes) if the Docker image you pointed to in the
+Kubernetes deployment for Flux is not Successfully tagged, &lt;code&gt;freshpod&lt;/code&gt;
+won&amp;rsquo;t have anything new to deploy.
+Other than that, you should be good to go!&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Building</title>
+      <link>/legacy/flux/contributing/building/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/contributing/building/</guid>
+      <description>
+        
+        
+        &lt;p&gt;You&amp;rsquo;ll need a working &lt;code&gt;go&lt;/code&gt; environment version &amp;gt;= 1.11 (official releases are built against &lt;code&gt;1.13&lt;/code&gt;).
+It&amp;rsquo;s also expected that you have a Docker daemon for building images.&lt;/p&gt;
+&lt;p&gt;Clone the repository. The project uses 
+&lt;a href=&#34;https://github.com/golang/go/wiki/Modules&#34; target=&#34;_blank&#34;&gt;Go Modules&lt;/a&gt;,
+so if you explicitly define &lt;code&gt;$GOPATH&lt;/code&gt; you should clone somewhere else.&lt;/p&gt;
+&lt;p&gt;Then, from the root directory:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;make
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This makes Docker images, and installs binaries to &lt;code&gt;$GOBIN&lt;/code&gt; (if you define it) or &lt;code&gt;$(go env GOPATH)/bin&lt;/code&gt;.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    &lt;p&gt;The default target architecture is amd64. If you would like
+to try to build Docker images and binaries for a different
+architecture you will have to set ARCH variable:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;make &lt;span style=&#34;color:#bb60d5&#34;&gt;ARCH&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&amp;lt;target_arch&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;running-tests&#34;&gt;Running tests&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# Unit tests&lt;/span&gt;
+make &lt;span style=&#34;color:#007020&#34;&gt;test&lt;/span&gt;
+
+&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# End-to-end tests&lt;/span&gt;
+make e2e
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+      </description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,180 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>道场 – Contributing</title>
+    <link>/legacy/helm-operator/contributing/</link>
+    <description>Recent content in Contributing on 道场</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="/legacy/helm-operator/contributing/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Legacy: Building</title>
+      <link>/legacy/helm-operator/contributing/building/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/contributing/building/</guid>
+      <description>
+        
+        
+        &lt;p&gt;You&amp;rsquo;ll need a working &lt;code&gt;go&lt;/code&gt; environment version &amp;gt;= 1.11 (official releases are built against &lt;code&gt;1.14.x&lt;/code&gt;).
+It&amp;rsquo;s also expected that you have a Docker daemon for building images.&lt;/p&gt;
+&lt;p&gt;Clone the repository. The project uses 
+&lt;a href=&#34;https://github.com/golang/go/wiki/Modules&#34; target=&#34;_blank&#34;&gt;Go Modules&lt;/a&gt;,
+so if you explicitly define &lt;code&gt;$GOPATH&lt;/code&gt; you should clone somewhere else.&lt;/p&gt;
+&lt;p&gt;Then, from the root directory:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;make
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This makes Docker images, and installs binaries to &lt;code&gt;$GOBIN&lt;/code&gt; (if you define it) or &lt;code&gt;$(go env GOPATH)/bin&lt;/code&gt;.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; the default target architecture is amd64. If you would like
+to try to build Docker images and binaries for a different
+architecture you will have to set ARCH variable:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ make &lt;span style=&#34;color:#bb60d5&#34;&gt;ARCH&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&amp;lt;target_arch&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/blockquote&gt;
+&lt;h2 id=&#34;running-tests&#34;&gt;Running tests&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# Unit tests&lt;/span&gt;
+make &lt;span style=&#34;color:#007020&#34;&gt;test&lt;/span&gt;
+
+&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# End-to-end tests, acceptable Helm versions are v2,v3&lt;/span&gt;
+make e2e &lt;span style=&#34;color:#bb60d5&#34;&gt;HELM_VERSION&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&amp;lt;version&amp;gt;
+
+&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# Run specific end-to-end test&lt;/span&gt;
+&lt;span style=&#34;color:#bb60d5&#34;&gt;E2E_TESTS&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;./10_helm_chart.bats &lt;span style=&#34;color:#bb60d5&#34;&gt;HELM_VERSION&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;v2 make e2e
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;For e2e tests to work on macOS, you may need to install some dependencies&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;brew install bash
+brew install parallel
+brew install coreutils
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Get started developing</title>
+      <link>/legacy/helm-operator/contributing/get-started-developing/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/helm-operator/contributing/get-started-developing/</guid>
+      <description>
+        
+        
+        &lt;p&gt;This guide shows you how to make a small change to the Helm Operator and then build and test that change locally using a Kind cluster.&lt;/p&gt;
+&lt;h2 id=&#34;prepare-your-environment&#34;&gt;Prepare your environment&lt;/h2&gt;
+&lt;p&gt;To get started you will need to prepare your development environment, the following will need to be installed:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://docs.docker.com/install/&#34; target=&#34;_blank&#34;&gt;docker&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://golang.org/doc/install&#34; target=&#34;_blank&#34;&gt;go&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://kind.sigs.k8s.io/docs/user/quick-start/&#34; target=&#34;_blank&#34;&gt;kind&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://kubernetes.io/docs/tasks/tools/install-kubectl/&#34; target=&#34;_blank&#34;&gt;kubectl&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://helm.sh/docs/intro/quickstart/&#34; target=&#34;_blank&#34;&gt;helm&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;configure-kind&#34;&gt;Configure Kind&lt;/h3&gt;
+&lt;p&gt;You will want to create a Kind cluster with a 
+&lt;a href=&#34;https://kind.sigs.k8s.io/docs/user/local-registry/&#34; target=&#34;_blank&#34;&gt;local registry&lt;/a&gt; so that you have somewhere to easily push your helm-operator image without relying on an external registry, you can do this by running the following:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;KIND_CLUSTER_NAME&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;helm-operator &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;  sh -c &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;$(&lt;/span&gt;curl -sSL https://kind.sigs.k8s.io/examples/kind-with-registry.sh&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You should now have your local development environment ready to make a change to the Helm Operator, continue on to see how to make your first change and deploy it to the Kind cluster.&lt;/p&gt;
+&lt;h2 id=&#34;make-the-change&#34;&gt;Make the change&lt;/h2&gt;
+&lt;p&gt;Your first change will involve adding a new field to the HelmRelease CRD that will simply output a custom log message when applying the release, first you will need to modify the CRD definition to add the new field:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-diff&#34; data-lang=&#34;diff&#34;&gt;&lt;span style=&#34;color:#a00000&#34;&gt;--- a/pkg/apis/helm.fluxcd.io/v1/types_helmrelease.go
+&lt;/span&gt;&lt;span style=&#34;color:#a00000&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#00a000&#34;&gt;+++ b/pkg/apis/helm.fluxcd.io/v1/types_helmrelease.go
+&lt;/span&gt;&lt;span style=&#34;color:#00a000&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#800080;font-weight:bold&#34;&gt;@@ -420,6 +420,9 @@ type HelmReleaseSpec struct {
+&lt;/span&gt;&lt;span style=&#34;color:#800080;font-weight:bold&#34;&gt;&lt;/span&gt;        // Values holds the values for this Helm release.
+        // +optional
+        Values HelmValues `json:&amp;#34;values,omitempty&amp;#34;`
+&lt;span style=&#34;color:#00a000&#34;&gt;+       // A custom message to emit when applying the release.
+&lt;/span&gt;&lt;span style=&#34;color:#00a000&#34;&gt;+       // +optional
+&lt;/span&gt;&lt;span style=&#34;color:#00a000&#34;&gt;+       EchoMessage *string `json:&amp;#34;echoMessage,omitempty&amp;#34;`
+&lt;/span&gt;&lt;span style=&#34;color:#00a000&#34;&gt;&lt;/span&gt; }
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now modify the sync process to output your message if it has been set:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-diff&#34; data-lang=&#34;diff&#34;&gt;&lt;span style=&#34;color:#a00000&#34;&gt;--- a/pkg/release/release.go
+&lt;/span&gt;&lt;span style=&#34;color:#a00000&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#00a000&#34;&gt;+++ b/pkg/release/release.go
+&lt;/span&gt;&lt;span style=&#34;color:#00a000&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#800080;font-weight:bold&#34;&gt;@@ -74,6 +74,10 @@ func (r *Release) Sync(hr *v1.HelmRelease) (err error) {
+&lt;/span&gt;&lt;span style=&#34;color:#800080;font-weight:bold&#34;&gt;&lt;/span&gt;        logger := releaseLogger(r.logger, client, hr)
+        logger.Log(&amp;#34;info&amp;#34;, &amp;#34;starting sync run&amp;#34;)
+ 
+&lt;span style=&#34;color:#00a000&#34;&gt;+       if hr.Spec.EchoMessage != nil {
+&lt;/span&gt;&lt;span style=&#34;color:#00a000&#34;&gt;+               logger.Log(&amp;#34;info&amp;#34;, *hr.Spec.EchoMessage)
+&lt;/span&gt;&lt;span style=&#34;color:#00a000&#34;&gt;+       }
+&lt;/span&gt;&lt;span style=&#34;color:#00a000&#34;&gt;+
+&lt;/span&gt;&lt;span style=&#34;color:#00a000&#34;&gt;&lt;/span&gt;        chart, cleanup, err := r.prepareChart(client, hr)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;That should be all that is needed for your first change, you can now move on to building and pushing the image so that you can see your changes in action.&lt;/p&gt;
+&lt;h2 id=&#34;building&#34;&gt;Building&lt;/h2&gt;
+&lt;p&gt;The next step is to build everything, as you have made changes to the CRD you will first want to run the code-generation tasks:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;make generate
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now you can build everything else including the Docker image:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;make all
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;pushing-the-image&#34;&gt;Pushing the image&lt;/h2&gt;
+&lt;p&gt;Once everything is successfully built you should be ready to push the image to your local Kind registry, you will have to re-tag the image and then push it to the local registry:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# Tag the image&lt;/span&gt;
+docker tag &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;  &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;fluxcd/helm-operator:&lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;$(&lt;/span&gt;./docker/image-tag&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;  &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;localhost:5000/helm-operator:&lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;$(&lt;/span&gt;./docker/image-tag&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;&lt;/span&gt;
+
+&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# Push the image&lt;/span&gt;
+docker push &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;  &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;localhost:5000/helm-operator:&lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;$(&lt;/span&gt;./docker/image-tag&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;deploying-your-changes&#34;&gt;Deploying your changes&lt;/h2&gt;
+&lt;p&gt;You can now deploy your changes to the Kind cluster using your newly built and pushed image:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# Create fluxcd namespace&lt;/span&gt;
+kubectl create namespace fluxcd
+
+&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# Apply HelmRelease CRD&lt;/span&gt;
+kubectl apply -f deploy/crds.yaml
+
+&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# Install helm-operator using pushed image&lt;/span&gt;
+helm upgrade -i helm-operator fluxcd/helm-operator &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;  --namespace fluxcd &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;  --set helm.versions&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;v3 &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;  --set image.repository&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;localhost:5000/helm-operator &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt;  --set image.tag&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;$(&lt;/span&gt;./docker/image-tag&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You should now have an instance of the Helm Operator running with your changes!&lt;/p&gt;
+&lt;h2 id=&#34;see-your-changes-in-action&#34;&gt;See your changes in action&lt;/h2&gt;
+&lt;p&gt;To see your changes in action, first deploy a HelmRelease setting the new &lt;code&gt;echoMessage&lt;/code&gt; field:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;cat &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;lt;&amp;lt;EOF | kubectl apply -f -
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;apiVersion: helm.fluxcd.io/v1
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;kind: HelmRelease
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;metadata:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  name: podinfo
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  namespace: default
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;spec:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  echoMessage: This is a test
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  releaseName: podinfo
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  chart:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;    repository: https://stefanprodan.github.io/podinfo
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;    version: 2.1.0
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;    name: podinfo
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;  values:
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;    replicaCount: 1
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Once the release is deployed you can view the helm-operator pods logs to see your emitted message:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&amp;gt; kubectl logs -n fluxcd --tail&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;25&lt;/span&gt; --selector&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;app&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;helm-operator
+
+...
+&lt;span style=&#34;color:#bb60d5&#34;&gt;ts&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;2020-04-15T20:35:16.249414781Z &lt;span style=&#34;color:#bb60d5&#34;&gt;caller&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;release.go:78 &lt;span style=&#34;color:#bb60d5&#34;&gt;component&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;release &lt;span style=&#34;color:#bb60d5&#34;&gt;release&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;podinfo &lt;span style=&#34;color:#bb60d5&#34;&gt;targetNamespace&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default &lt;span style=&#34;color:#bb60d5&#34;&gt;resource&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default:helmrelease/podinfo &lt;span style=&#34;color:#bb60d5&#34;&gt;helmVersion&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;v3 &lt;span style=&#34;color:#bb60d5&#34;&gt;info&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;This is a test&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#bb60d5&#34;&gt;ts&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;2020-04-15T20:35:16.540354042Z &lt;span style=&#34;color:#bb60d5&#34;&gt;caller&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;release.go:272 &lt;span style=&#34;color:#bb60d5&#34;&gt;component&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;release &lt;span style=&#34;color:#bb60d5&#34;&gt;release&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;podinfo &lt;span style=&#34;color:#bb60d5&#34;&gt;targetNamespace&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default &lt;span style=&#34;color:#bb60d5&#34;&gt;resource&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default:helmrelease/podinfo &lt;span style=&#34;color:#bb60d5&#34;&gt;helmVersion&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;v3 &lt;span style=&#34;color:#bb60d5&#34;&gt;info&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;running installation&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;phase&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;install
+&lt;span style=&#34;color:#bb60d5&#34;&gt;ts&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;2020-04-15T20:35:16.89689355Z &lt;span style=&#34;color:#bb60d5&#34;&gt;caller&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;helm.go:69 &lt;span style=&#34;color:#bb60d5&#34;&gt;component&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;helm &lt;span style=&#34;color:#bb60d5&#34;&gt;version&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;v3 &lt;span style=&#34;color:#bb60d5&#34;&gt;info&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;creating 3 resource(s)&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;targetNamespace&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default &lt;span style=&#34;color:#bb60d5&#34;&gt;release&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;podinfo
+&lt;span style=&#34;color:#bb60d5&#34;&gt;ts&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;2020-04-15T20:35:16.938861204Z &lt;span style=&#34;color:#bb60d5&#34;&gt;caller&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;release.go:281 &lt;span style=&#34;color:#bb60d5&#34;&gt;component&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;release &lt;span style=&#34;color:#bb60d5&#34;&gt;release&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;podinfo &lt;span style=&#34;color:#bb60d5&#34;&gt;targetNamespace&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default &lt;span style=&#34;color:#bb60d5&#34;&gt;resource&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default:helmrelease/podinfo &lt;span style=&#34;color:#bb60d5&#34;&gt;helmVersion&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;v3 &lt;span style=&#34;color:#bb60d5&#34;&gt;info&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;installation succeeded&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;revision&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;2.1.0 &lt;span style=&#34;color:#bb60d5&#34;&gt;phase&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;install
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;congratulations&#34;&gt;Congratulations!&lt;/h2&gt;
+&lt;p&gt;You did it! you made your first change to the HelmRelease CRD, built, deployed and ran an instance of the Helm Operator to see it in action.&lt;/p&gt;
+&lt;p&gt;You should now hopefully be more comfortable with making changes and running the Helm Operator locally, and be ready to tackle your 
+&lt;a href=&#34;https://github.com/fluxcd/helm-operator/issues?q=is%3Aissue&amp;#43;is%3Aopen&amp;#43;label%3A%22help&amp;#43;wanted%22&#34; target=&#34;_blank&#34;&gt;first issue&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;To find out more about the Helm Operator community and our contribution workflow have a look at the 
+&lt;a href=&#34;introduction.md&#34;&gt;contributing guide&lt;/a&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,2036 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>道场 – References</title>
+    <link>/legacy/flux/references/</link>
+    <description>Recent content in References on 道场</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="/legacy/flux/references/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Legacy: Blueprint</title>
+      <link>/legacy/flux/references/blueprint/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/references/blueprint/</guid>
+      <description>
+        
+        
+        &lt;p&gt;This page describes the goals of Flux, how it achieves them and
+significant architectural decisions. It is intentionally high level
+to prevent it from being out of date too quickly.&lt;/p&gt;
+&lt;h2 id=&#34;fluxs-goals&#34;&gt;Flux&amp;rsquo;s goals&lt;/h2&gt;
+&lt;p&gt;The overall goal of Flux is to automate the deployment of services.
+A typical use case would be:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;A developer makes changes&lt;/li&gt;
+&lt;li&gt;An operational cluster is now out of date and needs to be updated&lt;/li&gt;
+&lt;li&gt;Flux observes those changes and deploys them to the cluster&lt;/li&gt;
+&lt;li&gt;Flux maintains the current state of the cluster (e.g. in the event of
+failure)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Hence, the goal is to automate away the need for a developer to interact
+with an orchestrator (which is a common source of accidental failure) or
+with the systems that ensure that the orchestrator is in a working
+state.&lt;/p&gt;
+&lt;p&gt;Flux provides a CLI (
+&lt;a href=&#34;/legacy/flux/references/fluxctl/&#34;&gt;&lt;code&gt;fluxctl&lt;/code&gt;&lt;/a&gt;) to perform these operations
+manually. Flux is flexible enough to fit into any development process.&lt;/p&gt;
+&lt;h2 id=&#34;implementation-overview&#34;&gt;Implementation overview&lt;/h2&gt;
+&lt;p&gt;The following describes how Flux achieves the goals.&lt;/p&gt;
+&lt;h3 id=&#34;synchronisation-of-cluster-state&#34;&gt;Synchronisation of cluster state&lt;/h3&gt;
+&lt;p&gt;The Flux team firmly believe that cluster state should be version
+controlled. This allows users to record the history of the cluster,
+fallback to previous versions and recreate clusters in exactly the same
+state when required.&lt;/p&gt;
+&lt;p&gt;But there is also another aspect. By tightly integrating the cluster
+with version control, the cluster becomes more tightly integrated with
+the deployment pipeline. This means that developers no longer have to
+interact directly with a cluster (with the inevitable consequences of a
+&amp;ldquo;fat-finger&amp;rdquo; mistake) which makes it far more stable and ideally
+immutable.&lt;/p&gt;
+&lt;p&gt;Flux achieves this by automatically synchronising the state of the
+cluster to match the code representing the cluster in the repository.&lt;/p&gt;
+&lt;p&gt;This simple idea then allows for a whole range of tools that can react
+to changes and simply write to a repository.&lt;/p&gt;
+&lt;h3 id=&#34;monitoring-for-new-images&#34;&gt;Monitoring for new images&lt;/h3&gt;
+&lt;p&gt;Flux reads a list of running containers from the user git repository.
+For each image, it will query the container registry to obtain the most
+recently released tag.&lt;/p&gt;
+&lt;p&gt;Flux then compares the most recent image tag with that specified in the
+git repository. If they don&amp;rsquo;t match, the repository is updated.&lt;/p&gt;
+&lt;p&gt;When services are in an &amp;ldquo;automated&amp;rdquo; mode, the service will periodically
+check to see whether there are any new images. If there are, then they
+are written to the repository.&lt;/p&gt;
+&lt;p&gt;When automation is disabled, images are not checked.&lt;/p&gt;
+&lt;p&gt;In order to access private registries, credentials may be required.&lt;/p&gt;
+&lt;h3 id=&#34;deployment-of-images&#34;&gt;Deployment of images&lt;/h3&gt;
+&lt;p&gt;Flux will only deploy different images. It will not re-deploy images
+with the same tag.&lt;/p&gt;
+&lt;p&gt;Once a list of new images have been established, it will alter the
+configuration of the cluster to deploy the new images.&lt;/p&gt;
+&lt;p&gt;Images can be &amp;ldquo;locked&amp;rdquo; to a specific version. &amp;ldquo;locked&amp;rdquo; images won&amp;rsquo;t be
+updated by automated or manual means.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Daemon (fluxd)</title>
+      <link>/legacy/flux/references/daemon/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/references/daemon/</guid>
+      <description>
+        
+        
+        &lt;h2 id=&#34;summary&#34;&gt;Summary&lt;/h2&gt;
+&lt;p&gt;Flux daemon (&lt;code&gt;fluxd&lt;/code&gt;, aka Flux agent) allows automation of application deployments and version control of cluster configuration.
+Version controlling of cluster manifests provides reproducibility and a historical trail of events.&lt;/p&gt;
+&lt;h3 id=&#34;responsibilities&#34;&gt;Responsibilities&lt;/h3&gt;
+&lt;h4 id=&#34;continuous-deployment&#34;&gt;Continuous Deployment&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Flux daemon monitors user git repo Kubernetes manifests for
+changes, which it then deploys to the cluster.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Flux daemon monitors container registry for running container image
+updates. Detection of an image change (running container image tag
+vs container registry image tag) triggers k8s manifest update, which
+is committed to the user git repository, then deployed to the
+Kubernetes cluster.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;deployment-approaches&#34;&gt;Deployment approaches&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Automate vs Deautomate&lt;/p&gt;
+&lt;p&gt;Deployment happens automatically when a new image tag is
+detected. Deautomated deployment will not proceed until
+manually released (through the CLI tool &lt;code&gt;fluxctl&lt;/code&gt;).&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Lock vs Unlock&lt;/p&gt;
+&lt;p&gt;Deployment is pinned to a particular image tag.
+New deployment will not proceed upon triggered release.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;setup-and-configuration&#34;&gt;Setup and configuration&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;fluxd&lt;/code&gt; requires setup and offers customization though a multitude of flags.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Flag&lt;/th&gt;
+&lt;th&gt;Default&lt;/th&gt;
+&lt;th&gt;Purpose&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;listen -l&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;:3030&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;listen address where /metrics and API will be served&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;listen-metrics&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;listen address for /metrics endpoint&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;kubernetes-kubectl&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;optional, explicit path to kubectl tool&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;version&lt;/td&gt;
+&lt;td&gt;false&lt;/td&gt;
+&lt;td&gt;output the version number and exit&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Git repo &amp;amp; key etc.&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;git-url&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;URL of git repo with Kubernetes manifests; e.g., &lt;code&gt;git@github.com:fluxcd/flux-get-started&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;git-branch&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;master&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;branch of git repo to use for Kubernetes manifests&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;git-ci-skip&lt;/td&gt;
+&lt;td&gt;false&lt;/td&gt;
+&lt;td&gt;when set, fluxd will append &lt;code&gt;\n\n[ci skip]&lt;/code&gt; to its commit messages&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;git-ci-skip-message&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;&amp;quot;&amp;quot;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;if provided, fluxd will append this to commit messages (overrides &amp;ndash;git-ci-skip`)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;git-path&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;path within git repo to locate Kubernetes manifests (relative path)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;git-user&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;Weave Flux&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;username to use as git committer&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;git-email&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;support@weave.works&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;email to use as git committer&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;git-set-author&lt;/td&gt;
+&lt;td&gt;false&lt;/td&gt;
+&lt;td&gt;if set, the author of git commits will reflect the user who initiated the commit and will differ from the git committer&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;git-gpg-key-import&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;if set, fluxd will attempt to import the gpg key(s) found on the given path&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;git-signing-key&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;if set, commits made by fluxd to the user git repo will be signed with the provided GPG key.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;git-secret&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;if set and a &lt;code&gt;.gitsecret&lt;/code&gt; directory exist in the root of the git repository, Flux will execute a &lt;code&gt;git secret reveal -f&lt;/code&gt; in the working clone before performing any operations&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;git-label&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;label to keep track of sync progress; overrides both &amp;ndash;git-sync-tag and &amp;ndash;git-notes-ref&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;git-sync-tag&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;flux-sync&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;tag to use to mark sync progress for this cluster (old config, still used if &amp;ndash;git-label is not supplied)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;git-notes-ref&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;flux&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;ref to use for keeping commit annotations in git notes&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;git-poll-interval&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;5m&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;period at which to fetch any new commits from the git repo&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;git-timeout&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;20s&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;duration after which git operations time out&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;git-readonly&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;false&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;If &lt;code&gt;true&lt;/code&gt;, the git repo will be considered read-only, and Flux will not attempt to write to it. Implies &amp;ndash;sync-state=secret&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;syncing:&lt;/strong&gt; control over how config is applied to the cluster&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;sync-interval&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;5m&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;apply the git config to the cluster at least this often. New commits may provoke more frequent syncs&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;sync-timeout&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;1m&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;duration after which sync operations time out&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;sync-garbage-collection&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;false&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;when set, fluxd will delete resources that it created, but are no longer present in git&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;sync-garbage-collection-dry&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;false&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;only log what would be garbage collected, rather than deleting. Implies &amp;ndash;sync-garbage-collection&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;sync-state&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;git&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Where to keep sync state; either a tag in the upstream repo (&lt;code&gt;git&lt;/code&gt;), or as an annotation on the SSH secret (&lt;code&gt;secret&lt;/code&gt;)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;registry cache:&lt;/strong&gt; (none of these need overriding, usually)&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;memcached-hostname&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;memcached&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;hostname for memcached service to use for caching image metadata&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;memcached-timeout&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;1s&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;maximum time to wait before giving up on memcached requests&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;memcached-service&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;memcached&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;SRV service used to discover memcache servers&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;registry-cache-expiry&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;1h&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Duration to keep cached registry tag info. Must be &amp;lt; 1 month.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;registry-rps&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;200&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;maximum registry requests per second per host&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;registry-burst&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;125&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;maximum number of warmer connections to remote and memcache&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;registry-insecure-host&lt;/td&gt;
+&lt;td&gt;[]&lt;/td&gt;
+&lt;td&gt;registry hosts to use HTTP for (instead of HTTPS)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;registry-exclude-image&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;[&amp;quot;k8s.gcr.io/*&amp;quot;]&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;do not scan images that match these glob expressions&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;registry-include-image&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;nil&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;scan &lt;em&gt;only&lt;/em&gt; images that match these glob expressions (the default, &lt;code&gt;nil&lt;/code&gt;, means include everything)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;registry-use-labels&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;[&amp;quot;index.docker.io/weaveworks/*&amp;quot;, &amp;quot;index.docker.io/fluxcd/*&amp;quot;]&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;use the timestamp (RFC3339) from labels for (canonical) image refs that match these glob expressions&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;docker-config&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;&amp;quot;&amp;quot;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;path to a Docker config file with default image registry credentials&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;registry-ecr-region&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;[]&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;allow these AWS regions when scanning images from ECR (multiple values allowed); defaults to the detected cluster region&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;registry-ecr-include-id&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;[]&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;include these AWS account ID(s) when scanning images in ECR (multiple values allowed); empty means allow all, unless excluded&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;registry-ecr-exclude-id&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;[&amp;lt;EKS SYSTEM ACCOUNT&amp;gt;]&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;exclude these AWS account ID(s) when scanning ECR (multiple values allowed); defaults to the EKS system account, so system images will not be scanned&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;registry-require&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;[]&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;exit with an error if the given services are not available. Useful for escalating misconfiguration or outages that might otherwise go undetected. Presently supported values: {&lt;code&gt;ecr&lt;/code&gt;}&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;registry-disable-scanning&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;false&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;do not scan container image registries to fill in the registry cache&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;k8s-secret backed ssh keyring configuration&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;k8s-secret-name&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;flux-git-deploy&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;name of the k8s secret used to store the private SSH key&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;k8s-secret-volume-mount-path&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;/etc/fluxd/ssh&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;mount location of the k8s secret storing the private SSH key&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;k8s-secret-data-key&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;identity&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;data key holding the private SSH key within the k8s secret&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;k8s configuration&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;k8s-allow-namespace&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;restrict all operations to the provided namespaces&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;k8s-default-namespace&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;the namespace to use for resources where a namespace is not specified&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;k8s-unsafe-exclude-resource&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;[&amp;quot;*metrics.k8s.io/*&amp;quot;, &amp;quot;webhook.certmanager.k8s.io/*&amp;quot;, &amp;quot;v1/Event&amp;quot;]&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;do not attempt to obtain cluster resources whose group/version/kind matches these glob expressions, e.g. &lt;code&gt;coordination.k8s.io/v1beta1/Lease&lt;/code&gt;, &lt;code&gt;coordination.k8s.io/*/Lease&lt;/code&gt; or &lt;code&gt;coordination.k8s.io/*&lt;/code&gt;. Potentially unsafe, please read Flux&amp;rsquo;s troubleshooting section on &lt;code&gt;--k8s-unsafe-exclude-resource&lt;/code&gt; before using it.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;upstream service&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;connect&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;connect to an upstream service e.g., Weave Cloud, at this base address&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;token&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;authentication token for upstream service&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;SSH key generation&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;ssh-keygen-bits&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;-b argument to ssh-keygen (default unspecified)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;ssh-keygen-type&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;-t argument to ssh-keygen (default unspecified)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;ssh-keygen-format&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;-m argument to ssh-keygen (default RFC4716)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;manifest generation&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;manifest-generation&lt;/td&gt;
+&lt;td&gt;false&lt;/td&gt;
+&lt;td&gt;search for .flux.yaml files to generate manifests&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&amp;ndash;sops&lt;/td&gt;
+&lt;td&gt;false&lt;/td&gt;
+&lt;td&gt;decrypt SOPS-encrypted manifest files before applying them to the cluster. Provide decryption keys in the same way as providing them for &lt;code&gt;sops&lt;/code&gt; the binary, for example with &lt;code&gt;--git-gpg-key-import&lt;/code&gt;. The full description of how to supply sops with a key can be found in the 
+&lt;a href=&#34;https://github.com/mozilla/sops#usage&#34; target=&#34;_blank&#34;&gt;SOPS documentation&lt;/a&gt;. Be aware that manifests generated with &lt;code&gt;.flux.yaml&lt;/code&gt; files are not decrypted. Instead, make sure to output cleartext manifests by explicitly invoking the &lt;code&gt;sops&lt;/code&gt; binary.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;more-information&#34;&gt;More information&lt;/h2&gt;
+&lt;p&gt;Setting up and configuring &lt;code&gt;fluxd&lt;/code&gt; is discussed in
+
+&lt;a href=&#34;/legacy/flux/tutorials/get-started/&#34;&gt;&amp;ldquo;Get started with Flux&amp;rdquo;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;There is also more information on 
+&lt;a href=&#34;/legacy/flux/references/garbagecollection/&#34;&gt;garbage collection&lt;/a&gt;,
+
+&lt;a href=&#34;/legacy/flux/references/git-gpg/&#34;&gt;Git commit signing&lt;/a&gt;, and other elements in 
+&lt;a href=&#34;/legacy/flux/&#34;&gt;references&lt;/a&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: fluxctl</title>
+      <link>/legacy/flux/references/fluxctl/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/references/fluxctl/</guid>
+      <description>
+        
+        
+        &lt;p&gt;&lt;code&gt;fluxctl&lt;/code&gt; provides an API that can be used from the command line.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;--help&lt;/code&gt; for &lt;code&gt;fluxctl&lt;/code&gt; is described below.&lt;/p&gt;
+&lt;h2 id=&#34;installing-fluxctl&#34;&gt;Installing &lt;code&gt;fluxctl&lt;/code&gt;&lt;/h2&gt;
+&lt;h3 id=&#34;mac-os&#34;&gt;Mac OS&lt;/h3&gt;
+&lt;p&gt;If you are using a Mac and use Homebrew, you can simply run:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;brew install fluxctl
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;linux&#34;&gt;Linux&lt;/h3&gt;
+&lt;h4 id=&#34;ubuntu-and-others-snaps&#34;&gt;Ubuntu (and others): snaps&lt;/h4&gt;
+&lt;p&gt;
+&lt;a href=&#34;https://docs.snapcraft.io/installing-snapd&#34; target=&#34;_blank&#34;&gt;Many Linux distributions&lt;/a&gt; support
+snaps these days, which makes it very easy to install &lt;code&gt;fluxctl&lt;/code&gt; and stay up to
+date.&lt;/p&gt;
+&lt;p&gt;To install it, simply run:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;sudo snap install fluxctl --classic
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If you would prefer to track builds from master, run&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;sudo snap install fluxctl --edge --classic
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;instead.&lt;/p&gt;
+&lt;h4 id=&#34;arch-linux&#34;&gt;Arch Linux&lt;/h4&gt;
+&lt;p&gt;Install &lt;code&gt;fluxctl&lt;/code&gt; via pacman:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;pacman -S fluxctl
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;windows&#34;&gt;Windows&lt;/h3&gt;
+&lt;h4 id=&#34;chocolatey&#34;&gt;Chocolatey&lt;/h4&gt;
+&lt;p&gt;
+&lt;a href=&#34;https://chocolatey.org/&#34; target=&#34;_blank&#34;&gt;Chocolatey&lt;/a&gt; is a third party package manager for Windows.&lt;/p&gt;
+&lt;p&gt;If you haven&amp;rsquo;t already installed chocolatey you will need to 
+&lt;a href=&#34;https://chocolatey.org/install&#34; target=&#34;_blank&#34;&gt;do this first&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;fluxctl can then be installed from the 
+&lt;a href=&#34;https://chocolatey.org/packages/fluxctl&#34; target=&#34;_blank&#34;&gt;public package repository&lt;/a&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;choco install fluxctl
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;binary-releases&#34;&gt;Binary releases&lt;/h3&gt;
+&lt;p&gt;With every release of Flux, we release binaries of &lt;code&gt;fluxctl&lt;/code&gt; for Mac, Linux
+and Windows. Download them from the 
+&lt;a href=&#34;https://github.com/fluxcd/flux/releases&#34; target=&#34;_blank&#34;&gt;Flux release
+page&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;connecting-fluxctl-to-the-daemon&#34;&gt;Connecting &lt;code&gt;fluxctl&lt;/code&gt; to the daemon&lt;/h2&gt;
+&lt;p&gt;By default, &lt;code&gt;fluxctl&lt;/code&gt; will attempt to port-forward to your Flux
+instance, assuming it runs in the &lt;code&gt;&amp;quot;default&amp;quot;&lt;/code&gt; namespace. You can
+specify a different namespace with the &lt;code&gt;--k8s-fwd-ns&lt;/code&gt; flag:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl --k8s-fwd-ns&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;weave list-workloads
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The namespace can also be given in the environment variable
+&lt;code&gt;FLUX_FORWARD_NAMESPACE&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span style=&#34;color:#007020&#34;&gt;export&lt;/span&gt; &lt;span style=&#34;color:#bb60d5&#34;&gt;FLUX_FORWARD_NAMESPACE&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;weave
+fluxctl list-workloads
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If you are not able to use the port forward to connect, you will need
+some way of connecting to the Flux API directly (NodePort,
+LoadBalancer, VPN, etc). &lt;strong&gt;Be aware that exposing the Flux API in this
+way is a security hole, because it can be accessed without
+authentication.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Once that is set up, you can specify an API URL with &lt;code&gt;--url&lt;/code&gt; or the
+environment variable &lt;code&gt;FLUX_URL&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl --url http://127.0.0.1:3030/api/flux list-workloads
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;flux-api-service&#34;&gt;Flux API service&lt;/h3&gt;
+&lt;p&gt;Now you can easily query the Flux API:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl list-workloads --all-namespaces
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;add-an-ssh-deploy-key-to-the-repository&#34;&gt;Add an SSH deploy key to the repository&lt;/h3&gt;
+&lt;p&gt;Flux connects to the repository using an SSH key. You have two
+options:&lt;/p&gt;
+&lt;h4 id=&#34;1-allow-flux-to-generate-a-key-for-you&#34;&gt;1. Allow Flux to generate a key for you&lt;/h4&gt;
+&lt;p&gt;If you don&amp;rsquo;t specify a key to use, Flux will create one for you. Obtain
+the public key through &lt;code&gt;fluxctl&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ fluxctl identity
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQDCN2ECqUFMR413CURbLBcG41fLY75SfVZCd3LCsJBClVlEcMk4lwXxA3X4jowpv2v4Jw2qqiWKJepBf2UweBLmbWYicHc6yboj5o297//+ov0qGt/uRuexMN7WUx6c93VFGV7Pjd60Yilb6GSF8B39iEVq7GQUC1OZRgQnKZWLSQ&lt;span style=&#34;color:#666&#34;&gt;==&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Alternatively, you can see the public key in the &lt;code&gt;flux&lt;/code&gt; log.&lt;/p&gt;
+&lt;p&gt;The public key will need to be given to the service hosting the Git
+repository. For example, in GitHub you would create an SSH deploy key
+in the repository, supplying that public key.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;flux&lt;/code&gt; logs should show that it has now connected to the
+repository and synchronised the cluster.&lt;/p&gt;
+&lt;p&gt;When using Kubernetes, this key is stored as a Kubernetes secret. You
+can restart &lt;code&gt;flux&lt;/code&gt; and it will continue to use the same key.&lt;/p&gt;
+&lt;h4 id=&#34;2-specify-a-key-to-use&#34;&gt;2. Specify a key to use&lt;/h4&gt;
+&lt;p&gt;Create a Kubernetes Secret from a private key:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl create secret generic flux-git-deploy --from-file&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;identity&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;/full/path/to/private_key
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;this will result in a secret that has the structure:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;apiVersion&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;v1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;data&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;identity&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&amp;lt;base64 encoded RSA PRIVATE KEY&amp;gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;Secret&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;type&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;Opaque&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;...&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now add the secret to the &lt;code&gt;flux-deployment.yaml&lt;/code&gt; manifest:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;...&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;volumes&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;git-key&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;secret&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;          &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;secretName&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux-git-deploy&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And add a volume mount for the container:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;...&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;containers&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;fluxd&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;volumeMounts&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;git-key&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;          &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;mountPath&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;/etc/fluxd/ssh&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You can customise the paths and names of the chosen key with the
+arguments (examples with defaults): &lt;code&gt;--k8s-secret-name=flux-git-deploy&lt;/code&gt;,
+&lt;code&gt;--k8s-secret-volume-mount-path=/etc/fluxd/ssh&lt;/code&gt; and
+&lt;code&gt;--k8s-secret-data-key=identity&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Using an SSH key allows you to maintain control of the repository. You
+can revoke permission for &lt;code&gt;flux&lt;/code&gt; to access the repository at any time
+by removing the deploy key.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl helps you deploy your code.
+
+Connecting:
+
+  &lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# To a fluxd running in namespace &amp;#34;default&amp;#34; in your current kubectl context&lt;/span&gt;
+  fluxctl list-workloads
+
+  &lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# To a fluxd running in namespace &amp;#34;weave&amp;#34; in your current kubectl context&lt;/span&gt;
+  fluxctl --k8s-fwd-ns&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;weave list-workloads
+
+  &lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# To a Weave Cloud instance, with your instance token in $TOKEN&lt;/span&gt;
+  fluxctl --token &lt;span style=&#34;color:#bb60d5&#34;&gt;$TOKEN&lt;/span&gt; list-workloads
+
+Workflow:
+  fluxctl list-workloads                                                   &lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# Which workloads are running?&lt;/span&gt;
+  fluxctl list-images --workload&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default:deployment/foo                    &lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# Which images are running/available?&lt;/span&gt;
+  fluxctl release --workload&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default:deployment/foo --update-image&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;bar:v2  &lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# Release new version.&lt;/span&gt;
+
+Usage:
+  fluxctl &lt;span style=&#34;color:#666&#34;&gt;[&lt;/span&gt;command&lt;span style=&#34;color:#666&#34;&gt;]&lt;/span&gt;
+
+Available Commands:
+  automate       Turn on automatic deployment &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;for&lt;/span&gt; a workload.
+  deautomate     Turn off automatic deployment &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;for&lt;/span&gt; a workload.
+  &lt;span style=&#34;color:#007020&#34;&gt;help&lt;/span&gt;           Help about any &lt;span style=&#34;color:#007020&#34;&gt;command&lt;/span&gt;
+  identity       Display SSH public key
+  install        Print and tweak Kubernetes manifests needed to install Flux in a Cluster
+  list-images    Show deployed and available images.
+  list-workloads List workloads currently running in the cluster.
+  lock           Lock a workload, so it cannot be deployed.
+  policy         Manage policies &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;for&lt;/span&gt; a workload.
+  release        Release a new version of a workload.
+  save           save workload definitions to &lt;span style=&#34;color:#007020&#34;&gt;local&lt;/span&gt; files in cluster-native format
+  sync           synchronize the cluster with the git repository, now
+  unlock         Unlock a workload, so it can be deployed.
+  version        Output the version of fluxctl
+
+Flags:
+      --context string                  The kubeconfig context to use
+  -h, --help                            &lt;span style=&#34;color:#007020&#34;&gt;help&lt;/span&gt; &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;for&lt;/span&gt; fluxctl
+      --k8s-fwd-labels stringToString   Labels used to &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;select&lt;/span&gt; the fluxd pod a port forward should be created &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;for&lt;/span&gt;. You can also &lt;span style=&#34;color:#007020&#34;&gt;set&lt;/span&gt; the environment variable FLUX_FORWARD_LABELS &lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;default &lt;span style=&#34;color:#666&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#bb60d5&#34;&gt;app&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;flux&lt;span style=&#34;color:#666&#34;&gt;])&lt;/span&gt;
+      --k8s-fwd-ns string               Namespace in which fluxd is running, &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;for&lt;/span&gt; creating a port forward to access the API. No port forward will be created &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;if&lt;/span&gt; a URL or token is given. You can also &lt;span style=&#34;color:#007020&#34;&gt;set&lt;/span&gt; the environment variable FLUX_FORWARD_NAMESPACE &lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;default &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;default&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#666&#34;&gt;)&lt;/span&gt;
+      --timeout duration                Global &lt;span style=&#34;color:#007020&#34;&gt;command&lt;/span&gt; timeout; you can also &lt;span style=&#34;color:#007020&#34;&gt;set&lt;/span&gt; the environment variable FLUX_TIMEOUT &lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;default 1m0s&lt;span style=&#34;color:#666&#34;&gt;)&lt;/span&gt;
+  -t, --token string                    Weave Cloud authentication token; you can also &lt;span style=&#34;color:#007020&#34;&gt;set&lt;/span&gt; the environment variable WEAVE_CLOUD_TOKEN or FLUX_SERVICE_TOKEN
+  -u, --url string                      Base URL of the Flux API &lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;defaults to &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;https://cloud.weave.works/api/flux&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;if&lt;/span&gt; a token is provided&lt;span style=&#34;color:#666&#34;&gt;)&lt;/span&gt;; you can also &lt;span style=&#34;color:#007020&#34;&gt;set&lt;/span&gt; the environment variable FLUX_URL
+
+Use &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;fluxctl [command] --help&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;for&lt;/span&gt; more information about a command.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;using-fluxctl-install&#34;&gt;Using &lt;code&gt;fluxctl install&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;Installs Flux into your cluster, taking as input your Git details and namespace you want to target.&lt;/p&gt;
+&lt;p&gt;Example:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl install --git-url &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;git@github.com:&amp;lt;your username&amp;gt;/flux-get-started&amp;#39;&lt;/span&gt; | kubectl -f -
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;See 
+&lt;a href=&#34;/legacy/flux/tutorials/get-started/#set-up-flux&#34;&gt;here&lt;/a&gt; for a full tutorial which makes use of &lt;code&gt;fluxctl install&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;workloads&#34;&gt;Workloads&lt;/h2&gt;
+&lt;h3 id=&#34;what-is-a-workload&#34;&gt;What is a Workload?&lt;/h3&gt;
+&lt;p&gt;This term refers to any cluster resource responsible for the creation of
+containers from versioned images - in Kubernetes these are objects such as
+Deployments, DaemonSets, StatefulSets and CronJobs.&lt;/p&gt;
+&lt;h3 id=&#34;viewing-workloads&#34;&gt;Viewing Workloads&lt;/h3&gt;
+&lt;p&gt;The first thing to do is to check whether Flux can see any running
+workloads. To do this, use the &lt;code&gt;list-workloads&lt;/code&gt; subcommand:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ fluxctl list-workloads
+WORKLOAD                       CONTAINER   IMAGE                                         RELEASE  POLICY
+default:deployment/helloworld  helloworld  quay.io/weaveworks/helloworld:master-a000001  ready
+                               sidecar     quay.io/weaveworks/sidecar:master-a000002
+default:deployment/busybox     busybox     busybox:1.31.1                                ready
+default:deployment/nginx       nginx       nginx:stable-alpine                           ready
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Note that the actual images running will depend on your cluster.&lt;/p&gt;
+&lt;p&gt;You can also filter workloads by container name, using the &lt;code&gt;--container|-c&lt;/code&gt; option:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ fluxctl list-workloads --container helloworld
+WORKLOAD                       CONTAINER   IMAGE                                         RELEASE  POLICY
+default:deployment/helloworld  helloworld  quay.io/weaveworks/helloworld:master-a000001  ready
+                               sidecar     quay.io/weaveworks/sidecar:master-a000002
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;inspecting-the-version-of-a-container&#34;&gt;Inspecting the Version of a Container&lt;/h3&gt;
+&lt;p&gt;Once we have a list of workloads, we can begin to inspect which versions
+of the image are running.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ fluxctl list-images --workload default:deployment/helloworld
+WORKLOAD                       CONTAINER   IMAGE                          CREATED
+default:deployment/helloworld  helloworld  quay.io/weaveworks/helloworld
+                                           |   master-9a16ff945b9e        &lt;span style=&#34;color:#40a070&#34;&gt;20&lt;/span&gt; Jul &lt;span style=&#34;color:#40a070&#34;&gt;16&lt;/span&gt; 13:19 UTC
+                                           |   master-b31c617a0fe3        &lt;span style=&#34;color:#40a070&#34;&gt;20&lt;/span&gt; Jul &lt;span style=&#34;color:#40a070&#34;&gt;16&lt;/span&gt; 13:19 UTC
+                                           |   master-a000002             &lt;span style=&#34;color:#40a070&#34;&gt;12&lt;/span&gt; Jul &lt;span style=&#34;color:#40a070&#34;&gt;16&lt;/span&gt; 17:17 UTC
+                                           &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;-&amp;gt; master-a000001             12 Jul 16 17:16 UTC
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;                               sidecar     quay.io/weaveworks/sidecar
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;                                           &amp;#39;&lt;/span&gt;-&amp;gt; master-a000002             &lt;span style=&#34;color:#40a070&#34;&gt;23&lt;/span&gt; Aug &lt;span style=&#34;color:#40a070&#34;&gt;16&lt;/span&gt; 10:05 UTC
+                                               master-a000001             &lt;span style=&#34;color:#40a070&#34;&gt;23&lt;/span&gt; Aug &lt;span style=&#34;color:#40a070&#34;&gt;16&lt;/span&gt; 09:53 UTC
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The arrows will point to the version that is currently running
+alongside a list of other versions and their timestamps.&lt;/p&gt;
+&lt;p&gt;When using &lt;code&gt;fluxctl&lt;/code&gt; in scripts, you can remove the table headers with &lt;code&gt;--no-headers&lt;/code&gt; for both &lt;code&gt;list-images&lt;/code&gt; and &lt;code&gt;list-workloads&lt;/code&gt; command to suppress the header:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ fluxctl list-workloads --no-headers
+default:deployment/helloworld  helloworld  quay.io/weaveworks/helloworld:master-a000001  ready
+                               sidecar     quay.io/weaveworks/sidecar:master-a000002
+$ fluxctl list-images --workload default:deployment/helloworld --no-headers
+default:deployment/helloworld  helloworld  quay.io/weaveworks/helloworld
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;releasing-a-workload&#34;&gt;Releasing a Workload&lt;/h3&gt;
+&lt;p&gt;We can now go ahead and update a workload with the &lt;code&gt;release&lt;/code&gt; subcommand.
+This will check whether each workload needs to be updated, and if so,
+write the new configuration to the repository.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ fluxctl release --workload&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default:deployment/helloworld --user&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;phil --message&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;New version&amp;#34;&lt;/span&gt; --update-all-images
+Submitting release ...
+Commit pushed: 7dc025c
+Applied 7dc025c61fdbbfc2c32f792ad61e6ff52cf0590a
+WORKLOAD                     STATUS   UPDATES
+default:deployment/helloworld  success  helloworld: quay.io/weaveworks/helloworld:master-a000001 -&amp;gt; master-9a16ff945b9e
+
+$ fluxctl list-images --workload default:deployment/helloworld
+WORKLOAD                       CONTAINER   IMAGE                          CREATED
+default:deployment/helloworld  helloworld  quay.io/weaveworks/helloworld
+                                           &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;-&amp;gt; master-9a16ff945b9e        20 Jul 16 13:19 UTC
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;                                               master-b31c617a0fe3        20 Jul 16 13:19 UTC
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;                                               master-a000002             12 Jul 16 17:17 UTC
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;                                               master-a000001             12 Jul 16 17:16 UTC
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;                               sidecar     quay.io/weaveworks/sidecar
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;                                           &amp;#39;&lt;/span&gt;-&amp;gt; master-a000002             &lt;span style=&#34;color:#40a070&#34;&gt;23&lt;/span&gt; Aug &lt;span style=&#34;color:#40a070&#34;&gt;16&lt;/span&gt; 10:05 UTC
+                                               master-a000001             &lt;span style=&#34;color:#40a070&#34;&gt;23&lt;/span&gt; Aug &lt;span style=&#34;color:#40a070&#34;&gt;16&lt;/span&gt; 09:53 UTC
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;turning-on-automation&#34;&gt;Turning on Automation&lt;/h3&gt;
+&lt;p&gt;Automation can be easily controlled from &lt;code&gt;fluxctl&lt;/code&gt;
+with the &lt;code&gt;automate&lt;/code&gt; subcommand.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ fluxctl automate --workload&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default:deployment/helloworld
+Commit pushed: af4bf73
+WORKLOAD                     STATUS   UPDATES
+default:deployment/helloworld  success
+
+$ fluxctl list-workloads --namespace&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default
+WORKLOAD                       CONTAINER   IMAGE                                             RELEASE  POLICY
+default:deployment/helloworld  helloworld  quay.io/weaveworks/helloworld:master-9a16ff945b9e ready    automated
+                               sidecar     quay.io/weaveworks/sidecar:master-a000002
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Automation can also be enabled by adding the annotation
+&lt;code&gt;fluxcd.io/automated: &amp;quot;true&amp;quot;&lt;/code&gt; to the deployment.&lt;/p&gt;
+&lt;p&gt;We can see that the &lt;code&gt;list-workloads&lt;/code&gt; subcommand reports that the
+helloworld application is automated. Flux will now automatically
+deploy a new version of a workload whenever one is available and commit
+the new configuration to the version control system.&lt;/p&gt;
+&lt;h3 id=&#34;turning-off-automation&#34;&gt;Turning off Automation&lt;/h3&gt;
+&lt;p&gt;Turning off automation is performed with the &lt;code&gt;deautomate&lt;/code&gt; command:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ fluxctl deautomate --workload&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default:deployment/helloworld
+Commit pushed: a54ef2c
+WORKLOAD                     STATUS   UPDATES
+default:deployment/helloworld  success
+
+$ fluxctl list-workloads --namespace&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default
+WORKLOAD                       CONTAINER   IMAGE                                             RELEASE  POLICY
+default:deployment/helloworld  helloworld  quay.io/weaveworks/helloworld:master-9a16ff945b9e ready
+                               sidecar     quay.io/weaveworks/sidecar:master-a000002
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;We can see that the workload is no longer automated.&lt;/p&gt;
+&lt;h3 id=&#34;rolling-back-a-workload&#34;&gt;Rolling back a Workload&lt;/h3&gt;
+&lt;p&gt;Rolling back can be achieved by combining:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href=&#34;#turning-off-automation&#34;&gt;&lt;code&gt;deautomate&lt;/code&gt;&lt;/a&gt; to prevent Flux from automatically updating to newer versions, and&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;#releasing-a-workload&#34;&gt;&lt;code&gt;release&lt;/code&gt;&lt;/a&gt; to deploy the version you want to roll back to.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ fluxctl list-images --workload default:deployment/helloworld
+WORKLOAD                       CONTAINER   IMAGE                          CREATED
+default:deployment/helloworld  helloworld  quay.io/weaveworks/helloworld
+                                           &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;-&amp;gt; master-9a16ff945b9e        20 Jul 16 13:19 UTC
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;                                               master-b31c617a0fe3        20 Jul 16 13:19 UTC
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;                                               master-a000002             12 Jul 16 17:17 UTC
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;                                               master-a000001             12 Jul 16 17:16 UTC
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;                               sidecar     quay.io/weaveworks/sidecar
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;                                           &amp;#39;&lt;/span&gt;-&amp;gt; master-a000002             &lt;span style=&#34;color:#40a070&#34;&gt;23&lt;/span&gt; Aug &lt;span style=&#34;color:#40a070&#34;&gt;16&lt;/span&gt; 10:05 UTC
+                                               master-a000001             &lt;span style=&#34;color:#40a070&#34;&gt;23&lt;/span&gt; Aug &lt;span style=&#34;color:#40a070&#34;&gt;16&lt;/span&gt; 09:53 UTC
+
+$ fluxctl deautomate --workload&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default:deployment/helloworld
+Commit pushed: c07f317
+WORKLOAD                       STATUS   UPDATES
+default:deployment/helloworld  success
+
+$ fluxctl release --workload&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default:deployment/helloworld --update-image&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;quay.io/weaveworks/helloworld:master-a000001
+Submitting release ...
+Commit pushed: 33ce4e3
+Applied 33ce4e38048f4b787c583e64505485a13c8a7836
+WORKLOAD                     STATUS   UPDATES
+default:deployment/helloworld  success  helloworld: quay.io/weaveworks/helloworld:master-9a16ff945b9e -&amp;gt; master-a000001
+
+$ fluxctl list-images --workload default:deployment/helloworld
+WORKLOAD                     CONTAINER   IMAGE                          CREATED
+default:deployment/helloworld  helloworld  quay.io/weaveworks/helloworld
+                                           |   master-9a16ff945b9e        &lt;span style=&#34;color:#40a070&#34;&gt;20&lt;/span&gt; Jul &lt;span style=&#34;color:#40a070&#34;&gt;16&lt;/span&gt; 13:19 UTC
+                                           |   master-b31c617a0fe3        &lt;span style=&#34;color:#40a070&#34;&gt;20&lt;/span&gt; Jul &lt;span style=&#34;color:#40a070&#34;&gt;16&lt;/span&gt; 13:19 UTC
+                                           |   master-a000002             &lt;span style=&#34;color:#40a070&#34;&gt;12&lt;/span&gt; Jul &lt;span style=&#34;color:#40a070&#34;&gt;16&lt;/span&gt; 17:17 UTC
+                                           &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;-&amp;gt; master-a000001             12 Jul 16 17:16 UTC
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;                               sidecar     quay.io/weaveworks/sidecar
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;                                           &amp;#39;&lt;/span&gt;-&amp;gt; master-a000002             &lt;span style=&#34;color:#40a070&#34;&gt;23&lt;/span&gt; Aug &lt;span style=&#34;color:#40a070&#34;&gt;16&lt;/span&gt; 10:05 UTC
+                                               master-a000001             &lt;span style=&#34;color:#40a070&#34;&gt;23&lt;/span&gt; Aug &lt;span style=&#34;color:#40a070&#34;&gt;16&lt;/span&gt; 09:53 UTC
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;locking-a-workload&#34;&gt;Locking a Workload&lt;/h3&gt;
+&lt;p&gt;Locking a workload will stop manual or automated releases to that
+workload. Changes made in the file will still be synced.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ fluxctl lock --workload&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;deployment/helloworld
+Commit pushed: d726722
+WORKLOAD                       STATUS   UPDATES
+default:deployment/helloworld  success
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;releasing-an-image-to-a-locked-workload&#34;&gt;Releasing an image to a locked workload&lt;/h3&gt;
+&lt;p&gt;It may be desirable to release an image to a locked workload while
+maintaining the lock afterwards. In order to not having to modify the
+lock policy (which includes author and reason), one may use &lt;code&gt;--force&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl release --workload&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default:deployment/helloworld --update-all-images --force
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;unlocking-a-workload&#34;&gt;Unlocking a Workload&lt;/h3&gt;
+&lt;p&gt;Unlocking a workload allows it to have manual or automated releases
+(again).&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ fluxctl unlock --workload&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;deployment/helloworld
+Commit pushed: 708b63a
+WORKLOAD                       STATUS   UPDATES
+default:deployment/helloworld  success
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;recording-user-and-message-with-the-triggered-action&#34;&gt;Recording user and message with the triggered action&lt;/h3&gt;
+&lt;p&gt;Issuing a deployment change results in a version control change/git
+commit, keeping the history of the actions. The Flux daemon can be
+started with several flags that impact the commit information:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;flag&lt;/th&gt;
+&lt;th&gt;purpose&lt;/th&gt;
+&lt;th&gt;default&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;git-user&lt;/td&gt;
+&lt;td&gt;committer name&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;Weave Flux&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;git-email&lt;/td&gt;
+&lt;td&gt;committer email&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;support@weave.works&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;git-set-author&lt;/td&gt;
+&lt;td&gt;override the commit author&lt;/td&gt;
+&lt;td&gt;false&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Actions triggered by a user through the CLI &lt;code&gt;fluxctl&lt;/code&gt;
+tool, can have the commit author information customized. This is handy for providing extra context in the
+notifications and history. Whether the customization is possible, depends on the Flux daemon (&lt;code&gt;fluxd&lt;/code&gt;)
+&lt;code&gt;git-set-author&lt;/code&gt; flag. If set, the commit author will be customized in the following way:&lt;/p&gt;
+&lt;h2 id=&#34;image-tag-filtering&#34;&gt;Image Tag Filtering&lt;/h2&gt;
+&lt;p&gt;When building images it is often useful to tag build images by the branch that they were built against for example:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;quay.io/weaveworks/helloworld:master-9a16ff945b9e
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Indicates that the &lt;code&gt;helloworld&lt;/code&gt; image was built against master
+commit &lt;code&gt;9a16ff945b9e&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;When automation is turned on Flux will, by default, use whatever
+is the latest image on a given repository. If you want to only
+auto-update your image against a certain subset of tags then you
+can do that using tag filtering.&lt;/p&gt;
+&lt;p&gt;So for example, if you want to only update the &amp;ldquo;helloworld&amp;rdquo; image
+to tags that were built against the &amp;ldquo;prod&amp;rdquo; branch then you could
+do the following:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl policy --workload&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default:deployment/helloworld --tag-all&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;prod-*&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If your pod contains multiple containers then you tag each container
+individually:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl policy --workload&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default:deployment/helloworld --tag&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;helloworld=prod-*&amp;#39;&lt;/span&gt; --tag&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;sidecar=prod-*&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Manual releases without explicit mention of the target image will
+also adhere to tag filters.
+This will only release the newest image matching the tag filter:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl release --workload&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default:deployment/helloworld --update-all-images
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To release an image outside of tag filters, either specify the image:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl release --workload&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default:deployment/helloworld --update-image&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;helloworld:dev-abc123
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;or use &lt;code&gt;--force&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl release --workload&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default:deployment/helloworld --update-all-images --force
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Please note that automation might immediately undo this.&lt;/p&gt;
+&lt;h3 id=&#34;filter-pattern-types&#34;&gt;Filter pattern types&lt;/h3&gt;
+&lt;p&gt;Flux currently offers support for &lt;code&gt;glob&lt;/code&gt;, &lt;code&gt;semver&lt;/code&gt; and &lt;code&gt;regexp&lt;/code&gt; based filtering.&lt;/p&gt;
+&lt;h4 id=&#34;glob&#34;&gt;Glob&lt;/h4&gt;
+&lt;p&gt;The glob (&lt;code&gt;*&lt;/code&gt;) filter is the simplest filter Flux supports, a filter can contain
+multiple globs:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl policy --workload&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default:deployment/helloworld --tag-all&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;glob:master-v1.*.*&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;semver&#34;&gt;Semver&lt;/h4&gt;
+&lt;p&gt;If your images use 
+&lt;a href=&#34;https://semver.org&#34; target=&#34;_blank&#34;&gt;semantic versioning&lt;/a&gt; you can filter by image tags
+that adhere to certain constraints:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl policy --workload&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default:deployment/helloworld --tag-all&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;semver:~1&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;or only release images that have a stable semantic version tag (X.Y.Z):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl policy --workload&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default:deployment/helloworld --tag-all&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;semver:*&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Using a semver filter will also affect how Flux sorts images, so
+that the higher versions will be considered newer.&lt;/p&gt;
+&lt;p&gt;Semver has a concept of &amp;ldquo;pre-release&amp;rdquo; versions which have an extra
+label like &lt;code&gt;-beta&lt;/code&gt; at the end.  If you want to include these then
+write a policy with a hyphen; for example &lt;code&gt;&amp;gt;=1.2.3&lt;/code&gt; will skip
+prereleases while &lt;code&gt;&amp;gt;=1.2.3-0&lt;/code&gt; will include prereleases.&lt;/p&gt;
+&lt;h4 id=&#34;regexp&#34;&gt;Regexp&lt;/h4&gt;
+&lt;p&gt;If your images have complex tags you can filter by regular expression:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;fluxctl policy --workload&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;default:deployment/helloworld --tag-all&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;regexp:^([a-zA-Z]+)$&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Instead of &lt;code&gt;regexp&lt;/code&gt; it is also possible to use its alias &lt;code&gt;regex&lt;/code&gt;.
+Please bear in mind that if you want to match the whole tag,
+you must bookend your pattern with &lt;code&gt;^&lt;/code&gt; and &lt;code&gt;$&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;controlling-image-timestamps-with-labels&#34;&gt;Controlling image timestamps with labels&lt;/h3&gt;
+&lt;p&gt;Some image registries do not expose a reliable creation timestamp for
+image tags, which could pose a problem for the automated roll-out of
+images.&lt;/p&gt;
+&lt;p&gt;To overcome this problem you can define one of the supported labels in
+your &lt;code&gt;Dockerfile&lt;/code&gt;. Flux will prioritize labels over the timestamp it
+retrieves from the registry.&lt;/p&gt;
+&lt;h4 id=&#34;supported-label-formats&#34;&gt;Supported label formats&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;a href=&#34;https://github.com/opencontainers/image-spec/blob/master/annotations.md#pre-defined-annotation-keys&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;org.opencontainers.image.created&lt;/code&gt;&lt;/a&gt;
+date and time on which the image was built (string, date-time as defined by RFC 3339).&lt;/li&gt;
+&lt;li&gt;
+&lt;a href=&#34;http://label-schema.org/rc1/#build-time-labels&#34; target=&#34;_blank&#34;&gt;&lt;code&gt;org.label-schema.build-date&lt;/code&gt;&lt;/a&gt;
+date and time on which the image was built (string, date-time as defined by RFC 3339).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;actions-triggered-through-fluxctl&#34;&gt;Actions triggered through &lt;code&gt;fluxctl&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;fluxctl&lt;/code&gt; provides the following flags for the message and author customization:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;  -m, --message string      attach a message to the update
+      --user    string      override the user reported as initiating the update
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;commit-customization&#34;&gt;Commit customization&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Commit message&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;fluxctl --message=&amp;quot;Message providing more context for the action&amp;quot; .....
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Committer&lt;/p&gt;
+&lt;p&gt;Committer information can be overriden with the appropriate fluxd flags:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-console&#34; data-lang=&#34;console&#34;&gt;--git-user
+--git-email
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;See 
+&lt;a href=&#34;/legacy/flux/references/daemon/&#34;&gt;daemon.md&lt;/a&gt; for more information.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Commit author&lt;/p&gt;
+&lt;p&gt;The default for the author is the committer information, which can be overriden,
+in the following manner:&lt;/p&gt;
+&lt;p&gt;a) Default override uses user&amp;rsquo;s git configuration, ie &lt;code&gt;user.name&lt;/code&gt;
+and &lt;code&gt;user.email&lt;/code&gt; (.gitconfig) to set the commit author.
+If the user has neither user.name nor for
+user.email set up, the committer information will be used. If only one
+is set up, that will be used.&lt;/p&gt;
+&lt;p&gt;b) This can be further overriden by the use of the &lt;code&gt;fluxctl --user&lt;/code&gt; flag.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;examples&#34;&gt;Examples&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;fluxctl --user=&amp;quot;Jane Doe &amp;lt;jane@doe.com&amp;gt;&amp;quot; ......&lt;/code&gt;&lt;br&gt;
+This will always succeed as git expects a new author in the format
+&amp;ldquo;some_string &amp;lt;some_other_string&amp;gt;&amp;rdquo;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;fluxctl --user=&amp;quot;Jane Doe&amp;quot; .......&lt;/code&gt;&lt;br&gt;
+This form will succeed if there is already a repo commit, done by
+Jane Doe.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;fluxctl --user=&amp;quot;jane@doe.com&amp;quot; .......&lt;/code&gt;&lt;br&gt;
+This form will succeed if there is already a repo commit, done by
+&lt;a href=&#34;mailto:jane@doe.com&#34;&gt;jane@doe.com&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;errors-due-to-author-customization&#34;&gt;Errors due to author customization&lt;/h3&gt;
+&lt;p&gt;In case of no prior commit by the specified author, an error will be reported
+for 2) and 3):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;git commit: fatal: --author &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;unknown&amp;#39;&lt;/span&gt; is not &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;Name &amp;lt;email&amp;gt;&amp;#39;&lt;/span&gt; and matches
+no existing author
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;using-annotations&#34;&gt;Using Annotations&lt;/h2&gt;
+&lt;p&gt;Automation and image tag filtering can also be managed using annotations
+(&lt;code&gt;fluxctl&lt;/code&gt; is using the same mechanism).&lt;/p&gt;
+&lt;p&gt;Automation can be enabled with &lt;code&gt;fluxcd.io/automated: &amp;quot;true&amp;quot;&lt;/code&gt;. Image
+filtering annotations take the form
+&lt;code&gt;fluxcd.io/tag.&amp;lt;container-name&amp;gt;: &amp;lt;filter-type&amp;gt;:&amp;lt;filter-value&amp;gt;&lt;/code&gt; or
+&lt;code&gt;filter.fluxcd.io/&amp;lt;container-name&amp;gt;: &amp;lt;filter-type&amp;gt;:&amp;lt;filter-value&amp;gt;&lt;/code&gt;. Values of
+&lt;code&gt;filter-type&lt;/code&gt; can be 
+&lt;a href=&#34;#glob&#34;&gt;&lt;code&gt;glob&lt;/code&gt;&lt;/a&gt;, 
+&lt;a href=&#34;#semver&#34;&gt;&lt;code&gt;semver&lt;/code&gt;&lt;/a&gt;, and
+
+&lt;a href=&#34;#regexp&#34;&gt;&lt;code&gt;regexp&lt;/code&gt;&lt;/a&gt;. Filter values use the same syntax as when the filter is
+configured using &lt;code&gt;fluxctl&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Here&amp;rsquo;s a simple but complete deployment file with annotations:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;apiVersion&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;apps/v1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;Deployment&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;podinfo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;namespace&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;demo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;labels&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;app&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;podinfo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;annotations&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;fluxcd.io/automated&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;fluxcd.io/tag.podinfod&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;semver:~1.3&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;selector&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;matchLabels&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;app&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;podinfo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;template&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;labels&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;app&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;podinfo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;containers&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;podinfod&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;stefanprodan/podinfo:1.3.2&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;ports&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;containerPort&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;9898&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;          &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;http&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;command&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;- ./podinfo&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;- --port=9898&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Things to notice:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The annotations are made in &lt;code&gt;metadata.annotations&lt;/code&gt;, not in &lt;code&gt;spec.template.metadata&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;The &lt;code&gt;fluxcd.io/tag.&lt;/code&gt;&amp;hellip; references the container name &lt;code&gt;podinfod&lt;/code&gt;, this will change based on your container name. If you have multiple containers you would have multiple lines like that.&lt;/li&gt;
+&lt;li&gt;The value for the &lt;code&gt;fluxcd.io/tag.&lt;/code&gt;&amp;hellip; annotation should includes the filter pattern type, in this case &lt;code&gt;semver&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Annotations can also be used to tell Flux to temporarily ignore certain manifests
+using &lt;code&gt;fluxcd.io/ignore: &amp;quot;true&amp;quot;&lt;/code&gt;. Read more about this in the 
+&lt;a href=&#34;/legacy/flux/faq/&#34;&gt;FAQ&lt;/a&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Manifest generation through .flux.yaml configuration files</title>
+      <link>/legacy/flux/references/fluxyaml-config-files/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/references/fluxyaml-config-files/</guid>
+      <description>
+        
+        
+        &lt;p&gt;This feature lets you generate Kubernetes manifests with a program,
+instead of having to include them in your git repo as YAML files. For
+example, you can use &lt;code&gt;kustomize&lt;/code&gt; to patch a common set of resources to
+suit a particular environment.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    For a full, self-contained example of Flux generating manifests
+with &lt;code&gt;kustomize&lt;/code&gt; you can go to 
+&lt;a href=&#34;https://github.com/fluxcd/flux-kustomize-example&#34; target=&#34;_blank&#34;&gt;https://github.com/fluxcd/flux-kustomize-example&lt;/a&gt;
+
+&lt;/div&gt;
+
+&lt;p&gt;Manifest generation is controlled by the flags given to &lt;code&gt;fluxd&lt;/code&gt;, and
+&lt;code&gt;.flux.yaml&lt;/code&gt; files in your git repo.&lt;/p&gt;
+&lt;p&gt;To enable it, you will need to&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;pass the command-line flag &lt;code&gt;--manifest-generation=true&lt;/code&gt;
+to &lt;code&gt;fluxd&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;put at least one &lt;code&gt;.flux.yaml&lt;/code&gt; file in the git repository.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Where to put &lt;code&gt;.flux.yaml&lt;/code&gt;, and what should be in it, are described in
+the sections following.&lt;/p&gt;
+&lt;h2 id=&#34;setting-manifest-generation-up&#34;&gt;Setting manifest generation up&lt;/h2&gt;
+&lt;p&gt;The command-line flag &lt;code&gt;--git-path&lt;/code&gt; (which can be given multiple
+values) marks a &amp;ldquo;target path&amp;rdquo; within the git repository in which to
+find manifests. If &lt;code&gt;--git-path&lt;/code&gt; is not supplied, the top of the git
+repository is assumed to be the sole target path.&lt;/p&gt;
+&lt;p&gt;Without manifest generation, fluxd will recursively walk the
+directories under each target path, to look for YAML files.&lt;/p&gt;
+&lt;p&gt;With manifest generation &lt;strong&gt;enabled&lt;/strong&gt;, fluxd will look for processing
+instructions in a file &lt;code&gt;.flux.yaml&lt;/code&gt;, which can be located &lt;em&gt;at&lt;/em&gt; the
+target path, or in a directory &lt;em&gt;above&lt;/em&gt; it in the git repository.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;if a &lt;code&gt;.flux.yaml&lt;/code&gt; file is found, it is used &lt;strong&gt;instead&lt;/strong&gt; of looking
+for YAML files, and no other files are examined for that target
+path;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;if no &lt;code&gt;.flux.yaml&lt;/code&gt; file is found, the usual behaviour of looking
+for YAML files is adopted for that target path.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;a &lt;code&gt;.flux.yaml&lt;/code&gt; file containing the &lt;code&gt;scanForFiles&lt;/code&gt; directive resets
+the behaviour to looking for YAML files. This is explained below.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The manifests from all the target paths &amp;ndash; read from YAML files or
+generated &amp;ndash; are combined before applying to the cluster. If
+duplicates are detected, an error is logged and fluxd will abandon the
+attempt to apply manifests to the cluster.&lt;/p&gt;
+&lt;p&gt;Here are some examples:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;.
+├── base
+│   ├── demo-ns.yaml
+│   ├── kustomization.yaml
+│   ├── podinfo-dep.yaml
+│   ├── podinfo-hpa.yaml
+│   └── podinfo-svc.yaml
+├── .flux.yaml
+├── production
+│   ├── flux-patch.yaml
+│   ├── kustomization.yaml
+│   └── replicas-patch.yaml
+└── staging
+    ├── flux-patch.yaml
+    └── kustomization.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;In this case, say you started &lt;code&gt;fluxd&lt;/code&gt; with &lt;code&gt;--git-path=staging&lt;/code&gt;, it
+would find &lt;code&gt;.flux.yaml&lt;/code&gt; in the top directory and use that to generate
+manifests.  The other files and directories (if there were any) in
+&lt;code&gt;staging/&lt;/code&gt; are not examined by fluxd, in favour of following the
+instructions given in the &lt;code&gt;.flux.yaml&lt;/code&gt; file.&lt;/p&gt;
+&lt;p&gt;This layout could also be used with &lt;code&gt;--git-path=production&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In this modified example, the &lt;code&gt;.flux.yaml&lt;/code&gt; file has been moved under
+&lt;code&gt;staging/&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;.
+├── base
+│   ├── demo-ns.yaml
+│   ├── kustomization.yaml
+│   ├── podinfo-dep.yaml
+│   ├── podinfo-hpa.yaml
+│   └── podinfo-svc.yaml
+├── production
+│   ├── flux-patch.yaml
+│   ├── kustomization.yaml
+│   └── replicas-patch.yaml
+└── staging
+    ├── flux-patch.yaml
+    ├── .flux.yaml
+    └── kustomization.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;… since the &lt;code&gt;.flux.yaml&lt;/code&gt; file is now under &lt;code&gt;staging/&lt;/code&gt;, it will still
+take effect for &lt;code&gt;--git-path=staging&lt;/code&gt;. However:&lt;/p&gt;
+&lt;p&gt;Using &lt;code&gt;--git-path=production&lt;/code&gt; would &lt;strong&gt;not produce a usable
+configuration&lt;/strong&gt;, because without an applicable &lt;code&gt;.flux.yaml&lt;/code&gt;, the files
+under &lt;code&gt;production/&lt;/code&gt; would be treated as plain Kubernetes manifests,
+which they are plainly not.&lt;/p&gt;
+&lt;p&gt;Note also that the configuration file would &lt;strong&gt;not&lt;/strong&gt; take effect for
+&lt;code&gt;--git-path=.&lt;/code&gt; (i.e., the top directory), because manifest generation
+will not look in subdirectories for a &lt;code&gt;.flux.yaml&lt;/code&gt; file.&lt;/p&gt;
+&lt;h3 id=&#34;the-scanforfiles-directive&#34;&gt;The &lt;code&gt;scanForFiles&lt;/code&gt; directive&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;scanForFiles&lt;/code&gt; directive indicates that the target path should be
+treated as though it had &lt;em&gt;no&lt;/em&gt; &lt;code&gt;.flux.yaml&lt;/code&gt; in effect. In other words,
+fluxd will look for YAML files under the directory, and update
+manifests directly by rewriting the YAML files.&lt;/p&gt;
+&lt;p&gt;Here&amp;rsquo;s an example &lt;code&gt;.flux.yaml&lt;/code&gt; with the &lt;code&gt;scanForFiles&lt;/code&gt; directive:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;version: 1
+scanForFiles: {}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;(The &lt;code&gt;{}&lt;/code&gt; is an empty map, which acts as a placeholder value).&lt;/p&gt;
+&lt;p&gt;This is to account for the case in which you have a &lt;code&gt;.flux.yaml&lt;/code&gt;
+higher in the directory tree, applying to several target paths beneath
+it, but want to have a directory with regular YAMLs as well.&lt;/p&gt;
+&lt;p&gt;In the following example, the top-level &lt;code&gt;.flux.yaml&lt;/code&gt; would take effect
+for &lt;code&gt;--git-path=staging&lt;/code&gt; or &lt;code&gt;--git-path=production&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;But if you wanted &lt;code&gt;yamls/permissions.yaml&lt;/code&gt; to be applied (as it is),
+you could put a &lt;code&gt;.flux.yaml&lt;/code&gt; containing &lt;code&gt;scanForFiles&lt;/code&gt; in that directory, and
+specify &lt;code&gt;--git-path=staging,yamls&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;.
+├── .flux.yaml
+├── base
+│   ├── demo-ns.yaml
+│   ├── kustomization.yaml
+│   ├── podinfo-dep.yaml
+│   ├── podinfo-hpa.yaml
+│   └── podinfo-svc.yaml
+├── production
+│   ├── flux-patch.yaml
+│   ├── kustomization.yaml
+│   └── replicas-patch.yaml
+├── yamls
+│   ├── .flux.yaml # (with &amp;quot;scanForFiles&amp;quot; directive)
+│   └── permissions.yaml
+└── staging
+    ├── flux-patch.yaml
+    └── kustomization.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;how-to-construct-a-fluxyaml-file&#34;&gt;How to construct a .flux.yaml file&lt;/h2&gt;
+&lt;p&gt;Aside from the special case of the &lt;code&gt;scanForFiles&lt;/code&gt; directive,
+&lt;code&gt;.flux.yaml&lt;/code&gt; files come in two varieties: &amp;ldquo;patch-updated&amp;rdquo;,
+&amp;ldquo;command-updated&amp;rdquo;. These refer to the way in which 
+&lt;a href=&#34;/legacy/flux/references/automated-image-update/&#34;&gt;automated
+updates&lt;/a&gt; are applied to files in the
+repo:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;when patch-updated, fluxd will keep updates in its own patch file,
+which it applies to the generated manifests before applying to the
+cluster;&lt;/li&gt;
+&lt;li&gt;when command-updated, you must supply commands to update the
+appropriate file or files.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Patch-updated will work with any kind of manifest generation, because
+the patch is entirely managed by &lt;code&gt;fluxd&lt;/code&gt; and applied post-hoc to the
+manifests.&lt;/p&gt;
+&lt;p&gt;Command-updated is more general, but since you need to supply your own
+programs to find and update the right file, it is likely to be a lot
+more work.&lt;/p&gt;
+&lt;p&gt;Both patch-updated and command-updated configurations have the same
+way of specifying how to generate manifests, and differ only in how
+updates are recorded.&lt;/p&gt;
+&lt;h3 id=&#34;generator-configuration&#34;&gt;Generator configuration&lt;/h3&gt;
+&lt;p&gt;Here is an example of a &lt;code&gt;.flux.yaml&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;version&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# must be `1`&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;patchUpdated&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;generators&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;command&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;kustomize build .&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;patchFile&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux-patch.yaml&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;code&gt;generators&lt;/code&gt; field is an array of commands, all of which will be
+run in turn. Each command is expected to print a YAML stream to its
+stdout. The streams are concatenated and parsed as one big YAML
+stream, before being applied.&lt;/p&gt;
+&lt;p&gt;Much of the time, it will only be necessary to supply one command to
+be run.&lt;/p&gt;
+&lt;p&gt;The commands will be run with the target path being processed as a
+working directory &amp;ndash; which is not necessarily the same directory in
+which the &lt;code&gt;.flux.yaml&lt;/code&gt; file was found. 
+&lt;a href=&#34;#execution-context&#34;&gt;See below&lt;/a&gt;
+for more details on the execution context in which commands are run.&lt;/p&gt;
+&lt;h3 id=&#34;using-patch-updated-configuration&#34;&gt;Using patch-updated configuration&lt;/h3&gt;
+&lt;p&gt;A patch-updated configuration generates manifests using commands, and
+records updates as a set of 
+&lt;a href=&#34;https://github.com/kubernetes/community/blob/master/contributors/devel/sig-api-machinery/strategic-merge-patch.md&#34; target=&#34;_blank&#34;&gt;strategic merge&lt;/a&gt; patches
+in a file.&lt;/p&gt;
+&lt;p&gt;For example, when an automated image upgrade is run, fluxd will do
+this:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;run the generator commands and parse the manifests;&lt;/li&gt;
+&lt;li&gt;find the manifest that needs to be updated, and calculate the
+patch to it that performs the update;&lt;/li&gt;
+&lt;li&gt;record that patch in the patch file.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;When syncing, fluxd will generate the manifests as usual, then apply
+all the patches that have been recorded in the patch file.&lt;/p&gt;
+&lt;p&gt;This is how a patch-updated &lt;code&gt;.flux.yaml&lt;/code&gt; looks in general:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;version&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;patchUpdated&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;generators&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;command&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;generator_command&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;patchFile&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;path/to/patch.yaml&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;code&gt;generators&lt;/code&gt; field is explained just above. The &lt;code&gt;patchFile&lt;/code&gt; field
+gives a path, relative to the target path, in which to record
+patches. &lt;code&gt;fluxd&lt;/code&gt; will create or update the file when needed, and
+commit any changes it makes to git.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    At present, it is necessary to manually remove patches that
+refer to deleted manifests. See 
+&lt;a href=&#34;https://github.com/fluxcd/flux/issues/2428&#34; target=&#34;_blank&#34;&gt;issue
+#2428&lt;/a&gt;).
+
+&lt;/div&gt;
+
+&lt;h3 id=&#34;using-command-updated-configuration&#34;&gt;Using command-updated configuration&lt;/h3&gt;
+&lt;p&gt;A command-updated configuration generates manifests in the same way,
+but records changes by running commands as given in the &lt;code&gt;.flux.yaml&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;This is how a command-updated &lt;code&gt;.flux.yaml&lt;/code&gt; looks in general:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;version&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;commandUpdated&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;generators&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;command&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;generator_command&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;updaters&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;containerImage&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;command&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;image_updater_program&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;policy&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;command&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;policy_updater_program&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;code&gt;updaters&lt;/code&gt; section is particular to command-updated
+configuration. It contains an array of updaters, each of which gives a
+command for updating container images, and a command for updating
+policies (policy controls how automated updates should be applied to a
+resource; these appear as annotations in generated manifests).&lt;/p&gt;
+&lt;p&gt;When asked to update a resource, fluxd will run execute the
+appropriate variety of command for &lt;em&gt;each&lt;/em&gt; entry in &lt;code&gt;updaters:&lt;/code&gt;. For
+example, when updating an image, it will execute the command under
+&lt;code&gt;containerImage&lt;/code&gt;, for each updater entry, in turn.&lt;/p&gt;
+&lt;p&gt;Usually updates come in batches &amp;ndash; e.g., updating the same container
+image in several resources &amp;ndash; so the commands will likely be run
+several times.&lt;/p&gt;
+&lt;h3 id=&#34;execution-context-of-commands&#34;&gt;Execution context of commands&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;generators&lt;/code&gt; and &lt;code&gt;updaters&lt;/code&gt; are run in a POSIX shell inside the fluxd
+container. This means that the executables mentioned in commands must
+be available in the running fluxd container.&lt;/p&gt;
+&lt;p&gt;Flux currently includes &lt;code&gt;kustomize&lt;/code&gt;, &lt;code&gt;sops&lt;/code&gt; and basic Unix shell tools.
+If the tools in the Flux image are not sufficient for your use case,
+you have some options:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;build your own custom image based on the 
+&lt;a href=&#34;https://github.com/fluxcd/flux/blob/master/docker/Dockerfile.flux&#34; target=&#34;_blank&#34;&gt;Flux
+image&lt;/a&gt; that includes the tooling you need, and run
+that image instead of &lt;code&gt;fluxcd.io/flux&lt;/code&gt;;&lt;/li&gt;
+&lt;li&gt;copy files from an &lt;code&gt;initContainer&lt;/code&gt; into a volume shared by the flux
+container, within the deployment.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In the future it may be possible to specify an container image for
+each command, rather than relying on the tooling being in the
+filesystem.&lt;/p&gt;
+&lt;p&gt;The working directory (also known as CWD) of the &lt;code&gt;command&lt;/code&gt;s executed
+from a &lt;code&gt;.flux.yaml&lt;/code&gt; file will be set to the target path, i.e., the
+&lt;code&gt;--git-path&lt;/code&gt; entry.&lt;/p&gt;
+&lt;p&gt;For example, when using flux with &lt;code&gt;--git-path=staging&lt;/code&gt; on a git
+repository with this structure:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;├── .flux.yaml
+├── staging/
+├──── &lt;span style=&#34;color:#666&#34;&gt;[&lt;/span&gt;...&lt;span style=&#34;color:#666&#34;&gt;]&lt;/span&gt;
+├── production/
+└──── &lt;span style=&#34;color:#666&#34;&gt;[&lt;/span&gt;...&lt;span style=&#34;color:#666&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;… the commands in &lt;code&gt;.flux.yaml&lt;/code&gt; will be executed with their working
+directory set to &lt;code&gt;staging&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In addition, commands from &lt;code&gt;updaters&lt;/code&gt; are given arguments via
+environment variables, when executed:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;FLUX_WORKLOAD&lt;/code&gt;: the workload to be updated. Its format is
+&lt;code&gt;&amp;lt;namespace&amp;gt;:&amp;lt;kind&amp;gt;/&amp;lt;name&amp;gt;&lt;/code&gt; (e.g. &lt;code&gt;default:deployment/foo&lt;/code&gt;). For
+convenience (to circumvent parsing) &lt;code&gt;FLUX_WORKLOAD&lt;/code&gt; is also broken
+down into the following environment variables:&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;FLUX_WL_NS&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;FLUX_WL_KIND&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;FLUX_WL_NAME&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;containerImage&lt;/code&gt; updaters are provided with:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;FLUX_CONTAINER&lt;/code&gt;: Name of the container within the workload whose image needs to be updated.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;FLUX_IMG&lt;/code&gt;: Image name which the container needs to be updated to (e.g. &lt;code&gt;nginx&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;FLUX_TAG&lt;/code&gt;: Image tag which the container needs to be updated to (e.g. &lt;code&gt;1.15&lt;/code&gt;).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;policy&lt;/code&gt; updaters are provided with:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;FLUX_POLICY&lt;/code&gt;: the name of the policy to be added or updated in
+the workload. To make into an annotation name, prefix with
+&lt;code&gt;fluxcd.io/&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;FLUX_POLICY_VALUE&lt;/code&gt;: value of the policy to be added or updated
+in the controller. If the &lt;code&gt;FLUX_POLICY_VALUE&lt;/code&gt; environment
+variable is not set, it means the policy should be removed.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Please note that the default timeout for sync commands is set to one
+minute. If you run into errors like &lt;code&gt;error executing generator command: context deadline exceeded&lt;/code&gt;, you can increase the timeout with
+the &lt;code&gt;--sync-timeout&lt;/code&gt; fluxd command flag or the &lt;code&gt;sync.timeout&lt;/code&gt; Helm
+chart option.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Garbage collection</title>
+      <link>/legacy/flux/references/garbagecollection/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/references/garbagecollection/</guid>
+      <description>
+        
+        
+        &lt;p&gt;Part of syncing a cluster with a git repository is getting rid of
+resources in the cluster that have been removed in the repository. You
+can tell &lt;code&gt;fluxd&lt;/code&gt; to do this &amp;ldquo;garbage collection&amp;rdquo; using the command-line
+flag &lt;code&gt;--sync-garbage-collection&lt;/code&gt;. It&amp;rsquo;s important to know how it
+operates, and appreciate its limitations, before enabling it.&lt;/p&gt;
+&lt;h2 id=&#34;how-garbage-collection-works&#34;&gt;How garbage collection works&lt;/h2&gt;
+&lt;p&gt;When garbage collection is enabled, syncing is done in two phases:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Apply all the manifests in the git repo (as delimited by the
+branch and path arguments), and give each resource a label marking
+it as having been synced from this source.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Ask the cluster for all the resources marked as being from this
+source, and delete those that were not applied in step 1.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;In the above, &amp;ldquo;source&amp;rdquo; refers to the particular combination of git
+repo URL, branch, and paths that this &lt;code&gt;fluxd&lt;/code&gt; has been configured to
+use, which is taken as identifying the resources under &lt;em&gt;this&lt;/em&gt;
+&lt;code&gt;fluxd&lt;/code&gt;&amp;rsquo;s control.&lt;/p&gt;
+&lt;p&gt;We need to be careful about identifying these accurately, since
+getting it wrong could mean &lt;em&gt;not&lt;/em&gt; deleting resources that should be
+deleted; or (much worse), deleting resources that are under another
+&lt;code&gt;fluxd&lt;/code&gt;&amp;rsquo;s control.&lt;/p&gt;
+&lt;p&gt;The definition of &amp;ldquo;source&amp;rdquo; affects how garbage collection behaves when
+you reconfigure &lt;code&gt;fluxd&lt;/code&gt;. It is intended to be conservative: it ensures
+that &lt;code&gt;fluxd&lt;/code&gt; will not delete resources that it did not create.&lt;/p&gt;
+&lt;h2 id=&#34;limitations-of-this-approach&#34;&gt;Limitations of this approach&lt;/h2&gt;
+&lt;p&gt;In general, if you change an element of the source (the git repo URL,
+branch, and paths), there is a possiblility that resources no longer
+present in the new source will be missed (i.e., not deleted) by
+garbage collection, and you will need to delete them by hand.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Config change&lt;/th&gt;
+&lt;th&gt;What happens&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;git URL or branch&lt;/td&gt;
+&lt;td&gt;If the manifests at the new git repo are the same, they will all be relabelled, and things will proceed as usual. If they are different, the resources from the old repo will be missed by garbage collection and will need to be deleted by hand&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;path added&lt;/td&gt;
+&lt;td&gt;Existing resources will be relabelled, and new resources (from manifests in the new path) will be created. Then things will proceed as usual.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;path removed&lt;/td&gt;
+&lt;td&gt;The resources from manifests in the removed path will be missed by garbage collection, and will need to be deleted by hand. Other resources will be treated as usual.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Git commit signing and verification</title>
+      <link>/legacy/flux/references/git-gpg/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/references/git-gpg/</guid>
+      <description>
+        
+        
+        &lt;h2 id=&#34;summary&#34;&gt;Summary&lt;/h2&gt;
+&lt;p&gt;Flux can be configured to sign commits that it makes to the user git
+repo when, for example, it detects an updated Docker image is available
+for a release with automatic deployments enabled. To complete this
+functionality it is also able to verify signatures of commits (and the
+sync tag in git) to prevent Flux from applying unauthorized changes on
+the cluster.&lt;/p&gt;
+&lt;h2 id=&#34;commit-signing&#34;&gt;Commit signing&lt;/h2&gt;
+&lt;p&gt;The signing of commits (and the sync tag) requires two flags to be set:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;--git-gpg-key-import&lt;/code&gt; should be set to the path(s) Flux should look
+for GPG key(s) to import, this can be direct paths to keys and/or
+the paths to folders Flux should scan for files.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--git-signing-key&lt;/code&gt; should be set to the ID of the key Flux should
+use to sign commits, this can be the full fingerprint or the long
+ID, for example: &lt;code&gt;700D397C988079BFF0DDAFED6A7436E8790F8689&lt;/code&gt; (or
+&lt;code&gt;6A7436E8790F8689&lt;/code&gt;)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Once enabled Flux will sign both commits and the sync tag with given
+&lt;code&gt;--git-signing-key&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;creating-a-gpg-signing-key&#34;&gt;Creating a GPG signing key&lt;/h3&gt;
+
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    This requires 
+&lt;a href=&#34;https://www.gnupg.org&#34; target=&#34;_blank&#34;&gt;gnupg&lt;/a&gt; to be
+installed on your system.
+
+&lt;/div&gt;
+
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Enter the following shell command to start the key generation dialog:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt; $ gpg --full-generate-key
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The dialog will guide you through the process of generating a key.
+Pressing the &lt;code&gt;Enter&lt;/code&gt; key will assign the default value, please note
+that when in doubt, in almost all cases, the default value is
+recommended.&lt;/p&gt;
+&lt;p&gt;Select what kind of key you want and press &lt;code&gt;Enter&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;Please &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;select&lt;/span&gt; what kind of key you want:
+&lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;1&lt;span style=&#34;color:#666&#34;&gt;)&lt;/span&gt; RSA and RSA &lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;default&lt;span style=&#34;color:#666&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;2&lt;span style=&#34;color:#666&#34;&gt;)&lt;/span&gt; DSA and Elgamal
+&lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;3&lt;span style=&#34;color:#666&#34;&gt;)&lt;/span&gt; DSA &lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;sign only&lt;span style=&#34;color:#666&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;4&lt;span style=&#34;color:#666&#34;&gt;)&lt;/span&gt; RSA &lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;sign only&lt;span style=&#34;color:#666&#34;&gt;)&lt;/span&gt;
+Your selection? &lt;span style=&#34;color:#40a070&#34;&gt;1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Enter the desired key size (or simply press &lt;code&gt;Enter&lt;/code&gt; as the default
+will be secure for almost any setup):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;RSA keys may be between &lt;span style=&#34;color:#40a070&#34;&gt;1024&lt;/span&gt; and &lt;span style=&#34;color:#40a070&#34;&gt;4096&lt;/span&gt; bits long.
+What keysize &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;do&lt;/span&gt; you want? &lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;2048&lt;span style=&#34;color:#666&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Specify how long the key should be valid (or simply press &lt;code&gt;Enter&lt;/code&gt;):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;Please specify how long the key should be valid.
+       &lt;span style=&#34;color:#bb60d5&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; key does not expire
+    &amp;lt;n&amp;gt;  &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; key expires in n days
+    &amp;lt;n&amp;gt;w &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; key expires in n weeks
+    &amp;lt;n&amp;gt;m &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; key expires in n months
+    &amp;lt;n&amp;gt;y &lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt; key expires in n years
+Key is valid &lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;for&lt;/span&gt;? &lt;span style=&#34;color:#666&#34;&gt;(&lt;/span&gt;0&lt;span style=&#34;color:#666&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Verify your selection of choices and accept (&lt;code&gt;y&lt;/code&gt; and &lt;code&gt;Enter&lt;/code&gt;)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Enter your user ID information, it is recommended to set the email
+address to the same address as the daemon uses for Git operations.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Do not enter a passphrase&lt;/strong&gt;, as Flux will be unable to sign with a
+passphrase protected private key, instead, keep it in a secure place.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;You can validate the public and private keypair were created with
+success by running:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ gpg --list-secret-keys --keyid-format long &amp;lt;email address&amp;gt;
+sec   rsa2048/6A7436E8790F8689 2019-03-28 &lt;span style=&#34;color:#666&#34;&gt;[&lt;/span&gt;SC&lt;span style=&#34;color:#666&#34;&gt;]&lt;/span&gt;
+      700D397C988079BFF0DDAFED6A7436E8790F8689
+uid                 &lt;span style=&#34;color:#666&#34;&gt;[&lt;/span&gt;ultimate&lt;span style=&#34;color:#666&#34;&gt;]&lt;/span&gt; Weaveworks Flux &amp;lt;support@weave.works&amp;gt;
+ssb   rsa2048/ECA4FF5BD988B8E9 2019-03-28 &lt;span style=&#34;color:#666&#34;&gt;[&lt;/span&gt;E&lt;span style=&#34;color:#666&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;importing-a-gpg-signing-key&#34;&gt;Importing a GPG signing key&lt;/h3&gt;
+&lt;p&gt;Any file found in the configured &lt;code&gt;--git-gpg-key-import&lt;/code&gt; path(s) will be
+imported into GPG; therefore, by volume-mounting a key into that
+directory it will be made available for use by Flux.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Retrieve the key ID (second row of the &lt;code&gt;sec&lt;/code&gt; column):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$  gpg --list-secret-keys --keyid-format long &amp;lt;email address&amp;gt;
+sec   rsa2048/6A7436E8790F8689 2019-03-28 &lt;span style=&#34;color:#666&#34;&gt;[&lt;/span&gt;SC&lt;span style=&#34;color:#666&#34;&gt;]&lt;/span&gt;
+      700D397C988079BFF0DDAFED6A7436E8790F8689
+uid                 &lt;span style=&#34;color:#666&#34;&gt;[&lt;/span&gt;ultimate&lt;span style=&#34;color:#666&#34;&gt;]&lt;/span&gt; Weaveworks Flux &amp;lt;support@weave.works&amp;gt;
+ssb   rsa2048/ECA4FF5BD988B8E9 2019-03-28 &lt;span style=&#34;color:#666&#34;&gt;[&lt;/span&gt;E&lt;span style=&#34;color:#666&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Export the public and private keypair from your local GPG keyring
+to a Kubernetes secret with &lt;code&gt;--export-secret-keys &amp;lt;key id&amp;gt;&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ gpg --export-secret-keys --armor 700D397C988079BFF0DDAFED6A7436E8790F8689 |
+  kubectl create secret generic flux-gpg-signing-key --from-file&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;flux.asc&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;/dev/stdin --dry-run -o yaml
+apiVersion: v1
+data:
+  flux.asc: &amp;lt;base64 string&amp;gt;
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: flux-gpg-signing-key
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Adapt your Flux deployment to mount the secret and enable the
+signing of commits:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;template&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;       &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;volumes&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;       &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;gpg-signing-key&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;         &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;secret&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;           &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;secretName&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux-gpg-signing-key&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;           &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;defaultMode&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;0400&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;       &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;containers&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;       &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;         &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;volumeMounts&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;         &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;gpg-signing-key&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;           &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;mountPath&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;/root/gpg-signing-key/&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;           &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;readOnly&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;         &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;args&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;         &lt;/span&gt;- --git-gpg-key-import=/root/gpg-signing-key&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;         &lt;/span&gt;- --git-signing-key=700D397C988079BFF0DDAFED6A7436E8790F8689&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# key id&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;or set the &lt;code&gt;gpgKeys.secretName&lt;/code&gt; in your Helm &lt;code&gt;values.yaml&lt;/code&gt; to
+&lt;code&gt;gpg-keys&lt;/code&gt;, and &lt;code&gt;signingKey&lt;/code&gt; to your &lt;code&gt;&amp;lt;key id&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;To validate your setup is working, run &lt;code&gt;git log --show-signature&lt;/code&gt; or
+&lt;code&gt;git verify-tag &amp;lt;configured label&amp;gt;&lt;/code&gt; to assure Flux signs its git
+actions.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ git verify-tag &amp;lt;configured label&amp;gt;
+gpg: Signature made vr &lt;span style=&#34;color:#40a070&#34;&gt;29&lt;/span&gt; mrt &lt;span style=&#34;color:#40a070&#34;&gt;2019&lt;/span&gt; 15:28:34 CET
+gpg:                using RSA key 700D397C988079BFF0DDAFED6A7436E8790F8689
+gpg: Good signature from &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;Weaveworks Flux &amp;lt;support@weave.works&amp;gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#666&#34;&gt;[&lt;/span&gt;ultimate&lt;span style=&#34;color:#666&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    Flux &lt;em&gt;does not&lt;/em&gt; recursively scan a given directory but does
+understand symbolic links to files.
+
+&lt;/div&gt;
+
+
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    Flux will automatically add any imported key to the GnuPG
+trustdb. This is required as git will otherwise not trust signatures
+made with the imported keys.
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;signature-verification&#34;&gt;Signature verification&lt;/h2&gt;
+&lt;p&gt;The verification of commit signatures is enabled by importing all
+trusted public keys (&lt;code&gt;--git-gpg-key-import=&amp;lt;path&amp;gt;,&amp;lt;path2&amp;gt;&lt;/code&gt;), and by
+setting the &lt;code&gt;--gpg-verify-signatures&lt;/code&gt; flag. Once enabled Flux will
+verify all commit signatures, and the signature from the sync tag it is
+comparing revisions with.&lt;/p&gt;
+&lt;p&gt;In case a signature can not be verified, Flux will sync state up to the
+last valid revision it can find &lt;em&gt;before&lt;/em&gt; the unverified commit was
+made, and lock on this revision.&lt;/p&gt;
+&lt;h3 id=&#34;importing-trusted-gpg-keys-and-enabling-verification&#34;&gt;Importing trusted GPG keys and enabling verification&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Collect the public keys from all trusted git authors.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Create a &lt;code&gt;ConfigMap&lt;/code&gt; with all trusted public keys:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ kubectl create configmap flux-gpg-public-keys &lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#4070a0;font-weight:bold&#34;&gt;&lt;/span&gt; --from-file&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;author.asc --from-file&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;author2.asc --dry-run -o yaml
+ apiVersion: v1
+ data:
+   author.asc: &amp;lt;base64 string&amp;gt;
+   author2.asc: &amp;lt;base64 string&amp;gt;
+ kind: ConfigMap
+ metadata:
+   creationTimestamp: null
+   name: flux-gpg-public-keys
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Mount the config map in your Flux deployment, add the mount path to
+&lt;code&gt;--git-gpg-key-import&lt;/code&gt;, and enable the verification of commits:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;template&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;       &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;volumes&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;       &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;gpg-public-keys&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;         &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;configMap&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;           &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux-gpg-public-keys&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;           &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;defaultMode&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;0400&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;       &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;containers&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;       &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;flux&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;         &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;volumeMounts&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;         &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;gpg-public-keys&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;           &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;mountPath&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;/root/gpg-public-keys&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;           &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;readOnly&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;         &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;args&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;         &lt;/span&gt;- --git-gpg-key-import=/root/gpg-public-keys&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;         &lt;/span&gt;- --git-verify-signatures&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    Flux &lt;em&gt;does not&lt;/em&gt; recursively scan a given directory but does
+understand symbolic links to files.
+
+&lt;/div&gt;
+
+&lt;h3 id=&#34;enabling-verification-for-existing-repositories-disaster-recovery-and-deleted-sync-tags&#34;&gt;Enabling verification for existing repositories, disaster recovery, and deleted sync tags&lt;/h3&gt;
+&lt;p&gt;In case you have existing commits in your repository without a
+signature you may want to:&lt;/p&gt;
+&lt;p&gt;a. First enable signing by setting the &lt;code&gt;--git-gpg-key-import&lt;/code&gt; and
+&lt;code&gt;--git-signing-key&lt;/code&gt;, after Flux has synchronized the first commit
+with a signature, enable verification.&lt;/p&gt;
+&lt;p&gt;b. Sign the sync tag by yourself, with a key that is imported, to point
+towards the first commit with a signature (or the current &lt;code&gt;HEAD&lt;/code&gt;).
+Flux will then start synchronizing the changes between the sync tag
+revision and &lt;code&gt;HEAD&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ git tag --force --local-user&lt;span style=&#34;color:#666&#34;&gt;=&lt;/span&gt;&amp;lt;key id&amp;gt; -a -m &lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;Sync pointer&amp;#34;&lt;/span&gt; &amp;lt;tag name&amp;gt; &amp;lt;revision&amp;gt;
+$ git push --force origin &amp;lt;tag name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;choosing-a---git-verify-signatures-mode&#34;&gt;Choosing a &lt;code&gt;--git-verify-signatures-mode&lt;/code&gt;&lt;/h3&gt;
+&lt;h4 id=&#34;none-default&#34;&gt;&lt;code&gt;&amp;quot;none&amp;quot;&lt;/code&gt; (default)&lt;/h4&gt;
+&lt;p&gt;By default, Flux skips GPG verification of all commits.&lt;/p&gt;
+&lt;h4 id=&#34;all&#34;&gt;&lt;code&gt;&amp;quot;all&amp;quot;&lt;/code&gt;&lt;/h4&gt;
+&lt;p&gt;This is the regular verification behavior, consistent with the original
+&lt;code&gt;--gitVerifySignatures&lt;/code&gt; flag. It will perform GPG verification on every commit
+between the tip of the Flux branch and the Flux sync tag, including all parents.
+If your &lt;code&gt;master&lt;/code&gt; branch contains only signed commits (
+&lt;a href=&#34;https://help.github.com/en/github/administering-a-repository/about-required-commit-signing&#34; target=&#34;_blank&#34;&gt;a flow which GitHub
+supports&lt;/a&gt;), then this flow ought to work.&lt;/p&gt;
+&lt;h4 id=&#34;first-parent&#34;&gt;&lt;code&gt;&amp;quot;first-parent&amp;quot;&lt;/code&gt;&lt;/h4&gt;
+&lt;p&gt;However, there are some arguments for more limited signing behaviors, e.g. 
+&lt;a href=&#34;https://mikegerwitz.com/2012/05/a-git-horror-story-repository-integrity-with-signed-commits&#34; target=&#34;_blank&#34;&gt;this
+parable&lt;/a&gt; and 
+&lt;a href=&#34;http://git.661346.n2.nabble.com/GPG-signing-for-git-commit-tp2582986p2583316.html&#34; target=&#34;_blank&#34;&gt;this thread&lt;/a&gt;). In
+particular, it can be useful to allow unsigned commits into &lt;code&gt;master&lt;/code&gt;, and to
+point Flux at a &lt;code&gt;release&lt;/code&gt; branch containing signed merges from &lt;code&gt;master&lt;/code&gt;. A merge
+commit has two parents: the previous commit &amp;ldquo;in the branch,&amp;rdquo; as well as the last
+commit in the merged branch. In this scenario, use the &lt;code&gt;&amp;quot;first-parent&amp;quot;&lt;/code&gt; mode &amp;ndash;
+only the merge commits &amp;ldquo;in the branch&amp;rdquo; should be GPG-verified, since the commits
+from master have no signature.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Automated deployment of new container images</title>
+      <link>/legacy/flux/references/automated-image-update/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/references/automated-image-update/</guid>
+      <description>
+        
+        
+        &lt;p&gt;Flux can be used to automate container image updates in your cluster.
+Flux periodically scans the pods running in your cluster and builds a list of all container images.
+Using the image pull secrets, it connects to the container registries, pulls the images metadata
+and stores the image tag list in memcached.&lt;/p&gt;
+&lt;p&gt;You can enable the automate image tag updates by annotating your deployments, statefulsets,
+daemonsets or cronjobs objects. You can also control what tags should be considered for an
+update by using glob, regex or semantic version expressions.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    Flux only works with immutable image tags (&lt;code&gt;:latest&lt;/code&gt; is not supported).
+Every image tag must be unique, for this you can use the Git commit SHA or semver when tagging images.
+
+&lt;/div&gt;
+
+&lt;h2 id=&#34;examples&#34;&gt;Examples&lt;/h2&gt;
+&lt;p&gt;What follows is a list of examples on how you can control the image update automation. If you&amp;rsquo;re using Helm releases
+please see the 
+&lt;a href=&#34;/legacy/flux/references/helm-operator-integration/&#34;&gt;Helm Operator integration docs&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Turn on automation based on timestamp:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;apiVersion&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;apps/v1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;Deployment&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;annotations&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;fluxcd.io/automated&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;template&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;containers&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;app&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;docker.io/org/my-app:1.0.0&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The above configuration will make Flux update the &lt;code&gt;app&lt;/code&gt; container when you push
+a new image tag, be it &lt;code&gt;my-app:1.0.1&lt;/code&gt; or &lt;code&gt;my-app:9e3bdaf&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Restrict image updates with sem ver:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;apiVersion&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;apps/v1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;Deployment&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;annotations&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;fluxcd.io/automated&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;fluxcd.io/tag.app&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;semver:~1.0&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;template&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;containers&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;app&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;docker.io/org/my-app:1.0.0&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The above configuration will make Flux update the image when you push
+an image tag that matches the 
+&lt;a href=&#34;https://semver.org/&#34; target=&#34;_blank&#34;&gt;semantic version&lt;/a&gt;
+expression e.g &lt;code&gt;my-app:1.0.1&lt;/code&gt; but not &lt;code&gt;my-app:1.2.0&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Flux also support all the other ranges and operators available 
+&lt;a href=&#34;https://github.com/Masterminds/semver&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt; in addition to the &lt;code&gt;~&lt;/code&gt; range.&lt;/p&gt;
+&lt;p&gt;Restrict image to deploy prerelease version up until &lt;code&gt;myapp:1.0.0&lt;/code&gt; but not &lt;code&gt;myapp:1.0.1&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;apiVersion&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;apps/v1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;Deployment&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;annotations&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;fluxcd.io/automated&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;fluxcd.io/tag.app&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;semver: &amp;gt;= 1.0.0-rc.0, &amp;lt;1.0.1&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;template&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;containers&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;app&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;docker.io/org/my-app:1.0.0-rc.1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Restrict image updates with glob and regex expressions:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;apiVersion&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;apps/v1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;Deployment&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;annotations&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;fluxcd.io/automated&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;fluxcd.io/tag.sidecar&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;regex:^stg.*&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;fluxcd.io/tag.app&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;glob:dev-*&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;template&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;containers&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;sidecar&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;docker.io/org/my-proxy:stg-4s7bsgv&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;- &lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;name&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;app&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;docker.io/org/my-app:dev-9e3bdaf&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The above configuration will make Flux update the &lt;code&gt;sidecar&lt;/code&gt; when you push
+a tag for the &lt;code&gt;my-proxy&lt;/code&gt; image that begins with &lt;code&gt;stg&lt;/code&gt;.
+For the &lt;code&gt;app&lt;/code&gt; container, Flux will update it when you push a tag for the
+&lt;code&gt;my-app&lt;/code&gt; image that begins with &lt;code&gt;dev-&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;To target a specific container the annotation format is &lt;code&gt;fluxcd.io/tag.&amp;lt;CONTAINER&amp;gt;: &amp;lt;TYPE&amp;gt;:&amp;lt;EXPRESSION&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;You can turn off the automation with &lt;code&gt;fluxcd.io/automated: &amp;quot;false&amp;quot;&lt;/code&gt; or with &lt;code&gt;fluxcd.io/locked: &amp;quot;true&amp;quot;&lt;/code&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Monitoring Flux</title>
+      <link>/legacy/flux/references/monitoring/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/references/monitoring/</guid>
+      <description>
+        
+        
+        &lt;p&gt;The Flux daemon exposes &lt;code&gt;/metrics&lt;/code&gt; endpoints which can be scraped for
+monitoring data in Prometheus format; exact metric names and help are
+available from the endpoints themselves.&lt;/p&gt;
+&lt;p&gt;The following metrics are exposed:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;metric&lt;/th&gt;
+&lt;th&gt;description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;flux_cache_request_duration_seconds&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Duration of cache requests, in seconds.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;flux_client_fetch_duration_seconds&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Duration of remote image metadata requests&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;flux_daemon_job_duration_seconds&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Duration of job execution, in seconds&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;flux_daemon_queue_duration_seconds&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Duration of time spent in the job queue before execution&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;flux_daemon_queue_length_count&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Count of jobs waiting in the queue to be run&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;flux_daemon_sync_duration_seconds&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Duration of git-to-cluster synchronisation&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;flux_daemon_sync_manifests&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Number of manifests being synced to cluster&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;flux_registry_fetch_duration_seconds&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Duration of image metadata requests (from cache)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;flux_fluxd_connection_duration_seconds&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Duration in seconds of the current connection to fluxsvc&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;flux_git_ready&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Status of the git repository&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Flux sync state can be obtained by using the following PromQL expressions:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;delta(flux_daemon_sync_duration_seconds_count{success=&#39;true&#39;}[6m]) &amp;lt; 1&lt;/code&gt; - for general flux sync errors - usually if
+that is true then there are some problems with infrastructure or there are manifests parse error or there are manifests
+with duplicate ids.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;flux_daemon_sync_manifests{success=&#39;false&#39;} &amp;gt; 0&lt;/code&gt; - for git manifests errors - if true then there are either some
+problems with applying git manifests to kubernetes - e.g. configmap size is too big to fit in annotations or
+immutable field (like label selector) was changed.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;flux_git_ready &amp;lt; 1&lt;/code&gt; - for git clone/fetch/push errors. If true then there are some problems in the git repository,
+or the repository cannot be reached.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Legacy: Integration with the Helm Operator</title>
+      <link>/legacy/flux/references/helm-operator-integration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/legacy/flux/references/helm-operator-integration/</guid>
+      <description>
+        
+        
+        &lt;p&gt;You can release charts to your cluster via &amp;ldquo;GitOps&amp;rdquo;, by combining Flux
+and the 
+&lt;a href=&#34;https://github.com/fluxcd/helm-operator&#34; target=&#34;_blank&#34;&gt;Helm Operator&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The essential mechanism is this: the declaration of a Helm release is
+represented by a custom resource, specifying the chart and its
+values. If you put such a resource in your git repo as a file, Flux
+will apply it to the cluster, and once it&amp;rsquo;s in the cluster, the Helm
+Operator will make sure the release exists by installing or upgrading
+it.&lt;/p&gt;
+&lt;h2 id=&#34;upgrading-images-in-a-helmrelease-using-flux&#34;&gt;Upgrading images in a &lt;code&gt;HelmRelease&lt;/code&gt; using Flux&lt;/h2&gt;
+&lt;p&gt;If the chart you&amp;rsquo;re using in a &lt;code&gt;HelmRelease&lt;/code&gt; lets you specify the
+particular images to run, you will usually be able to update them with
+Flux, the same way you can with Deployments and so on.&lt;/p&gt;
+
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    For automation to work, the repository &lt;em&gt;and&lt;/em&gt; tag should be
+defined (either as a whole string, or under separate keys), as Flux
+determines image updates based on what it reads in the &lt;code&gt;.spec.values&lt;/code&gt;
+of the &lt;code&gt;HelmRelease&lt;/code&gt;.
+
+&lt;/div&gt;
+
+&lt;h3 id=&#34;automated-image-detection&#34;&gt;Automated image detection&lt;/h3&gt;
+&lt;p&gt;Flux interprets certain commonly used structures in the &lt;code&gt;values&lt;/code&gt;
+section of a &lt;code&gt;HelmRelease&lt;/code&gt; as referring to images, at least an
+&lt;code&gt;image&lt;/code&gt; key needs to be specified.  The following are understood
+(showing just the &lt;code&gt;values&lt;/code&gt; section):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;values&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;repo/image:version&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;values&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;repo/image&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;tag&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;version&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;values&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;registry&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;docker.io&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;repo/image&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;tag&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;version&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;values&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;repository&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;repo/image&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;tag&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;version&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;values&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;registry&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;docker.io&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;repository&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;repo/image&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;tag&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;version&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;These can appear at the top level (immediately under &lt;code&gt;values:&lt;/code&gt;), or in
+a subsection (under a key, itself under &lt;code&gt;values:&lt;/code&gt;). Other values
+may be mixed in arbitrarily. Here&amp;rsquo;s an example of a values section
+that specifies two images:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;values&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;persistent&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# image that will be labeled &amp;#34;chart-image&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;repo/image1:version&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;subsystem&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# image that will be labeled &amp;#34;subsystem&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;repository&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;repo/image2&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;tag&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;version&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;imagePullPolicy&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;IfNotPresent&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;port&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;4040&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;annotations&#34;&gt;Annotations&lt;/h3&gt;
+&lt;p&gt;If Flux does not automatically detect your image, it is possible to
+map the image paths by alias with YAML dot notation annotations. An
+alias overrules a detected image.&lt;/p&gt;
+&lt;p&gt;The following annotations are available, and &lt;code&gt;repository.fluxcd.io&lt;/code&gt;
+is required for any of these to take effect.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Annotation&lt;/th&gt;
+&lt;th&gt;Value&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;Required?&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;fluxcd.io/automated&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;&amp;quot;true&amp;quot;&lt;/code&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✅ &lt;br&gt; * Note: This must be a string &lt;code&gt;&amp;quot;true&amp;quot;&lt;/code&gt; &lt;br&gt; rather than a boolean &lt;code&gt;true&lt;/code&gt; or all other &lt;code&gt;*.fluxcd.io/*&lt;/code&gt; &lt;br&gt; annotations will be silently ignored&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;&lt;code&gt;repository.fluxcd.io/&amp;lt;alias&amp;gt;&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;sub.repo&lt;/code&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✅&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;registry.fluxcd.io/&amp;lt;alias&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;sub.reg&lt;/code&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;tag.fluxcd.io/&amp;lt;alias&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;sub.tag&lt;/code&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;filter.fluxcd.io/&amp;lt;alias&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;glob:master-*&lt;/code&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+&lt;div class=&#34;alert alert-primary&#34; role=&#34;alert&#34;&gt;
+
+
+    Note: Glob patterns following &lt;code&gt;glob:&lt;/code&gt; are sensitive to spaces
+
+&lt;/div&gt;
+
+&lt;p&gt;The following example &lt;code&gt;HelmRelease&lt;/code&gt; specifies two images:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;annotations&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# image and tag&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;repository.fluxcd.io/app&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;appImage&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;tag.fluxcd.io/app&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;appTag&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;filter.fluxcd.io/app&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;glob:*&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# nested image with registry and tag&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;registry.fluxcd.io/submarine&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;sub.marinesystem.reg&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;repository.fluxcd.io/submarine&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;sub.marinesystem.img&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;tag.fluxcd.io/submarine&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;sub.marinesystem.tag&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;values&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# image and tag&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;appImage&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;repo/image1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;appTag&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;version&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;sub&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;marinesystem&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#60a0b0;font-style:italic&#34;&gt;# nested image with registry and tag&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;reg&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;domain.com&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;img&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;repo/image2&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;tag&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;version&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;filters&#34;&gt;Filters&lt;/h4&gt;
+&lt;p&gt;You can use the 
+&lt;a href=&#34;/legacy/flux/references/fluxctl/&#34;&gt;same annotations&lt;/a&gt; in
+the &lt;code&gt;HelmRelease&lt;/code&gt; as you would for a Deployment or other workload,
+to control updates and automation. For the purpose of specifying
+filters, the container name is either &lt;code&gt;chart-image&lt;/code&gt; (if at the top
+level), the key under which the image is given (e.g., &lt;code&gt;&amp;quot;subsystem&amp;quot;&lt;/code&gt;
+from the example above), or the alias you are using in your
+annotations.&lt;/p&gt;
+&lt;p&gt;Top level image example:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;HelmRelease&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;annotations&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;fluxcd.io/automated&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;filter.fluxcd.io/chart-image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;semver:~4.0&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;values&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;repository&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;bitnami/mongodb&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;tag&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;4.0.3&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Sub-section images example:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;kind&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;HelmRelease&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;metadata&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;annotations&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;fluxcd.io/automated&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;filter.fluxcd.io/prometheus&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;semver:~2.3&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;filter.fluxcd.io/alertmanager&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;glob:v0.15.*&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;filter.fluxcd.io/nats&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;regex:^0.6.*&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;spec&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;values&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;prometheus&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;prom/prometheus:v2.3.1&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;alertmanager&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;prom/alertmanager:v0.15.0&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;nats&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;      &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;image&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;repository&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;nats-streaming&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;        &lt;/span&gt;&lt;span style=&#34;color:#062873;font-weight:bold&#34;&gt;tag&lt;/span&gt;:&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#40a070&#34;&gt;0.6.0&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+      </description>
+    </item>
+    
+  </channel>
+</rss>
