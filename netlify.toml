@@ -1,0 +1,15 @@
+[build]
+  publish = "public"
+  command = "make production-build"
+
+[build.environment]
+  HUGO_VERSION = "0.84.3"
+
+[context.production.environment]
+  HUGO_ENV = "production"
+
+[context.deploy-preview]
+  command = "make preview-build"
+
+[context.branch-deploy]
+  command = "make branch-build"

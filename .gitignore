@@ -1,0 +1,20 @@
+node_modules/
+
+# Hugo-generated assets
+public/
+resources/
+themes/docsy
+themes/docsy-*
+
+# clone of gohugoio/hugo for docker-support
+hugo/
+
+# Imported Flux CLI assets
+content/en/docs/cmd/flux*
+static/install.sh
+
+# Adopters logos
+static/img/logos
+
+# local GH token, used for some scripts
+.gh-token

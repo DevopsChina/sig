@@ -1,0 +1,62 @@
+adopters:
+  project: Flux v2
+  description: >
+    Check out everything about Flux v2 on our [website](https://fluxcd.io/docs/).
+  companies:
+    - name: Weaveworks
+      url: https://weave.works
+      logo: logos/weaveworks.png
+    - name: Xenit
+      url: https://xenit.se/
+      logo: logos/xenit.png
+    - name: Sortlist
+      url: https://www.sortlist.com
+      logo: logos/sortlist.png
+    - name: TietoEVRY
+      url: https://www.tietoevry.com/
+      logo: logos/tietoevry.png
+    - name: Nexxiot
+      url: https://www.nexxiot.com
+      logo: logos/nexxiot.png
+    - name: Yad2
+      url: https://www.yad2.co.il
+      logo: logos/yad2.png
+    - name: SoulCycle
+      url: https://www.soul-cycle.com
+      logo: logos/soulcycle.png
+    - name: Luminovo
+      url: https://luminovo.ai
+      logo: logos/luminovo.png
+    - name: MacPaw
+      url: https://macpaw.com/
+      logo: logos/macpaw.png
+    - name: AdoreMe
+      url: https://adoreme.com
+      logo: logos/adoreme.png
+    - name: bimspot
+      url: https://bimspot.io
+      logo: logos/bimspot.png
+    - name: blackmirror media
+      url: https://blackmirror.media
+      logo: logos/blackmirror-media.png
+    - name: sngular
+      url: https://www.sngular.com
+      logo: logos/sngular.png
+    - name: happn
+      url: https://www.happn.com
+      logo: logos/happn.png
+    - name: Sage AI Labs
+      url: https://www.sage.com
+      logo: logos/sageailabs.png
+    - name: Quivr
+      url: https://quivr.be
+      logo: logos/quivr.svg
+    - name: HybridK8s
+      url: https://hybridk8s.tech
+      logo: logos/hybridk8s.png
+    - name: D2iQ
+      url: https://d2iq.com
+      logo: logos/d2iq.png
+    - name: particule.
+      url: https://particule.io
+      logo: logos/particule.svg
